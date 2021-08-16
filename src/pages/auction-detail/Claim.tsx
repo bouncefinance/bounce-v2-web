@@ -40,8 +40,6 @@ export const Claim: FC<AuctionDetailClaimType> = ({
 	userBid,
 	userPay,
 }) => {
-	console.log(userBid, price);
-
 	return (
 		<div className={styles.component}>
 			<DescriptionList
