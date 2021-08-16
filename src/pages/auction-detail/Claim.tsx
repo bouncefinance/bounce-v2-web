@@ -7,6 +7,8 @@ import { PrimaryButton } from "@app/ui/button";
 import { DescriptionList } from "@app/ui/description-list";
 import { Spinner } from "@app/ui/spinner";
 
+import { divide, roundedMultiplied } from "@app/utils/bn";
+
 import styles from "./Claim.module.scss";
 
 type AuctionDetailClaimType = {
@@ -38,6 +40,8 @@ export const Claim: FC<AuctionDetailClaimType> = ({
 	userBid,
 	userPay,
 }) => {
+	console.log(userBid, price);
+
 	return (
 		<div className={styles.component}>
 			<DescriptionList
@@ -54,7 +58,7 @@ export const Claim: FC<AuctionDetailClaimType> = ({
 					),
 					"Total bid amount": (
 						<span style={{ display: "grid", alignItems: "center", gridAutoFlow: "column" }}>
-							{amount}
+							{roundedMultiplied(userBid, price).toString()}
 							{"\u00a0"}
 							<Currency token={to.address} small />
 						</span>
