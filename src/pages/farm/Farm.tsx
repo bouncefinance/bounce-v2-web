@@ -1,3 +1,4 @@
+import { useWeb3React } from "@web3-react/core";
 import classNames from "classnames";
 import React, { FC, useEffect, useState } from "react";
 
@@ -7,6 +8,11 @@ import { Button } from "@app/ui/button";
 import { GutterBox } from "@app/ui/gutter-box";
 import { ShortLogo } from "@app/ui/icons/short-logo";
 
+import { getAuctionAddress } from "@app/web3/api/bounce/contractAddress";
+import { getBalance, getTokenContract } from "@app/web3/api/bounce/erc";
+import { getContract } from "@app/web3/contracts/helpers";
+import { useChainId, useWeb3Provider } from "@app/web3/hooks/use-web3";
+
 import { MaybeWithClassName } from "../../helper/react/types";
 
 import styles from "./Farm.module.scss";
@@ -14,6 +20,16 @@ import styles from "./Farm.module.scss";
 export const Farm: FC<MaybeWithClassName> = ({ className }) => {
 	// const [showStakePop, setShowStakePop] = useState<boolean>(false);
 	const { open, close, popUp } = useControlPopUp();
+	const { account } = useWeb3React();
+	const chainId = useChainId();
+	const provider = useWeb3Provider();
+	const tokenContract = getTokenContract(provider, getAuctionAddress(chainId));
+
+	const loadAuctionStaking = () => {
+		getBalance(tokenContract, account).then((b) => {
+			console.log("b", b);
+		});
+	};
 
 	const handlePopUp = (type: string) => {
 		// switch (type) {
