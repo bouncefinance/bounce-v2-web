@@ -62,7 +62,7 @@ export const Card: FC<DisplayGovernanceInfoType & MaybeWithClassName & { bordere
 				{`Proposer: ${creator?.replace(/^(.{6}).*(.{4})$/, "$1...$2") || "--"}`}
 			</Caption>
 
-			<Body1 className={styles.description} lighten={50}>
+			<Body1 className={styles.summary} lighten={50}>
 				{content?.summary || ""}
 			</Body1>
 
