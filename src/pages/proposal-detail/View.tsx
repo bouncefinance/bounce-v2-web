@@ -175,7 +175,11 @@ export const View: FC<IProposalView & ProposalDetailViewType> = ({
 
 						<div className={styles.address}>
 							<Caption className={styles.copy} Component="span" weight="medium">
-								{creator}
+								<CopyAddress
+									className={styles.copy}
+									address={creator}
+									labelAddress={`${creator?.replace(/^(.{6}).*(.{4})$/, "$1...$2")}`}
+								/>
 							</Caption>
 						</div>
 					</div>

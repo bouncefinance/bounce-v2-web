@@ -202,7 +202,8 @@ export const useGovernance = () => {
 			}
 
 			governance.position = position;
-			console.log("queryGovernance creator", id, Web3.utils.numberToHex(governance.creator));
+			governance.creator = Web3.utils.numberToHex(governance.creator);
+			// console.log("queryGovernance creator", id, Web3.utils.numberToHex(governance.creator));
 
 			governance.yesCount = await contract.methods
 				.getVotes(int2hex(id, 64), asciiToHex("VOTE_YES"))
@@ -241,6 +242,8 @@ export const useGovDetail = (id: string, trigger: boolean) => {
 	async function queryGovDetail() {
 		const contract = getContract(library, bounceStake.abi, getStakingAddress(chainId));
 		const governance: IProposal = await queryGovernanceItem(contract, id);
+
+		governance.creator = Web3.utils.numberToHex(governance.creator);
 
 		if (governance.voteResult?.slice(0, "PROPOSE_STATUS_PASS".length) === "PROPOSE_STATUS_PASS") {
 			governance.status = PROPOSAL_STATUS.PASSED;
