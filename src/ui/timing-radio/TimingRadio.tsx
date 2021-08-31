@@ -1,51 +1,54 @@
 import classNames from "classnames";
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
+import { FieldRenderProps } from "react-final-form";
+import { uid } from "react-uid";
 
 import { MaybeWithClassName } from "@app/helper/react/types";
 
 import styles from "./TimingRadio.module.scss";
 
-type TimingRadioType = {
-	// timingList: number[];
-	// value: number;
-	// onChange(timing: number): void;
-	name: string;
-	value: string;
-	onChange?: any;
-};
+// type TimingRadioType = {
+// 	timingList: number[];
+// 	selectedTiming: number;
+// 	handleClick(timing: number): void;
+// };
 
-export const TimingRadio: FC<TimingRadioType & MaybeWithClassName> = ({
-	className,
-	timingList,
-	value,
-	onChange,
-	className,
-	children,
-	name,
-	value,
-	onChange,
-}) => {
+export const TimingRadio: FC<
+	/* TimingRadioType &  */ MaybeWithClassName & FieldRenderProps<number>
+> = ({ input }) => {
+	const timingList = [3, 4, 5, 6, 7];
+	const [selectedTiming, setSelectedTiming] = useState(timingList[0]);
+
+	useEffect(() => {
+		input.onChange(selectedTiming);
+	}, [selectedTiming]);
+
 	return (
 		<div className={styles.root}>
-			<input
-				className={styles.input}
-				name={name}
-				value={value}
-				onChange={onChange}
-			/>
 			<div className={styles.line}></div>
-			{timingList.map((timing: number) => (
+			{timingList.map((timing: number, index: number) => (
 				<div
+					role="radio"
+					aria-checked="false"
+					tabIndex={index}
 					className={classNames(styles.item)}
-					key={timing}
+					key={uid(timing)}
+					onKeyDown={(key) => {
+						if (key.code === "13") {
+							input.onChange(timing);
+							setSelectedTiming(timing);
+						}
+					}}
 					onClick={() => {
-						onChange(timing);
+						setSelectedTiming(timing);
 					}}
 				>
 					<div
-						className={value === timing ? styles.selectedData : styles.unSelectedData}
+						className={selectedTiming === timing ? styles.selectedData : styles.unSelectedData}
 					>{`${timing} Day`}</div>
-					<div className={value === timing ? styles.selectedCircle : styles.unSelectedCircle}></div>
+					<div
+						className={selectedTiming === timing ? styles.selectedCircle : styles.unSelectedCircle}
+					></div>
 				</div>
 			))}
 		</div>

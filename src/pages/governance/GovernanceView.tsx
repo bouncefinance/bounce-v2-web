@@ -1,7 +1,8 @@
 import classNames from "classnames";
+import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 
-import { GOVERNANCE_PATH } from "@app/const/const";
+import { CREATE_PROPOSAL_PATH, GOVERNANCE_PATH } from "@app/const/const";
 import { MaybeWithClassName } from "@app/helper/react/types";
 
 import { Card } from "@app/modules/governance-card";
@@ -32,6 +33,7 @@ type GovernanceType = {
 export const GovernanceView: FC<GovernanceType & MaybeWithClassName> = ({ className }) => {
 	const { govList, BOTStaked } = useGovernance();
 	const [results, setResults] = useState<IProposal[]>();
+	const { push: routerPush } = useRouter();
 
 	useEffect(() => {
 		setResults(govList);
@@ -44,7 +46,7 @@ export const GovernanceView: FC<GovernanceType & MaybeWithClassName> = ({ classN
 				<div className={styles.banner}>
 					<div className={styles.fakeTab}>
 						<Body1 className={styles.strVoting}>Voting</Body1>
-						<Button color="primary-white">
+						<Button color="primary-white" onClick={() => routerPush(CREATE_PROPOSAL_PATH)}>
 							<Body1 className={styles.strCreateProposal}>+ Create Proposal</Body1>
 						</Button>
 					</div>

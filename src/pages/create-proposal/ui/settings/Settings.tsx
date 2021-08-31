@@ -4,8 +4,8 @@ import { useFlowControl } from "@app/modules/flow/hooks";
 import { ProvideAdvancedSettingsForProposal } from "@app/modules/provide-advanced-settings-for-proposal";
 
 export type SettingsOutType = {
-	forText: string;
-	againstText: string;
+	agreeFor: string;
+	againstFor: string;
 	timing: number;
 };
 
@@ -14,8 +14,8 @@ const SettingsImp = () => {
 
 	const onSubmit = async (values: any) => {
 		addData({
-			forText: values.forText,
-			againstText: values.againstText,
+			agreeFor: values.agreeFor,
+			againstFor: values.againstFor,
 			timing: values.timing,
 		});
 

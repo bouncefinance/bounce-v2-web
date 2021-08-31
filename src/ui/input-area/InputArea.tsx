@@ -12,6 +12,7 @@ type InputType = {
 	name: string;
 	type: string;
 	value?: string | number;
+	// maxLength?: number;
 	placeholder?: string;
 	readOnly?: boolean;
 	required?: boolean;

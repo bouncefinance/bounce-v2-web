@@ -18,8 +18,8 @@ type ConfirmationType = {
 	title: string;
 	description: string;
 	details: string;
-	forText: string;
-	againstText: string;
+	agreeFor: string;
+	againstFor: string;
 	timing: number;
 };
 
@@ -28,14 +28,14 @@ export const ConfirmationView: FC<MaybeWithClassName & ConfirmationType> = ({
 	title,
 	description,
 	details,
-	forText,
-	againstText,
+	agreeFor,
+	againstFor,
 	timing,
 }) => {
 	const PROPOSAL_SETTINGS = {
-		For: forText,
-		Against: againstText,
-		"Proposal Timing": timing,
+		For: agreeFor,
+		Against: againstFor,
+		"Proposal Timing": `${timing} days`,
 	};
 
 	return (
@@ -55,8 +55,8 @@ export const ConfirmationImp: FC = () => {
 		title,
 		description,
 		details,
-		forText,
-		againstText,
+		agreeFor,
+		againstFor,
 		timing,
 	} = useFlowData<ConfirmationInType>();
 
@@ -67,8 +67,8 @@ export const ConfirmationImp: FC = () => {
 			title={title}
 			description={description}
 			details={details}
-			forText={forText}
-			againstText={againstText}
+			agreeFor={agreeFor}
+			againstFor={againstFor}
 			timing={timing}
 		/>
 	);

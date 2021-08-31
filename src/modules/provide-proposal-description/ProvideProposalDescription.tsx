@@ -7,6 +7,7 @@ import { TextArea } from "@app/modules/text-area";
 import { TextField } from "@app/modules/text-field";
 import { NavLink, PrimaryButton } from "@app/ui/button";
 import { RightArrow2 } from "@app/ui/icons/arrow-right-2";
+import { Caption } from "@app/ui/typography";
 
 import styles from "./ProvideProposalDescription.module.scss";
 
@@ -22,7 +23,13 @@ export const ProvideProposalDescription: FC<ProvideProposalDescriptionType> = ({
 	return (
 		<Form onSubmit={onSubmit} className={styles.form} initialValues={initialState}>
 			<Label Component="label" className={styles.label} label="Title">
-				<TextField type="text" name="title" placeholder="Enter your project name" required />
+				<TextField
+					type="text"
+					name="title"
+					placeholder="Enter your project name"
+					required
+					maxLength={100}
+				/>
 			</Label>
 			<Label Component="label" className={styles.label} label="Project Description">
 				<TextArea
@@ -30,6 +37,7 @@ export const ProvideProposalDescription: FC<ProvideProposalDescriptionType> = ({
 					name="description"
 					placeholder="What will be done if the proposal is implement"
 					required
+					maxLength={800}
 				/>
 			</Label>
 			<Label Component="label" className={styles.label} label="Details">
@@ -37,7 +45,7 @@ export const ProvideProposalDescription: FC<ProvideProposalDescriptionType> = ({
 					type="text"
 					name="details"
 					placeholder="Write a longer motivation with links and references if necessary"
-					required
+					maxLength={800}
 				/>
 			</Label>
 			<FormSpy>

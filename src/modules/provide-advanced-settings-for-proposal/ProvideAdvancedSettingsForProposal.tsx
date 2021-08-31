@@ -4,8 +4,8 @@ import { FormSpy, Field } from "react-final-form";
 import { Form } from "@app/modules/form";
 import { Label } from "@app/modules/label";
 import { TextArea } from "@app/modules/text-area";
-import { TimingRadio } from "@app/ui/timing-radio";
 import { PrimaryButton } from "@app/ui/button";
+import { TimingRadio } from "@app/ui/timing-radio";
 
 import styles from "./ProvideAdvancedSettingsForProposal.module.scss";
 
@@ -18,43 +18,28 @@ export const ProvideAdvancedSettingsForProposal: FC<ProvideAdvancedSettingsForPr
 	onSubmit,
 	// initialState,
 }) => {
-	const timingList = [1, 3, 5, 6, 7];
-	const [selectedTiming, setSelectedTiming] = useState(timingList[0]);
-
-	useEffect(() => {
-		console.log("selectedTiming: ", selectedTiming);
-	}, [selectedTiming]);
-
 	return (
 		<Form onSubmit={onSubmit} className={styles.form} /* initialValues={initialState} */>
 			<Label Component="label" className={styles.label} label="For">
-				<TextArea type="text" name="forText" placeholder="Formulate clear For position" required />
+				<TextArea
+					type="text"
+					name="agreeFor"
+					placeholder="Formulate clear For position"
+					required
+					maxLength={800}
+				/>
 			</Label>
 			<Label Component="label" className={styles.label} label="Against">
 				<TextArea
 					type="text"
-					name="againstText"
+					name="againstFor"
 					placeholder="Formulate clear Against position"
 					required
+					maxLength={800}
 				/>
 			</Label>
-			<Label Component="div" label="Proposal Timing">
-				<Field name="timing">
-					{({ input }) => {
-
-						return (
-							<TimingRadio
-								timingList={timingList}
-								value={selectedTiming}
-								onChange={(timing) => {
-									console.log("timing: ", timing);
-									props.form.change("timing", timing);
-									setSelectedTiming(timing);
-								}}
-							/>
-						);
-					}}
-				</Field>
+			<Label Component="div" className={styles.label} label="Proposal Timing">
+				<Field name="timing" component={TimingRadio} />
 			</Label>
 			<PrimaryButton className={styles.submit} size="large" submit>
 				Create

@@ -16,11 +16,11 @@ export const ProposalDetail: FC<{ proposalIndex: number; proposalId: string }> =
 }) => {
 	const { back: goBack } = useRouter();
 
-	const { gov } = useGovDetail(proposalId);
+	const [voted, setVoted] = useState();
+
+	const { gov } = useGovDetail(proposalId, voted);
 
 	const [proposalDetail, setProposalDetail] = useState<IProposal>();
-
-	const { popUp, close, open } = useControlPopUp();
 
 	useEffect(() => {
 		if (JSON.stringify(gov) === JSON.stringify({})) return;
@@ -29,24 +29,12 @@ export const ProposalDetail: FC<{ proposalIndex: number; proposalId: string }> =
 
 	return (
 		<>
-			<View {...proposalDetail} proposalIndex={proposalIndex} onBack={() => goBack()}></View>
-			{/* {popUp.defined ? (
-				<ProcessingPopUp
-					title={"Vote PopUp"}
-					text={"Vote PopUp text text"}
-					onSuccess={() => {
-						close();
-					}}
-					onTry={() => console.log("on Try Again")}
-					isSuccess={false}
-					isLoading={true}
-					isError={false}
-					control={popUp}
-					close={() => {
-						close();
-					}}
-				/>
-			) : undefined} */}
+			<View
+				{...proposalDetail}
+				proposalIndex={proposalIndex}
+				setVoted={setVoted}
+				onBack={() => goBack()}
+			></View>
 		</>
 	);
 };

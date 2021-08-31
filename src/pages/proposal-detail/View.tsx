@@ -1,5 +1,6 @@
 import { useWeb3React } from "@web3-react/core";
 import classnames from "classnames";
+import { useRouter } from "next/router";
 import { FC, useState, useEffect, ReactNode } from "react";
 
 import Web3 from "web3";
@@ -32,8 +33,6 @@ import {
 	PopUpTextType,
 } from "@app/web3/api/bounce/governance";
 
-import { useWeb3Provider } from "@app/web3/hooks/use-web3";
-
 import styles from "./View.module.scss";
 
 type ProposalDetailViewType = {
@@ -50,6 +49,7 @@ type ProposalDetailViewType = {
 
 interface IProposalView extends IProposal {
 	proposalIndex: number;
+	setVoted: any;
 }
 
 export const View: FC<IProposalView & ProposalDetailViewType> = ({
@@ -65,12 +65,9 @@ export const View: FC<IProposalView & ProposalDetailViewType> = ({
 	time,
 	title,
 	voteResult,
+	setVoted,
 }) => {
 	const { account, library, chainId } = useWeb3React();
-	console.log("library: ", library);
-
-	const Web3Provider = useWeb3Provider();
-	console.log("Web3Provider: ", Web3Provider);
 
 	const STATUS: Record<PROPOSAL_STATUS, ReactNode> = {
 		[PROPOSAL_STATUS.LIVE]: (
@@ -80,6 +77,7 @@ export const View: FC<IProposalView & ProposalDetailViewType> = ({
 		[PROPOSAL_STATUS.FAILED]: "Failed",
 	};
 
+	const router = useRouter();
 	const [operation, setOperation] = useState<OperationEnum>(OperationEnum.FOR);
 	const [optionDescription, setOptionDescription] = useState<String>();
 	const [ProcessState, setProcessState] = useState<ProcessStateEnum>(ProcessStateEnum.INITIAL);
@@ -99,7 +97,7 @@ export const View: FC<IProposalView & ProposalDetailViewType> = ({
 			open();
 
 			contract.methods[operation](int2hex(index, 64))
-				.send({ from: "account" })
+				.send({ from: account })
 				.on("transactionHash", (hash) => {
 					setProcessState(ProcessStateEnum.SUBMITTING);
 					setPopUpText(PopUpTextObj.SUBMITTING);
@@ -107,6 +105,7 @@ export const View: FC<IProposalView & ProposalDetailViewType> = ({
 				.on("receipt", (_, receipt) => {
 					setProcessState(ProcessStateEnum.SUCCESS);
 					setPopUpText(PopUpTextObj.SUCCESS);
+					setVoted(true);
 				})
 				.on("error", (err, receipt) => {
 					console.log("error1", err);
@@ -137,6 +136,9 @@ export const View: FC<IProposalView & ProposalDetailViewType> = ({
 	const _cancelCount = Number(cancelCount) / 1e18;
 
 	useEffect(() => {
+		console.log("operation: ", operation);
+		console.log("content: ", content);
+		console.log("optionDescription: ", optionDescription);
 		if (!content) return;
 
 		if (operation === OperationEnum.FOR) setOptionDescription(content.agreeFor);
@@ -194,9 +196,7 @@ export const View: FC<IProposalView & ProposalDetailViewType> = ({
 
 							<ProgressBar
 								className={styles.bar}
-								fillInPercentage={
-									_yesCount && _noCount ? (_yesCount / (_yesCount + _noCount)) * 100 : 0
-								}
+								fillInPercentage={(_yesCount / (_yesCount + _noCount)) * 100}
 								status={status}
 							/>
 
@@ -223,7 +223,7 @@ export const View: FC<IProposalView & ProposalDetailViewType> = ({
 								>
 									<Heading3 className={styles.strVoteFor}>Vote For</Heading3>
 									<Caption Component="span" className={styles.price}>
-										{`${_yesCount} Auction`}
+										{!isNaN(_yesCount) && `${_yesCount} Auction`}
 									</Caption>
 								</Button>
 								<Button
@@ -235,7 +235,7 @@ export const View: FC<IProposalView & ProposalDetailViewType> = ({
 								>
 									<Heading3 className={styles.strVoteFor}>Vote Against</Heading3>
 									<Caption Component="span" className={styles.price}>
-										{`${_noCount} Auction`}
+										{!isNaN(_noCount) && `${_noCount} Auction`}
 									</Caption>
 								</Button>
 								<Button
@@ -247,7 +247,7 @@ export const View: FC<IProposalView & ProposalDetailViewType> = ({
 								>
 									<Heading3 className={styles.strVoteFor}>Vote Neutral</Heading3>
 									<Caption Component="span" className={styles.price}>
-										{`${_cancelCount} Auction`}
+										{!isNaN(_cancelCount) && `${_cancelCount} Auction`}
 									</Caption>
 								</Button>
 							</ul>

@@ -11,7 +11,7 @@
 
 .banner {
 	width: calc(100% - 2 * 14rem);
-	padding: 0 14rem;
+	padding: 1rem 14rem 0 14rem;
 	height: 21rem;
 	background-color: black;
 
@@ -41,7 +41,7 @@
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		margin: 5.8rem auto auto auto;
+		margin: 3.4rem auto auto auto;
 		width: max-content;
 		position: relative;
 
@@ -94,8 +94,7 @@
 
 .list {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(var(--governance-card-width), 1fr));
-	// grid-template-columns: repeat(auto-fit, minmax(var(--governance-card-width), 28.3rem));
+	grid-template-columns: repeat(3, minmax(var(--governance-card-width), 1fr));
 	grid-gap: calc(var(--spacing-unit) * 3);
 
 	margin: 0;
@@ -104,9 +103,13 @@
 
 	list-style: none;
 
-	// @include mixin.from(media.$lg) {
-	// grid-template-columns: repeat(auto-fit, minmax(var(--governance-card-width), 450px));
-	// }
+  @include mixin.between(media.$lg, media.$xxl) {
+		grid-template-columns: repeat(2, minmax(var(--governance-card-width), 1fr));
+  }
+  
+	@include mixin.until(media.$lg) {
+		grid-template-columns: repeat(1, minmax(var(--governance-card-width), 1fr));
+  }
 }
 
 .pagination {

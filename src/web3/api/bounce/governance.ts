@@ -225,8 +225,10 @@ export const useGovernance = () => {
 
 			console.log("query governance detail---->", int2hex(id, 64));
 			governanceList = governanceList.concat(governance);
-			// console.log('query governance--->', governance,numberToHex(id),asciiToHex('VOTE_YES'))
 			id = governanceID;
+
+			console.log("governanceID: ", governanceID);
+
 			setGovList(governanceList.map((_) => _));
 			position++;
 		}
@@ -244,7 +246,7 @@ export const useGovernance = () => {
 	return { govList, BOTStaked, govReward, govBOT };
 };
 
-export const useGovDetail = (id) => {
+export const useGovDetail = (id: string, trigger: boolean) => {
 	const { active, library, chainId } = useWeb3React();
 	const [gov, setGov] = useState<IProposal>();
 
@@ -285,7 +287,7 @@ export const useGovDetail = (id) => {
 		if (active) {
 			queryGovDetail();
 		}
-	}, [active]);
+	}, [active, trigger]);
 
 	return { gov };
 };

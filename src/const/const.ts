@@ -16,6 +16,7 @@ export const FARM_PATH = "https://app.bounce.finance/earning ";
 // export const GOVERNANCE_PATH = "https://app.bounce.finance/governance";
 export const GOVERNANCE_PATH = "/governance";
 export const CREATE_PATH = "/create";
+export const CREATE_PROPOSAL_PATH = "/create/proposal";
 
 export const ACCOUNT_PATH = "/account";
 
