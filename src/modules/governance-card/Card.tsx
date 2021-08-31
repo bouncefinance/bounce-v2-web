@@ -13,20 +13,7 @@ import { toThousands } from "@app/utils/toThousands";
 
 import styles from "./Card.module.scss";
 
-// export type DisplayGovernanceInfoType = {
-// 	href?: string;
-// 	status: PROPOSAL_STATUS;
-// 	endTime: number;
-// 	id: number;
-// 	name: string;
-// 	fill: number;
-// 	proposer: string;
-// 	description: string;
-// 	forAmount: number;
-// 	againstAmount: number;
-// };
-
-interface DisplayGovernanceInfoType extends IProposal {
+export interface DisplayGovernanceInfoType extends IProposal {
 	href?: string;
 }
 
