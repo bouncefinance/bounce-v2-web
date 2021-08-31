@@ -59,10 +59,10 @@
   font-size: var(--body-1);
   font-weight: var(--regular);
   color: rgba(var(--primary-black), 1);
-
   box-sizing: border-box;
-
   border: 0;
+
+  resize: none;
 }
 
 .input::placeholder {

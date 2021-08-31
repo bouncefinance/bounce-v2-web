@@ -5,7 +5,7 @@
 	display: grid;
 	grid-template-columns: auto auto;
 	justify-content: stretch;
-	grid-template-areas: "status id" "name name" "proposer proposer" "description description" "strVoteFor strVoteAgainst" "bar bar" "forAmount againstAmount";
+	grid-template-areas: "status id" "name name" "proposer proposer" "summary summary" "strVoteFor strVoteAgainst" "bar bar" "forAmount againstAmount";
 
 	padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 3.5)
 		calc(var(--spacing-unit) * 5);
@@ -67,8 +67,8 @@
 	border-bottom: 1px solid rgba(var(--primary-black), 0.1);
 }
 
-.description {
-	grid-area: description;
+.summary {
+	grid-area: summary;
 
 	margin-top: calc(var(--spacing-unit) * 3);
 	margin-bottom: calc(var(--spacing-unit) * 3);
@@ -81,7 +81,7 @@
 
 	@include mixin.from(media.$lg) {
 		height: 6.6rem;
-		webkit-line-clamp: 5 /*文本显示4行*/;
+		-webkit-line-clamp: 5 /*文本显示5行*/;
 	}
 }
 

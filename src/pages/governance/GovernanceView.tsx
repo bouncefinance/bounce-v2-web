@@ -13,10 +13,7 @@ import { GutterBox } from "@app/ui/gutter-box";
 import { PopupTeleporterTarget } from "@app/ui/pop-up-container";
 import { Caption, Heading2, Body1 } from "@app/ui/typography";
 
-import { PROPOSAL_STATUS } from "@app/utils/governance";
-
-import { IProposal } from "@app/utils/governance";
-import { useGovernance } from "@app/web3/api/bounce/governance";
+import { useMyTotalStaked, useProposalList } from "@app/web3/api/bounce/governance";
 
 import styles from "./Governance.module.scss";
 
@@ -31,14 +28,9 @@ type GovernanceType = {
 };
 
 export const GovernanceView: FC<GovernanceType & MaybeWithClassName> = ({ className }) => {
-	const { govList, BOTStaked } = useGovernance();
-	const [results, setResults] = useState<IProposal[]>();
+	const myTotalStaked = useMyTotalStaked();
+	const proposalList = useProposalList();
 	const { push: routerPush } = useRouter();
-
-	useEffect(() => {
-		setResults(govList);
-		console.log("result: ", results);
-	}, [govList]);
 
 	return (
 		<>
@@ -57,7 +49,7 @@ export const GovernanceView: FC<GovernanceType & MaybeWithClassName> = ({ classN
 						</Caption>
 						<div className={styles.line2}>
 							<Heading2 className={styles.powerAmount}>
-								{BOTStaked ? Number(BOTStaked) / 1e18 : ""}
+								{myTotalStaked ? myTotalStaked : " "}
 							</Heading2>
 							&nbsp;
 							<Body1 className={styles.strVotes}>Votes</Body1>
@@ -65,12 +57,12 @@ export const GovernanceView: FC<GovernanceType & MaybeWithClassName> = ({ classN
 					</div>
 				</div>
 
-				{results && results.length > 0 && (
+				{proposalList && proposalList.length > 0 && (
 					<section className={styles.result}>
 						<GutterBox>
-							{results && (
+							{proposalList && (
 								<ul className={styles.list}>
-									{results.map((proposal, index) => (
+									{proposalList.map((proposal, index) => (
 										<li key={proposal.index} className="animate__animated animate__flipInY">
 											<Card
 												content={proposal.content}
