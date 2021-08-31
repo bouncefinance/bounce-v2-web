@@ -21,9 +21,13 @@ import { PopUpContainer } from "@app/ui/pop-up-container";
 
 import { useAllTokens, useTokenList } from "@app/web3/api/tokens";
 
+import { uriToHttp } from "@app/web3/api/tokens/ens/helpers";
+
+import { Icon } from "../icon";
+
 import { ListOfTokens } from "./ListOfTokens";
 import styles from "./SelectToken.module.scss";
-import EMPTY from "./assets/empty.svg";
+// import EMPTY from "./assets/empty.svg";
 
 type SelectTokenType = {
 	value?: string;
@@ -37,6 +41,7 @@ type SelectTokenType = {
 	error?: string;
 	onBlur?(): void;
 	onChange(date: string): void;
+	showArrow?: boolean;
 };
 
 export const SelectTokenView: FC<SelectTokenType & MaybeWithClassName> = ({
@@ -52,6 +57,7 @@ export const SelectTokenView: FC<SelectTokenType & MaybeWithClassName> = ({
 	tokenListControl,
 	onBlur,
 	error,
+	showArrow = true,
 }) => {
 	const { popUp, close, open } = useControlPopUp();
 
@@ -116,19 +122,12 @@ export const SelectTokenView: FC<SelectTokenType & MaybeWithClassName> = ({
 					onClick={!readOnly ? open : () => null}
 				>
 					{active && (
-						<span
-							className={styles.value}
-							style={
-								{
-									"--icon": active.img ? `url("${active.img}")` : `url(${EMPTY})`,
-									"--show-icon": active.img !== undefined ? "block" : "none",
-								} as CSSProperties
-							}
-						>
-							{active.currency}
-						</span>
+						<div className={styles.value}>
+							{active.img && <Icon src={active.img} />}
+							<span>{active.currency}</span>
+						</div>
 					)}
-					<Arrow style={{ transform: !popUp.defined ? "rotate(180deg)" : "rotate(0)" }} />
+					{showArrow && <Arrow position={!popUp.defined ? "bottom" : "top"} />}
 				</FieldFrame>
 			</div>
 			{popUp.defined ? (
@@ -176,7 +175,7 @@ export const SelectToken: FC<
 	const { activeLists } = tokenListControl;
 
 	const tokens = useAllTokens(
-		useCallback((list) => activeLists.includes(list.name), [activeLists])
+		useCallback((list) => activeLists.includes(list?.name), [activeLists])
 	);
 
 	const options: ShortTokenInfo[] = useMemo(
@@ -186,21 +185,23 @@ export const SelectToken: FC<
 					key: token.address,
 					title: token.name,
 					currency: token.symbol,
-					img: token.logoURI,
+					img: token.logoURI ? uriToHttp(token.logoURI)[0] : "",
 					source: token.source,
 				};
 			}),
 		[filter, tokens]
 	);
 
-	const convertedTokensList: ShortTokenListInfo[] = tokenList.map((value) => {
-		return {
-			key: value.name,
-			name: value.name,
-			img: value.logoURI,
-			count: value.tokens.length,
-		};
-	});
+	const convertedTokensList: ShortTokenListInfo[] = tokenList
+		.filter((item) => !!item)
+		.map((value) => {
+			return {
+				key: value.name,
+				name: value.name,
+				img: value.logoURI,
+				count: value.tokens.length,
+			};
+		});
 
 	return (
 		<SelectTokenView

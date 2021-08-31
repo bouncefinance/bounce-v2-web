@@ -11,13 +11,23 @@ import type { FC, ReactNode } from "react";
 type DescriptionListType = {
 	title?: string;
 	data: Record<string, ReactNode>;
+	columnAmount?: 1 | 2;
+};
+
+const ListStyle = {
+	1: "oneColumnList",
+	2: "twoColumnList",
 };
 
 export const DescriptionList: FC<DescriptionListType & MaybeWithClassName> = ({
 	className,
 	title,
 	data,
+	columnAmount = 2,
 }) => {
+	console.log("columnAmount: ", columnAmount);
+	console.log("ListStyle[columnAmount]: ", ListStyle[columnAmount]);
+
 	return (
 		<div className={classNames(className, styles.component)}>
 			{title && (
@@ -25,7 +35,7 @@ export const DescriptionList: FC<DescriptionListType & MaybeWithClassName> = ({
 					{title}
 				</Caption>
 			)}
-			<dl className={styles.list}>
+			<dl className={styles[ListStyle[columnAmount]]}>
 				{Object.keys(data).map((key) => (
 					<Fragment key={key}>
 						<Caption Component="dt" lighten={50}>

@@ -65,17 +65,17 @@ export const ListOfTokens: FC<ListOfTokensType> = ({
 }) => {
 	const [searchValue, setSearch] = useState("");
 	const handleOnSearch = (e: ChangeEvent<HTMLInputElement>) =>
-		setSearch(e.target.value.toLowerCase());
+		setSearch(e.target.value?.toLowerCase());
 
-	const listOfTokens = useMemo(() => {
+	const tokens = useMemo(() => {
 		if (!searchValue) {
 			return options;
 		}
 
 		return options.filter(
 			(option) =>
-				option.title.toLowerCase().includes(searchValue) ||
-				option.key.toLowerCase().includes(searchValue)
+				option.title?.toLowerCase().includes(searchValue) ||
+				option.key?.toLowerCase().includes(searchValue)
 		);
 	}, [options, searchValue]);
 
@@ -92,11 +92,11 @@ export const ListOfTokens: FC<ListOfTokensType> = ({
 			</div>
 			<div className={styles.scroll}>
 				<StrollableContainer bar={ScrollBar} draggable>
-					<SizeHolder lineCount={listOfTokens.length}>
+					<SizeHolder lineCount={tokens.length}>
 						<StrollerState>
 							{({ clientHeight, scrollTop }) =>
 								getDataWindow(
-									listOfTokens,
+									tokens,
 									LINE_HEIGHT,
 									scrollTop,
 									clientHeight
