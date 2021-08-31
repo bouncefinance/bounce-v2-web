@@ -4,6 +4,7 @@ const withImages = require("next-images");
 module.exports = {
 	...withImages(),
 	distDir: "dist",
+
 	// future: {
 	// 	webpack5: true,
 	// },

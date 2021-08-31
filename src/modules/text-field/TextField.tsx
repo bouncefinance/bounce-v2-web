@@ -4,7 +4,7 @@ import { Field } from "react-final-form";
 import { MaybeWithClassName } from "@app/helper/react/types";
 
 import { Input } from "@app/ui/input";
-import { composeValidators, isRequired } from "@app/utils/validation";
+import { composeValidators, isRequired, isNotLongerThan } from "@app/utils/validation";
 
 type TextFieldType = {
 	name: string;
@@ -13,6 +13,7 @@ type TextFieldType = {
 	readOnly?: boolean;
 	initialValue?: any;
 	value?: any;
+	maxLength?: number;
 	step?: string;
 	required?: boolean;
 	validate?: (value: string) => any;
@@ -33,6 +34,7 @@ export const TextField: FC<TextFieldType & MaybeWithClassName> = ({
 	before,
 	after,
 	value,
+	maxLength,
 	step,
 	min,
 	max,
@@ -41,9 +43,11 @@ export const TextField: FC<TextFieldType & MaybeWithClassName> = ({
 		<Field
 			name={name}
 			initialValue={initialValue}
-			validate={
-				required ? (validate ? composeValidators(isRequired, validate) : isRequired) : validate
-			}
+			validate={composeValidators(
+				required && isRequired,
+				maxLength && isNotLongerThan(maxLength),
+				validate
+			)}
 			value={value}
 		>
 			{({ input, meta }) => (

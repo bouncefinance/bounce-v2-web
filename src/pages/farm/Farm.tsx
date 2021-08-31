@@ -10,7 +10,7 @@ import { GutterBox } from "@app/ui/gutter-box";
 import { ShortLogo } from "@app/ui/icons/short-logo";
 import { numToWei, weiToNum } from "@app/utils/bn/wei";
 import BounceERC20ABI from "@app/web3/api/bounce/BounceERC20.abi.json";
-import bounceStake from "@app/web3/api/bounce/bounceStake.abi.json";
+import bounceStake from "@app/web3/api/bounce/BounceStake.abi.json";
 import { getAuctionAddress, getStakingAddress } from "@app/web3/api/bounce/contractAddress";
 import { getContract } from "@app/web3/contracts/helpers";
 import { useChainId, useWeb3Provider } from "@app/web3/hooks/use-web3";

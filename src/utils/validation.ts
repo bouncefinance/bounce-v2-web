@@ -1,5 +1,5 @@
 export const composeValidators = (...validators: any[]) => (value: string) =>
-	validators.reduce((error, validator) => error || validator(value), undefined);
+	validators.reduce((error, validator) => error || (validator && validator(value)), undefined);
 
 export function isRequired<T>(value: T): string | undefined {
 	return value ? undefined : "This field is required.";
@@ -14,7 +14,7 @@ export const isEqualZero = (value: string): string | undefined => {
 };
 
 export const isNotLongerThan = (max: number) => (value: string): string | undefined => {
-	return value.length > max ? `Should be a less than ${max} symbols` : undefined;
+	return value && value.length > max ? `Keep it below ${max} characters` : undefined;
 };
 
 export function isValidEmail(value: string): string | undefined {
