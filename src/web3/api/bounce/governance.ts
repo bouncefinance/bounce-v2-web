@@ -110,17 +110,13 @@ const queryGovernanceItem = async (contract, _index) => {
 	const info = await Promise.all(
 		governanceKeyMap.map(async (item) => {
 			const boj = {};
-			console.log("queryGovernanceItem key", item.key);
 
 			const data = await queryGovernanceData(contract, item, _index);
-			console.log("queryGovernanceItem data:", data);
 			boj[item.name] = data;
 
 			return boj;
 		})
 	);
-
-	console.log("info: ", info);
 
 	const data: IProposal = {};
 
@@ -183,8 +179,6 @@ export const useGovernance = () => {
 	}
 
 	async function queryGovList() {
-		console.log("govnance----> id", soliditySha3("proposes"), "--->", fromAscii("proposes"));
-
 		const contract = getContract(library, bounceStake.abi, getStakingAddress(chainId));
 		const index = await contract.methods.getConfig(soliditySha3("proposes"), 0).call();
 		let id = index;
@@ -196,7 +190,6 @@ export const useGovernance = () => {
 		while (id != 0) {
 			governanceID = await contract.methods.getConfig(soliditySha3("proposes"), id).call();
 			governance = await queryGovernanceItem(contract, id);
-			console.log("governance detail", governance);
 
 			if (governance.voteResult.slice(0, "PROPOSE_STATUS_PASS".length) === "PROPOSE_STATUS_PASS") {
 				governance.status = "Passed";
@@ -223,17 +216,12 @@ export const useGovernance = () => {
 				.getVotes(int2hex(id, 64), asciiToHex("VOTE_CANCEL"))
 				.call();
 
-			console.log("query governance detail---->", int2hex(id, 64));
 			governanceList = governanceList.concat(governance);
 			id = governanceID;
-
-			console.log("governanceID: ", governanceID);
 
 			setGovList(governanceList.map((_) => _));
 			position++;
 		}
-
-		console.log("governanceList:", governanceList);
 	}
 
 	useEffect(() => {
@@ -253,7 +241,6 @@ export const useGovDetail = (id: string, trigger: boolean) => {
 	async function queryGovDetail() {
 		const contract = getContract(library, bounceStake.abi, getStakingAddress(chainId));
 		const governance: IProposal = await queryGovernanceItem(contract, id);
-		console.log("detail governance", governance);
 
 		if (governance.voteResult?.slice(0, "PROPOSE_STATUS_PASS".length) === "PROPOSE_STATUS_PASS") {
 			governance.status = PROPOSAL_STATUS.PASSED;
@@ -264,8 +251,6 @@ export const useGovDetail = (id: string, trigger: boolean) => {
 		} else {
 			governance.status = PROPOSAL_STATUS.LIVE;
 		}
-
-		console.log("queryGovernance creator", id, Web3.utils.numberToHex(governance.creator));
 
 		governance.yesCount = await contract.methods
 			.getVotes(int2hex(id, 64), asciiToHex("VOTE_YES"))
@@ -279,7 +264,6 @@ export const useGovDetail = (id: string, trigger: boolean) => {
 			.getVotes(int2hex(id, 64), asciiToHex("VOTE_CANCEL"))
 			.call();
 
-		console.log("query governance detail", governance);
 		setGov(governance);
 	}
 
@@ -342,14 +326,10 @@ export const useVote = async (
 ) => {
 	const { account, library, chainId } = useWeb3React();
 
-	console.log("governance id", numberToHex(id));
-
 	const contract = getContract(library, bounceStake.abi, getStakingAddress(chainId));
 
 	try {
 		setState(ProcessStateEnum.INITIAL);
-
-		console.log("onVote", int2hex(id, 64));
 
 		contract.methods[OperationEnum[operation]](int2hex(id, 64))
 			.send({ from: account })
@@ -361,7 +341,6 @@ export const useVote = async (
 			})
 			.on("error", (err, receipt) => {
 				setState(ProcessStateEnum.FAIL);
-				console.log("error1", err);
 			});
 	} catch (err) {
 		if (err.code === 4001) {
