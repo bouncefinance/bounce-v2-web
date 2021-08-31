@@ -59,7 +59,7 @@ export const Card: FC<DisplayGovernanceInfoType & MaybeWithClassName & { bordere
 				<span className={styles.name}>{title}</span>
 			</Heading2>
 			<Caption Component="span" className={styles.proposer} lighten={50}>
-				{`Proposer: ${creator?.replace(/^(.{6}).*(.{6})$/, "$1...$2") || "--"}`}
+				{`Proposer: ${creator?.replace(/^(.{6}).*(.{4})$/, "$1...$2") || "--"}`}
 			</Caption>
 
 			<Body1 className={styles.description} lighten={50}>
