@@ -77,7 +77,6 @@ export const View: FC<IProposalView & ProposalDetailViewType> = ({
 		[PROPOSAL_STATUS.FAILED]: "Failed",
 	};
 
-	const router = useRouter();
 	const [operation, setOperation] = useState<OperationEnum>(OperationEnum.FOR);
 	const [optionDescription, setOptionDescription] = useState<String>();
 	const [ProcessState, setProcessState] = useState<ProcessStateEnum>(ProcessStateEnum.INITIAL);
@@ -149,7 +148,12 @@ export const View: FC<IProposalView & ProposalDetailViewType> = ({
 	}, [operation, content]);
 
 	return (
-		<section className={styles.component}>
+		<section
+			className={classnames(
+				styles.component,
+				status === PROPOSAL_STATUS.LIVE ? styles.live : styles.end
+			)}
+		>
 			<GutterBox>
 				<div className={styles.wrapper}>
 					<div className={styles.navigation}>
@@ -213,58 +217,60 @@ export const View: FC<IProposalView & ProposalDetailViewType> = ({
 						</GutterBox>
 					</div>
 
-					<GutterBox className={styles.votePanel}>
-						<Heading2 className={styles.strMakeDecision}>make your decision</Heading2>
+					{status === PROPOSAL_STATUS.LIVE && (
+						<GutterBox className={styles.votePanel}>
+							<Heading2 className={styles.strMakeDecision}>make your decision</Heading2>
 
-						<div className={styles.tabsWrapper}>
-							<ul className={styles.tabs}>
-								<Button
-									className={classnames(
-										styles.tab,
-										operation === OperationEnum.FOR ? styles.active : null
-									)}
-									onClick={() => setOperation(OperationEnum.FOR)}
-								>
-									<Heading3 className={styles.strVoteFor}>Vote For</Heading3>
-									<Caption Component="span" className={styles.price}>
-										{!isNaN(_yesCount) && `${_yesCount} Auction`}
-									</Caption>
-								</Button>
-								<Button
-									className={classnames(
-										styles.tab,
-										operation === OperationEnum.AGAINST ? styles.active : null
-									)}
-									onClick={() => setOperation(OperationEnum.AGAINST)}
-								>
-									<Heading3 className={styles.strVoteFor}>Vote Against</Heading3>
-									<Caption Component="span" className={styles.price}>
-										{!isNaN(_noCount) && `${_noCount} Auction`}
-									</Caption>
-								</Button>
-								<Button
-									className={classnames(
-										styles.tab,
-										operation === OperationEnum.NEUTRAL ? styles.active : null
-									)}
-									onClick={() => setOperation(OperationEnum.NEUTRAL)}
-								>
-									<Heading3 className={styles.strVoteFor}>Vote Neutral</Heading3>
-									<Caption Component="span" className={styles.price}>
-										{!isNaN(_cancelCount) && `${_cancelCount} Auction`}
-									</Caption>
-								</Button>
-							</ul>
-						</div>
+							<div className={styles.tabsWrapper}>
+								<ul className={styles.tabs}>
+									<Button
+										className={classnames(
+											styles.tab,
+											operation === OperationEnum.FOR ? styles.active : null
+										)}
+										onClick={() => setOperation(OperationEnum.FOR)}
+									>
+										<Heading3 className={styles.strVoteFor}>Vote For</Heading3>
+										<Caption Component="span" className={styles.price}>
+											{!isNaN(_yesCount) && `${_yesCount} Auction`}
+										</Caption>
+									</Button>
+									<Button
+										className={classnames(
+											styles.tab,
+											operation === OperationEnum.AGAINST ? styles.active : null
+										)}
+										onClick={() => setOperation(OperationEnum.AGAINST)}
+									>
+										<Heading3 className={styles.strVoteFor}>Vote Against</Heading3>
+										<Caption Component="span" className={styles.price}>
+											{!isNaN(_noCount) && `${_noCount} Auction`}
+										</Caption>
+									</Button>
+									<Button
+										className={classnames(
+											styles.tab,
+											operation === OperationEnum.NEUTRAL ? styles.active : null
+										)}
+										onClick={() => setOperation(OperationEnum.NEUTRAL)}
+									>
+										<Heading3 className={styles.strVoteFor}>Vote Neutral</Heading3>
+										<Caption Component="span" className={styles.price}>
+											{!isNaN(_cancelCount) && `${_cancelCount} Auction`}
+										</Caption>
+									</Button>
+								</ul>
+							</div>
 
-						<Caption Component="p" className={styles.description}>
-							{optionDescription}
-						</Caption>
+							<Caption Component="p" className={styles.description}>
+								{optionDescription}
+							</Caption>
 
-						<PrimaryButton className={styles.submitBtn} submit onClick={handleVote}>
-							<Body1 className={styles.strSubmit}>Submit</Body1>
-						</PrimaryButton>
-					</GutterBox>
+							<PrimaryButton className={styles.submitBtn} submit onClick={handleVote}>
+								<Body1 className={styles.strSubmit}>Submit</Body1>
+							</PrimaryButton>
+						</GutterBox>
+					)}
 				</div>
 			</GutterBox>
 			{popUp.defined ? (

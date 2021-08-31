@@ -131,6 +131,96 @@ const queryGovernanceItem = async (contract, _index) => {
 	return data;
 };
 
+export const useMyTotalStaked = () => {
+	const { active, account, library, chainId } = useWeb3React();
+
+	const [myTotalStaked, setMyTotalStaked] = useState<number>();
+
+	function queryStaked() {
+		const stakingContract = getContract(library, bounceStake.abi, getStakingAddress(chainId));
+
+		try {
+			stakingContract.methods
+				.myTotalStake(account)
+				.call()
+				.then((res: string) => {
+					setMyTotalStaked(Number(res) / 1e18);
+				});
+		} catch (e) {
+			console.log("myTotalStake error:", e);
+		}
+	}
+
+	useEffect(() => {
+		if (active) {
+			queryStaked();
+		}
+	}, [active]);
+
+	return myTotalStaked;
+};
+
+export const useProposalList = () => {
+	const { active, library, chainId } = useWeb3React();
+
+	const [proposalList, setProposalList] = useState<IProposal[]>([]);
+
+	async function queryProposalList() {
+		const contract = getContract(library, bounceStake.abi, getStakingAddress(chainId));
+		const index = await contract.methods.getConfig(soliditySha3("proposes"), 0).call();
+		let id = index;
+		let position = 0;
+		let governanceList = [];
+		let governance = null;
+		let governanceID = 0;
+
+		while (id != 0) {
+			governanceID = await contract.methods.getConfig(soliditySha3("proposes"), id).call();
+			governance = await queryGovernanceItem(contract, id);
+
+			if (governance.voteResult.slice(0, "PROPOSE_STATUS_PASS".length) === "PROPOSE_STATUS_PASS") {
+				governance.status = "Passed";
+			} else if (
+				governance.voteResult.slice(0, "PROPOSE_STATUS_FAIL".length) === "PROPOSE_STATUS_FAIL"
+			) {
+				governance.status = "Failed";
+			} else {
+				governance.status = "Live";
+			}
+
+			governance.position = position;
+			governance.creator = Web3.utils.numberToHex(governance.creator);
+			// console.log("queryGovernance creator", id, Web3.utils.numberToHex(governance.creator));
+
+			governance.yesCount = await contract.methods
+				.getVotes(int2hex(id, 64), asciiToHex("VOTE_YES"))
+				.call();
+
+			governance.noCount = await contract.methods
+				.getVotes(int2hex(id, 64), asciiToHex("VOTE_NO"))
+				.call();
+
+			governance.cancelCount = await contract.methods
+				.getVotes(int2hex(id, 64), asciiToHex("VOTE_CANCEL"))
+				.call();
+
+			governanceList = governanceList.concat(governance);
+			id = governanceID;
+
+			setProposalList(governanceList.map((_) => _));
+			position++;
+		}
+	}
+
+	useEffect(() => {
+		if (active) {
+			queryProposalList();
+		}
+	}, [active]);
+
+	return proposalList;
+};
+
 export const useGovernance = () => {
 	const { active, account, library, chainId } = useWeb3React();
 

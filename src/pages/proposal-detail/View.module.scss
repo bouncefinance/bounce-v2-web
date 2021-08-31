@@ -3,11 +3,17 @@
 
 .component {
 	display: grid;
-
-	padding: calc(var(--spacing-unit) * 5) 0;
 	min-height: calc(100vh - var(--header-height) - 1px);
 
 	box-sizing: border-box;
+}
+
+.live {
+	padding: calc(var(--spacing-unit) * 5) 0;
+}
+
+.end {
+	padding: calc(var(--spacing-unit) * 11) 0;
 }
 
 .wrapper {
