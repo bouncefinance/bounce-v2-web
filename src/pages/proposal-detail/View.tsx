@@ -82,12 +82,9 @@ export const View: FC<IProposalView & ProposalDetailViewType> = ({
 	const [ProcessState, setProcessState] = useState<ProcessStateEnum>(ProcessStateEnum.INITIAL);
 	const [popUpText, setPopUpText] = useState<PopUpTextType>();
 
-	const { numberToHex } = Web3.utils;
 	const { open, close, popUp } = useControlPopUp();
 
 	const handleVote = async () => {
-		console.log("governance id", numberToHex(index));
-
 		const contract = getContract(library, bounceStake.abi, getStakingAddress(chainId));
 
 		try {
@@ -135,9 +132,6 @@ export const View: FC<IProposalView & ProposalDetailViewType> = ({
 	const _cancelCount = Number(cancelCount) / 1e18;
 
 	useEffect(() => {
-		console.log("operation: ", operation);
-		console.log("content: ", content);
-		console.log("optionDescription: ", optionDescription);
 		if (!content) return;
 
 		if (operation === OperationEnum.FOR) setOptionDescription(content.agreeFor);

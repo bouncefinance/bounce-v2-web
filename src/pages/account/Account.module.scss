@@ -6,7 +6,7 @@
   grid-row-gap: calc(var(--spacing-unit) * 4);
   align-content: start;
 
-  min-height: calc(100vh - var(--header-height));
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
   padding: calc(var(--spacing-unit) * 6.5) 0;
 
   box-sizing: border-box;
