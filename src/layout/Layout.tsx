@@ -7,6 +7,7 @@ import { CSSProperties } from "react";
 
 import { ApplicationWrappers } from "@app/layout/ApplicationWrappers";
 import { ConnectWalletProvider } from "@app/modules/connect-wallet-modal/ConnectWalletProvider";
+import { Footer } from "@app/modules/footer";
 import { Header } from "@app/modules/header";
 
 import { Vector } from "@app/ui/icons/vector";
@@ -87,7 +88,7 @@ export const Layout: FC<LayoutType> = ({
 						<Vector />
 					</a>
 				</main>
-				<footer />
+				<Footer />
 			</div>
 		</Providers>
 	);
