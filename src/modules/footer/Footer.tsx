@@ -44,7 +44,7 @@ export const HeaderView: FC<MaybeWithClassName> = ({ className }) => {
 					<NavLink className={styles["text-navLink"]} href="/TermsOfService">
 						Terms Of Service
 					</NavLink>
-					<NavLink className={styles["text-navLink"]} href="/PrivacPolicy">
+					<NavLink className={styles["text-navLink"]} href="/PrivacyPolicy">
 						Privacy Policy
 					</NavLink>
 				</div>
