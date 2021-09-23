@@ -38,15 +38,19 @@ export const HeaderView: FC<MaybeWithClassName> = ({ className }) => {
 
 			<div className={styles["right-wrap"]}>
 				<div className={styles["text-navLink-group"]}>
-					<NavLink className={styles["text-navLink"]} href="https://docs.bounce.finance/">
+					<a
+						className={styles["text-navLink"]}
+						target="__blank"
+						href="https://docs.bounce.finance/"
+					>
 						Bounce Docs
-					</NavLink>
-					<NavLink className={styles["text-navLink"]} href="https://docs.bounce.finance/">
+					</a>
+					<a className={styles["text-navLink"]} target="__blank" href="/TermsOfService">
 						Terms Of Service
-					</NavLink>
-					<NavLink className={styles["text-navLink"]} href="https://docs.bounce.finance/">
+					</a>
+					<a className={styles["text-navLink"]} target="__blank" href="/PrivacyPolicy">
 						Privacy Policy
-					</NavLink>
+					</a>
 				</div>
 
 				<span className={styles["statement"]}>
