@@ -130,8 +130,7 @@ export const NavLink: FC<CommonType & { href: string; as?: string; exact?: boole
 			{href.startsWith("http") ||
 			href.startsWith("mailto") ||
 			href.startsWith("tel") ||
-			href.includes("download") ||
-			href.includes("PrivacyPolicy") ? (
+			href.includes("download") ? (
 				<ButtonComponent
 					Component="a"
 					href={href}
