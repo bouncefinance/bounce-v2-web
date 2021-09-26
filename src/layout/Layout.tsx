@@ -1,11 +1,12 @@
 import classNames from "classnames";
 import Head from "next/head";
-import { useRouter } from "next/router";
-import React, { createContext, FC, memo, ReactNode } from "react";
+import router, { useRouter } from "next/router";
+import React, { createContext, FC, memo, ReactNode, useEffect, useState } from "react";
 
 import { CSSProperties } from "react";
 
 import { ApplicationWrappers } from "@app/layout/ApplicationWrappers";
+import { BlockPopUp } from "@app/modules/block-pop-up";
 import { ConnectWalletProvider } from "@app/modules/connect-wallet-modal/ConnectWalletProvider";
 import { Footer } from "@app/modules/footer";
 import { Header } from "@app/modules/header";
@@ -62,6 +63,42 @@ export const Layout: FC<LayoutType> = ({
 	description = "",
 	keywords,
 }) => {
+	const [isIpLegal, setIsIpLegal] = useState<boolean>(true);
+	const router = useRouter();
+
+	const checkIP = async () => {
+		try {
+			const result = await fetch("https://geolocation-db.com/json/");
+			const res = await result.json();
+			console.log("res: ", res);
+
+			if (!res) return;
+
+			const { country_code } = res;
+			// 屏蔽中国和美国的 IP
+
+			if (
+				!country_code ||
+				country_code === "CN" ||
+				country_code === "HK" ||
+				country_code === "TW" ||
+				country_code === "US"
+			) {
+				setIsIpLegal(false);
+			}
+		} catch (error) {
+			console.log("error");
+		}
+	};
+
+	useEffect(() => {
+		checkIP();
+	}, [router]);
+
+	useEffect(() => {
+		console.log("router: ", router);
+	}, [router]);
+
 	return (
 		<Providers>
 			<div className={classNames(styles.component, className)}>
@@ -90,6 +127,7 @@ export const Layout: FC<LayoutType> = ({
 				</main>
 				<Footer />
 			</div>
+			<BlockPopUp visible={!isIpLegal} />
 		</Providers>
 	);
 };
