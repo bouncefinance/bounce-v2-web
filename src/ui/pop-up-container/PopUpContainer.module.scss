@@ -2,101 +2,109 @@
 @use "../../helper/style/media";
 
 .component {
-  position: fixed;
-  z-index: 100;
-  top: 50%;
-  left: 50%;
-  right: auto;
+	position: fixed;
+	z-index: 100;
+	top: 50%;
+	left: 50%;
+	right: auto;
 
-  width: 100%;
-  height: auto;
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 0 var(--gutters);
+	width: 100%;
+	height: auto;
+	max-width: var(--max-width);
+	margin: 0 auto;
+	padding: 0 var(--gutters);
 
-  box-sizing: border-box;
+	box-sizing: border-box;
 
-  transform: translate(-50%, -45%);
+	transform: translate(-50%, -45%);
 
-  opacity: 0;
+	opacity: 0;
 
-  pointer-events: none;
-  visibility: hidden;
+	pointer-events: none;
+	visibility: hidden;
 
-  transition-timing-function: linear;
-  transition-duration: 150ms, 150ms;
-  transition-property: transform, opacity;
+	transition-timing-function: linear;
+	transition-duration: 150ms, 150ms;
+	transition-property: transform, opacity;
 
-  @include mixin.until(media.$sm) {
-    height: var(--window-height);
-    padding: 0;
-  }
+	@include mixin.until(media.$sm) {
+		height: var(--window-height);
+		padding: 0;
+	}
 }
 
 .animation {
-  transform: translate(-50%, -50%);
-  opacity: 1;
+	transform: translate(-50%, -50%);
+	opacity: 1;
 
-  transition-timing-function: linear;
-  transition-duration: 200ms, 300ms;
-  transition-property: transform, opacity;
+	transition-timing-function: linear;
+	transition-duration: 200ms, 300ms;
+	transition-property: transform, opacity;
 }
 
 .visible {
-  pointer-events: all;
-  visibility: visible;
+	pointer-events: all;
+	visibility: visible;
 }
 
 .container {
-  position: relative;
+	position: relative;
 
-  display: grid;
-  grid-template-rows: 100%;
+	display: grid;
+	grid-template-rows: 100%;
 
-  width: 100%;
-  max-height: 86vh;
-  margin: 0 auto;
+	width: 100%;
+	max-height: 86vh;
+	margin: 0 auto;
 
-  border-radius: 1.375rem;
+	border-radius: 1.375rem;
 
-  background-color: rgba(var(--primary-white), 1);
+	background-color: rgba(var(--primary-white), 1);
 
-  box-shadow: 0 2px 14px rgba(6, 5, 44, 0.1);
+	box-shadow: 0 2px 14px rgba(6, 5, 44, 0.1);
 
-  overflow: hidden;
+	overflow: hidden;
 }
 
 .fixedHeight {
-  min-height: 37.5rem;
-  max-height: 37.5rem;
+	min-height: 37.5rem;
+	max-height: 37.5rem;
 }
 
 .close {
-  position: absolute;
-  top: 1.875rem;
-  right: 2.5rem;
-  z-index: 1;
+	position: absolute;
+	top: 1.875rem;
+	right: 2.5rem;
+	z-index: 1;
+
+	@include mixin.until(media.$xs) {
+		display: none;
+	}
 }
 
 .back {
-  position: absolute;
-  top: 2.75rem;
-  left: 2.5rem;
-  z-index: 1;
+	position: absolute;
+	top: 2.75rem;
+	left: 2.5rem;
+	z-index: 1;
 }
 
 .content {
-  display: grid;
-  grid-template-rows: var(--template);
+	display: grid;
+	grid-template-rows: var(--template);
 
-  height: 100%;
-  padding-top: 1.875rem;
+	height: 100%;
+	padding-top: 1.875rem;
 
-  box-sizing: border-box;
+	@include mixin.until(media.$xs) {
+		padding-bottom: 1.875rem;
+	}
+  
+	box-sizing: border-box;
 }
 
 .title {
-  margin: 0;
+	margin: 0;
 
-  text-align: center;
+	text-align: center;
 }

@@ -29,6 +29,7 @@ export const ConnectWallet: FC<ConnectWallet> = ({
 			<Heading1 Component="h2" className={styles.title}>
 				Connect your wallet
 			</Heading1>
+
 			<ul className={styles.list}>
 				<li className={styles.item}>
 					<button className={styles.button} type="button" onClick={onMetamask} disabled={disable}>
@@ -54,6 +55,7 @@ export const ConnectWallet: FC<ConnectWallet> = ({
 					</button>
 				</li>
 			</ul>
+
 			{sideEffect}
 		</div>
 	);

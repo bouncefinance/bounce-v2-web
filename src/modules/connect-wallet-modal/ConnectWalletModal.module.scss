@@ -9,6 +9,11 @@
   width: 100%;
   padding: calc(var(--spacing-unit) * 11.25) calc(var(--spacing-unit) * 10) calc(var(--spacing-unit) * 17.5);
 
+
+	@include mixin.until(media.$xs) {
+		padding: 0;
+	}
+
   box-sizing: border-box;
 }
 

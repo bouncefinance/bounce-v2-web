@@ -60,10 +60,10 @@ export const AuctionView: FC<AuctionType & MaybeWithClassName> = ({
 					visibleText={result === undefined}
 				>
 					<Form className={styles.form} onSubmit={onSubmit} initialValues={initialSearchState}>
-						<div>
+						<div className={styles["select-field-wrapper"]}>
 							<SelectTokenField name="token-type" placeholder="Select a token" />
 						</div>
-						<div>
+						<div className={styles["select-field-wrapper"]}>
 							<SelectField
 								name="auctionType"
 								placeholder="Choose Auction Type"
@@ -71,7 +71,7 @@ export const AuctionView: FC<AuctionType & MaybeWithClassName> = ({
 								required
 							/>
 						</div>
-						<div>
+						<div className={styles["select-field-wrapper"]}>
 							<PoolSearchField placeholder="Pool Information (Optional)" name="pool" />
 						</div>
 						<Button

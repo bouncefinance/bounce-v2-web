@@ -38,6 +38,10 @@
 
 .dots {
   margin-right: calc(var(--spacing-unit) * 3);
+
+  @include mixin.until(media.$xs) {
+    display: none;
+  }
 }
 
 .navigation {

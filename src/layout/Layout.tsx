@@ -7,8 +7,9 @@ import { CSSProperties } from "react";
 
 import { ApplicationWrappers } from "@app/layout/ApplicationWrappers";
 import { ConnectWalletProvider } from "@app/modules/connect-wallet-modal/ConnectWalletProvider";
-import { Footer } from "@app/modules/footer";
+import { DesktopFooter } from "@app/modules/desktop-footer";
 import { Header } from "@app/modules/header";
+import { MobileFooter } from "@app/modules/mobile-footer";
 
 import { Vector } from "@app/ui/icons/vector";
 
@@ -69,15 +70,15 @@ export const Layout: FC<LayoutType> = ({
 					<title>{title}</title>
 					<meta name="Description" content={description} />
 					<meta name="keywords" content={keywords} />
+					<meta
+						name="viewport"
+						content="width=device-width, minimum-scale=1, initial-scale=1, shrink-to-fit=no, user-scalable=no"
+					/>
 				</Head>
 				<Header className={styles.header} />
 				<main className={styles.main}>
-					<div className={styles.desktop}>
+					<div /* className={styles.desktop} */>
 						<WaitForRouter>{children}</WaitForRouter>
-					</div>
-					<div className={styles.mobile}>
-						Sorry, this event is unavailable on mobile. Please visit our desktop website to
-						participate.
 					</div>
 					<a
 						className={classNames(styles.vector)}
@@ -88,7 +89,8 @@ export const Layout: FC<LayoutType> = ({
 						<Vector />
 					</a>
 				</main>
-				<Footer />
+				<DesktopFooter className={styles.desktop} />
+				<MobileFooter className={styles.mobile} />
 			</div>
 		</Providers>
 	);

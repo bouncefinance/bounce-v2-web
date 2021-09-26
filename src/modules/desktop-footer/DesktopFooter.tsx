@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import React, { FC } from "react";
 
 import { MaybeWithClassName } from "@app/helper/react/types";
@@ -9,11 +10,11 @@ import { Medium } from "@app/ui/icons/medium";
 import { Telegram } from "@app/ui/icons/telegram";
 import { Twitter } from "@app/ui/icons/twitter";
 
-import styles from "./Footer.module.scss";
+import styles from "./DesktopFooter.module.scss";
 
-export const HeaderView: FC<MaybeWithClassName> = ({ className }) => {
+export const FooterView: FC<MaybeWithClassName> = ({ className }) => {
 	return (
-		<footer className={styles["footer"]}>
+		<footer className={classNames(className, styles["footer"])}>
 			<div className={styles["left-wrap"]}>
 				<NavLink icon={<Medium />} href="https://medium.com/@bouncefinance">
 					<></>
@@ -57,6 +58,6 @@ export const HeaderView: FC<MaybeWithClassName> = ({ className }) => {
 	);
 };
 
-export const Footer: FC<MaybeWithClassName> = ({ className }) => {
-	return <HeaderView className={className} />;
+export const DesktopFooter: FC<MaybeWithClassName> = ({ className }) => {
+	return <FooterView className={className} />;
 };

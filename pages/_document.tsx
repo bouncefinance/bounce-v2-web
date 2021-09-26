@@ -13,10 +13,10 @@ class MyDocument extends Document {
 				<Head>
 					<meta charSet="utf-8" />
 					{/* Use minimum-scale=1 to enable GPU rasterization */}
-					<meta
+					{/* <meta
 						name="viewport"
 						content="width=device-width, minimum-scale=1, initial-scale=1, shrink-to-fit=no, user-scalable=no"
-					/>
+					/> */}
 					<link rel="shortcut icon" href="/imgs/favicon.ico" />
 					<link rel="preconnect" href="https://fonts.gstatic.com" />
 					<link

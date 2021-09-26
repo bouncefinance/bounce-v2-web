@@ -30,13 +30,13 @@
 }
 
 .mobile {
-  @include mixin.from(media.$lg) {
+  @include mixin.from(media.$xs) {
     display: none;
   }
 }
 
 .desktop {
-  @include mixin.until(media.$lg) {
-    // display: none;
+  @include mixin.until(media.$xs) {
+    display: none;
   }
 }
