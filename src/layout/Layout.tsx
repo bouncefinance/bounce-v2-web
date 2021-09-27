@@ -80,8 +80,6 @@ export const Layout: FC<LayoutType> = ({
 			if (
 				!country_code ||
 				country_code === "CN" ||
-				country_code === "HK" ||
-				country_code === "TW" ||
 				country_code === "US"
 			) {
 				setIsIpLegal(false);
