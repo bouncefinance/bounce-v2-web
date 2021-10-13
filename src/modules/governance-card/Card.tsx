@@ -14,13 +14,13 @@ import { toThousands } from "@app/utils/toThousands";
 import styles from "./Card.module.scss";
 
 export interface DisplayGovernanceInfoType extends IProposal {
-	href?: string;
+	href?: any;
 }
 
 export const Card: FC<DisplayGovernanceInfoType & MaybeWithClassName & { bordered?: boolean }> = ({
 	className,
 	bordered = false,
-	href = "www.baidu.com",
+	href,
 	content,
 	yesCount,
 	noCount,

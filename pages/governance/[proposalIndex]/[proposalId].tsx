@@ -6,16 +6,38 @@ import { RequireConnectedWallet } from "@app/modules/require-connected-wallet";
 import { ProposalDetail } from "@app/pages/proposal-detail";
 import { pageWithLayout } from "@app/utils/pageInLayout";
 
+function getUrlParam(name) {
+	const reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+	const r = window.location.search.substr(1).match(reg);
+
+	if (r != null) return decodeURIComponent(r[2]);
+
+	return null;
+}
+
 const ProposalViewPage = pageWithLayout(
 	() => {
 		const {
 			query: { proposalIndex, proposalId },
 		} = useRouter();
 
+		// console.log("window.location: ", window.location);
+
+		let index;
+		let id;
+
+		if (!proposalIndex && !proposalId) {
+			index = getUrlParam("proposalIndex");
+			id = getUrlParam("proposalId");
+		} else {
+			index = proposalIndex;
+			id = proposalId;
+		}
+
 		return (
 			<NoSsr>
 				<RequireConnectedWallet>
-					<ProposalDetail proposalIndex={+proposalIndex} proposalId={String(proposalId)} />
+					<ProposalDetail proposalIndex={+index} proposalId={String(id)} />
 				</RequireConnectedWallet>
 			</NoSsr>
 		);

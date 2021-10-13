@@ -77,11 +77,7 @@ export const Layout: FC<LayoutType> = ({
 			const { country_code } = res;
 			// 屏蔽中国和美国的 IP
 
-			if (
-				!country_code ||
-				country_code === "CN" ||
-				country_code === "US"
-			) {
+			if (!country_code || country_code === "CN" || country_code === "US") {
 				setIsIpLegal(false);
 			}
 		} catch (error) {
@@ -125,7 +121,7 @@ export const Layout: FC<LayoutType> = ({
 				</main>
 				<Footer />
 			</div>
-			<BlockPopUp visible={!isIpLegal} />
+			{/* <BlockPopUp visible={!isIpLegal} /> */}
 		</Providers>
 	);
 };
