@@ -21,14 +21,21 @@ const ProposalViewPage = pageWithLayout(
 			query: { proposalIndex, proposalId },
 		} = useRouter();
 
-		// console.log("window.location: ", window.location);
+		console.log("proposalIndex 1: ", proposalIndex);
+		console.log("proposalId 1: ", proposalId);
 
 		let index;
 		let id;
 
 		if (!proposalIndex && !proposalId) {
-			index = getUrlParam("proposalIndex");
-			id = getUrlParam("proposalId");
+			const proposalIndex_2 = getUrlParam("proposalIndex");
+			const proposalId_2 = getUrlParam("proposalId");
+
+			console.log("proposalIndex 2: ", proposalIndex_2);
+			console.log("proposalId 2: ", proposalId_2);
+
+			index = proposalIndex_2;
+			id = proposalId_2;
 		} else {
 			index = proposalIndex;
 			id = proposalId;
