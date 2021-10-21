@@ -17,6 +17,7 @@ import { useConnectWalletControl } from "@app/modules/connect-wallet-modal";
 import { fromWei } from "@app/utils/bn/wei";
 import { getProgress, getSwapRatio, POOL_STATUS } from "@app/utils/pool";
 import { getIsOpen } from "@app/utils/time";
+import { isEqualZero } from "@app/utils/validation";
 import { useTokenSearchWithFallbackService } from "@app/web3/api/tokens/use-fallback-tokens";
 import { useChainId, useWeb3Provider } from "@app/web3/hooks/use-web3";
 
@@ -177,25 +178,55 @@ export const Auction = () => {
 		(async () => {
 			const { auctionType, ...params } = searchFilters;
 
-			const {
-				data: foundPools,
-				meta: { total },
-			} = await fetchPoolSearch(
-				chainId,
-				auctionType,
-				{
-					token: params["token-type"],
-					poolId: params.pool?.id,
-					poolName: params.pool?.name,
-					creator: params.pool?.creator,
-				},
-				{
-					page,
-					perPage: WINDOW_SIZE,
-				}
-			);
-			setTotalCount(total);
-			setPoolList(foundPools);
+			// 容错处理
+
+			if (params["token-type"] === "0x0000000000000000000000000000000000000000") {
+				// 如果是 ETH 则请求所有的数据由前端过滤
+				const {
+					data: foundPools,
+					meta: { total },
+				} = await fetchPoolSearch(
+					chainId,
+					auctionType,
+					{
+						poolId: params.pool?.id,
+						poolName: params.pool?.name,
+						creator: params.pool?.creator,
+					},
+					{
+						page,
+						perPage: 100,
+					}
+				);
+				const filterPoolsByEth = foundPools.filter((item) => {
+					return (
+						isEqualZero(item.poolDetail.token0.address) ||
+						isEqualZero(item.poolDetail.token1.address)
+					);
+				});
+				setTotalCount(filterPoolsByEth.length);
+				setPoolList(filterPoolsByEth);
+			} else {
+				const {
+					data: foundPools,
+					meta: { total },
+				} = await fetchPoolSearch(
+					chainId,
+					auctionType,
+					{
+						token: params["token-type"],
+						poolId: params.pool?.id,
+						poolName: params.pool?.name,
+						creator: params.pool?.creator,
+					},
+					{
+						page,
+						perPage: WINDOW_SIZE,
+					}
+				);
+				setTotalCount(total);
+				setPoolList(foundPools);
+			}
 		})();
 	}, [searchFilters, page, chainId]);
 
