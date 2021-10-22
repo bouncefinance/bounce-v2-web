@@ -46,9 +46,6 @@ function getUrlParam(name) {
 const index = getUrlParam("proposalIndex");
 const id = getUrlParam("proposalId");
 
-console.log("index: ", index);
-console.log("id: ", id);
-
 export const GovernanceView: FC<GovernanceType & MaybeWithClassName> = ({ className }) => {
 	const myTotalStaked = useMyTotalStaked();
 	const proposalList = useProposalList();
