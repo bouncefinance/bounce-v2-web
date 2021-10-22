@@ -22,9 +22,6 @@ export const ProposalDetail: FC<{ proposalIndex: number; proposalId: string }> =
 
 	const [proposalDetail, setProposalDetail] = useState<IProposal>();
 
-	console.log("proposalId in ProposalDetail: ", proposalId);
-	console.log("proposalIndex in ProposalDetail: ", proposalIndex);
-
 	useEffect(() => {
 		if (JSON.stringify(gov) === JSON.stringify({})) return;
 		setProposalDetail(gov);

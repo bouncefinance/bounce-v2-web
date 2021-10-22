@@ -121,7 +121,7 @@ export const Layout: FC<LayoutType> = ({
 				</main>
 				<Footer />
 			</div>
-			{/* <BlockPopUp visible={!isIpLegal} /> */}
+			<BlockPopUp visible={!isIpLegal} />
 		</Providers>
 	);
 };
