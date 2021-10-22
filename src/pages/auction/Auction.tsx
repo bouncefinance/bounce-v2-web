@@ -165,7 +165,6 @@ export const Auction = () => {
 
 		// 	return;
 		// }
-
 		setSearchFilters({ ...values });
 		setPage(0);
 	};
