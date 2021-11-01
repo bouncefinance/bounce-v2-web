@@ -26,6 +26,7 @@ export const CopyAddress: FC<{ address: string; labelAddress?: string } & MaybeW
 			{labelAddress || address}
 			<CopyToClipboard text={address} onCopy={() => setCopy(true)}>
 				{isCopy ? <Copied /> : <Copy className={styles.copy} />}
+				{/* <Copied /> */}
 			</CopyToClipboard>
 		</span>
 	);

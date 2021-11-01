@@ -14,13 +14,13 @@ import { toThousands } from "@app/utils/toThousands";
 import styles from "./Card.module.scss";
 
 export interface DisplayGovernanceInfoType extends IProposal {
-	href?: string;
+	href?: any;
 }
 
 export const Card: FC<DisplayGovernanceInfoType & MaybeWithClassName & { bordered?: boolean }> = ({
 	className,
 	bordered = false,
-	href = "www.baidu.com",
+	href,
 	content,
 	yesCount,
 	noCount,
@@ -59,10 +59,10 @@ export const Card: FC<DisplayGovernanceInfoType & MaybeWithClassName & { bordere
 				<span className={styles.name}>{title}</span>
 			</Heading2>
 			<Caption Component="span" className={styles.proposer} lighten={50}>
-				{`Proposer: ${creator?.replace(/^(.{7}).*(.{5})$/, "$1...$2") || "--"}`}
+				{`Proposer: ${creator?.replace(/^(.{6}).*(.{4})$/, "$1...$2") || "--"}`}
 			</Caption>
 
-			<Body1 className={styles.description} lighten={50}>
+			<Body1 className={styles.summary} lighten={50}>
 				{content?.summary || ""}
 			</Body1>
 

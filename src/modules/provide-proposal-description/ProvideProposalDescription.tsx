@@ -37,7 +37,7 @@ export const ProvideProposalDescription: FC<ProvideProposalDescriptionType> = ({
 					name="description"
 					placeholder="What will be done if the proposal is implement"
 					required
-					maxLength={800}
+					maxLength={250}
 				/>
 			</Label>
 			<Label Component="label" className={styles.label} label="Details">
@@ -45,7 +45,7 @@ export const ProvideProposalDescription: FC<ProvideProposalDescriptionType> = ({
 					type="text"
 					name="details"
 					placeholder="Write a longer motivation with links and references if necessary"
-					maxLength={800}
+					maxLength={600}
 				/>
 			</Label>
 			<FormSpy>

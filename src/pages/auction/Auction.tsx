@@ -17,6 +17,7 @@ import { useConnectWalletControl } from "@app/modules/connect-wallet-modal";
 import { fromWei } from "@app/utils/bn/wei";
 import { getProgress, getSwapRatio, POOL_STATUS } from "@app/utils/pool";
 import { getIsOpen } from "@app/utils/time";
+import { isEqualZero } from "@app/utils/validation";
 import { useTokenSearchWithFallbackService } from "@app/web3/api/tokens/use-fallback-tokens";
 import { useChainId, useWeb3Provider } from "@app/web3/hooks/use-web3";
 
@@ -147,6 +148,8 @@ export const Auction = () => {
 	});
 
 	const onSubmit = async (values: any) => {
+		console.log("BOUNCE", " app.bounce.finance");
+
 		if (!provider) {
 			if (!(await walletControl.requestAuthorization())) {
 				return {
@@ -164,7 +167,6 @@ export const Auction = () => {
 
 		// 	return;
 		// }
-
 		setSearchFilters({ ...values });
 		setPage(0);
 	};

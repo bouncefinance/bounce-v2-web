@@ -137,7 +137,7 @@ export const NavLink: FC<CommonType & { href: string; as?: string; exact?: boole
 					role="link"
 					target="_blank"
 					className={className}
-					rel="noopener noreferrer"
+					rel={"noopener noreferrer"}
 					{...rest}
 				/>
 			) : (
