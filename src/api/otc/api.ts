@@ -19,6 +19,8 @@ const fetchInformation = async <T = any>(
 ): Promise<APIResponse<T>> => {
 	const apiPrefix = getAPIByNetwork(chainId);
 
+	console.log("params: ", params);
+
 	return getJson(undefined, `${apiPrefix}/${url}`, params);
 };
 
@@ -60,6 +62,8 @@ export const fetchOtcSearch = async (
 		total: number;
 	};
 }> => {
+	console.log(">>>>> in fetchOtcSearch");
+
 	const res = await fetchInformation<OtcSearchEntity[]>(chainId, "otcs", {
 		offset: pagination.page * pagination.perPage,
 		limit: pagination.perPage,

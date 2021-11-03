@@ -105,7 +105,7 @@ export const CreateFixedAuction: FC<MaybeWithClassName> = () => {
 				let isPayable = true;
 
 				if (!isEqualZero(tokenFrom.address)) {
-					// 如果是 ETH 则需要先授权
+					// 如果不是 ETH 则需要先授权
 					isPayable = false;
 
 					const tokenContract = getTokenContract(provider, tokenFrom.address);
@@ -142,7 +142,7 @@ export const CreateFixedAuction: FC<MaybeWithClassName> = () => {
 					account,
 					{
 						name: data.poolName,
-						creator: account,
+						// creator: account,
 						token0: tokenFrom.address,
 						token1: tokenTo.address,
 						amountTotal0: fromAmount,
@@ -150,9 +150,9 @@ export const CreateFixedAuction: FC<MaybeWithClassName> = () => {
 						openAt: +data.startPool / 1000,
 						closeAt: +data.endPool / 1000,
 						claimAt: +data.claimStart / 1000,
-						enableWhiteList: data.whitelist,
 						maxAmount1PerWallet: limit,
 						onlyBot: false,
+						enableWhiteList: data.whitelist,
 					},
 					data.whiteListList,
 					isPayable

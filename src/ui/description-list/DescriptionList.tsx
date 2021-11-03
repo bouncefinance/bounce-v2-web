@@ -25,9 +25,6 @@ export const DescriptionList: FC<DescriptionListType & MaybeWithClassName> = ({
 	data,
 	columnAmount = 2,
 }) => {
-	console.log("columnAmount: ", columnAmount);
-	console.log("ListStyle[columnAmount]: ", ListStyle[columnAmount]);
-
 	return (
 		<div className={classNames(className, styles.component)}>
 			{title && (

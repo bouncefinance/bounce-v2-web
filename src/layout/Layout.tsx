@@ -70,7 +70,6 @@ export const Layout: FC<LayoutType> = ({
 		try {
 			const result = await fetch("https://geolocation-db.com/json/");
 			const res = await result.json();
-			console.log("res: ", res);
 
 			if (!res) return;
 
@@ -87,10 +86,6 @@ export const Layout: FC<LayoutType> = ({
 
 	useEffect(() => {
 		checkIP();
-	}, [router]);
-
-	useEffect(() => {
-		console.log("router: ", router);
 	}, [router]);
 
 	return (
@@ -121,7 +116,7 @@ export const Layout: FC<LayoutType> = ({
 				</main>
 				<Footer />
 			</div>
-			<BlockPopUp visible={!isIpLegal} />
+			{/* <BlockPopUp visible={!isIpLegal} /> */}
 		</Providers>
 	);
 };

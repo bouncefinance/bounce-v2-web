@@ -2,6 +2,7 @@ import { TokenInfo } from "@uniswap/token-lists";
 
 import BNB from "./assets/bnb.svg";
 import ETHER from "./assets/eth.svg";
+import POLYGON from "./assets/polygon.svg";
 
 import { makeToken } from "./utils";
 
@@ -19,6 +20,16 @@ const getBaseToken = (chainId: number) => {
 				"BNB",
 				"Binance",
 				BNB
+			);
+
+		case 137:
+			return makeToken(
+				chainId,
+				"0x0000000000000000000000000000000000000000",
+				18,
+				"POLYGON",
+				"Polygon",
+				POLYGON
 			);
 
 		default:

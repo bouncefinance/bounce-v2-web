@@ -122,7 +122,8 @@ export const getWhitelistedStatus = async (
 export const createAuctionPool = (
 	contract: ContractType,
 	account: string,
-	data: AuctionPoolType,
+	// data: AuctionPoolType,
+	data: any,
 	whiteList: string[] | undefined,
 	isPayable: boolean
 ) => {

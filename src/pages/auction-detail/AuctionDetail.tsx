@@ -440,8 +440,6 @@ export const AuctionDetail: FC<{ poolID: number; auctionType: POOL_TYPE }> = ({
 		return null;
 	}
 
-	console.log("pool", pool);
-
 	return (
 		<>
 			<View
