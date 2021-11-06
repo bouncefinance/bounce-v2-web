@@ -50,13 +50,8 @@ export const queryERC20Token = async (
 	// debugger;f
 
 	const ERC20_CT = getContract(provider, BounceERC20ABI.abi, address);
-	const name = ERC20_CT.methods.name().call();
 	const symbol = ERC20_CT.methods.symbol().call();
 	const decimals = ERC20_CT.methods.decimals().call();
-
-	console.log("ERC20_CT: ", ERC20_CT);
-	console.log("name: ", name);
-	console.log("symbol: ", symbol);
 
 	return {
 		symbol: await symbol,

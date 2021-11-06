@@ -40,8 +40,6 @@ const FixedImp = () => {
 
 	const [balance, setBalance] = useState(0);
 
-	console.log("findToken(tokenFrom).address: ", findToken(tokenFrom).address);
-
 	const tokenContract = getTokenContract(provider, findToken(tokenFrom).address);
 
 	useEffect(() => {

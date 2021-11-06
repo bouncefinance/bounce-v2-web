@@ -165,10 +165,6 @@ const chainConfig: IChainConfig[] = [
 ];
 
 export const SelectChain: FC<ISelectChain> = ({ currentChain }) => {
-	useEffect(() => {
-		console.log("currentChain: ", currentChain);
-	}, [currentChain]);
-
 	const [active, setActive] = useState(false);
 	const curChain = chainConfig.find((item) => item.chainId === currentChain);
 

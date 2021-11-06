@@ -179,8 +179,6 @@ export const Auction = () => {
 		(async () => {
 			const { auctionType, ...params } = searchFilters;
 
-			console.log("params: ", params);
-
 			const {
 				data: foundPools,
 				meta: { total },
