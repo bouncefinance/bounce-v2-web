@@ -102,7 +102,7 @@ export const CreateFixedAuction: FC<MaybeWithClassName> = () => {
 			const limit = data.limit ? numToWei(data.limit, tokenTo.decimals, 0) : "0";
 
 			try {
-				let isPayable = true;
+				let isPayable = false;
 
 				if (!isEqualZero(tokenFrom.address)) {
 					// 如果不是 ETH 则需要先授权
