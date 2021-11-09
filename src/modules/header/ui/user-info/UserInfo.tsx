@@ -21,7 +21,7 @@ import { getEthBalance } from "@app/web3/api/bounce/erc";
 import { useWalletConnection } from "@app/web3/hooks/use-connection";
 import { useChainId, useWeb3 } from "@app/web3/hooks/use-web3";
 
-import { NETWROKS, WEB3_NETWORKS } from "@app/web3/networks/const";
+import { NETWROKS } from "@app/web3/networks/const";
 
 import styles from "./UserInfo.module.scss";
 
@@ -259,10 +259,6 @@ export const UserInfo = () => {
 	const { account } = useWeb3React();
 	const web3 = useWeb3();
 	const chainId = useChainId();
-
-	useEffect(() => {
-		console.log("chainId: ", chainId);
-	}, [chainId]);
 
 	const updateData = useCallback(async () => {
 		getEthBalance(web3, account).then((b) => setBalance(b));

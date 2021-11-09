@@ -1,9 +1,7 @@
 import classNames from "classnames";
 import Head from "next/head";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import React, { createContext, FC, memo, ReactNode, useEffect, useState } from "react";
-
-import { CSSProperties } from "react";
 
 import { ApplicationWrappers } from "@app/layout/ApplicationWrappers";
 import { BlockPopUp } from "@app/modules/block-pop-up";
@@ -116,7 +114,7 @@ export const Layout: FC<LayoutType> = ({
 				</main>
 				<Footer />
 			</div>
-			{/* <BlockPopUp visible={!isIpLegal} /> */}
+			<BlockPopUp visible={!isIpLegal} />
 		</Providers>
 	);
 };

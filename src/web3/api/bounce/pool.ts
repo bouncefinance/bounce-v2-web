@@ -1,6 +1,5 @@
 import { AbstractProvider } from "web3-core";
 
-import { IToken } from "@app/api/types";
 import { getContract } from "@app/web3/contracts/helpers";
 import { WEB3_NETWORKS } from "@app/web3/networks/const";
 import { ADDRESS_MAPPING, getChainAddressMapping } from "@app/web3/networks/mapping";
@@ -47,7 +46,7 @@ export const getAllowance = async (
 
 export type AuctionPoolType = {
 	name: string;
-	creator: string;
+	// creator: string;
 	token0: string;
 	token1: string;
 	amountTotal0: string;
@@ -55,9 +54,9 @@ export type AuctionPoolType = {
 	openAt: number;
 	closeAt: number;
 	claimAt: number;
-	enableWhiteList: boolean;
 	maxAmount1PerWallet: string;
 	onlyBot: boolean;
+	enableWhiteList: boolean;
 };
 
 export const getPools = async (
@@ -122,8 +121,7 @@ export const getWhitelistedStatus = async (
 export const createAuctionPool = (
 	contract: ContractType,
 	account: string,
-	// data: AuctionPoolType,
-	data: any,
+	data: AuctionPoolType,
 	whiteList: string[] | undefined,
 	isPayable: boolean
 ) => {
