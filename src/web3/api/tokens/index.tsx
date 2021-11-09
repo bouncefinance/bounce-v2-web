@@ -106,6 +106,7 @@ export const useAllTokens = (filter: (list: TokenList) => boolean) => {
 	const tokenList = useTokenList();
 	const chainId = useChainId();
 	const ether = getEtherChain(chainId);
+
 	const [customTokenList] = useLocallyDefinedTokens();
 
 	// note: cache is split on filter, then on ether
