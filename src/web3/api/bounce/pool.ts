@@ -46,7 +46,7 @@ export const getAllowance = async (
 
 export type AuctionPoolType = {
 	name: string;
-	// creator: string;
+	creator?: string;
 	token0: string;
 	token1: string;
 	amountTotal0: string;
