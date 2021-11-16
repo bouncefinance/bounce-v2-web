@@ -186,7 +186,7 @@ const chainConfig: IChainConfig[] = [
 				decimals: 18,
 			},
 			rpcUrls: ["https://arb1.arbitrum.io/rpc"],
-			blockExplorerUrls: ["https://explorer.arbitrum.io/"],
+			blockExplorerUrls: ["https://arbiscan.io/"],
 		},
 		isHidden: true,
 	},

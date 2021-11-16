@@ -19,7 +19,7 @@ export const CHAINS_INFO = {
 	43114: { currency: "AVAX", explorer: { name: "snowtrace", Url: "https://snowtrace.io" } },
 	42161: {
 		currency: "ETH",
-		explorer: { name: "explorer.arbitrum", Url: "https://explorer.arbitrum.io" },
+		explorer: { name: "arbiscan", Url: "https://arbiscan.io" },
 	},
 	250: { currency: "FTM", explorer: { name: "ftmscan", Url: "https://ftmscan.com" } },
 };
