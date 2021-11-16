@@ -30,6 +30,13 @@ export const queryERC20Token = async (
 				address,
 				antiFake: true,
 			};
+		} else if (chainID === WEB3_NETWORKS.POLYGON) {
+			return {
+				symbol: "POLYGON",
+				decimals: 18,
+				address,
+				antiFake: true,
+			};
 		} else {
 			return {
 				symbol: "ETH",

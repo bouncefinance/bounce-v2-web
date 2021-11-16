@@ -53,6 +53,7 @@ const TokenImp = () => {
 		[WEB3_NETWORKS.ETH]: `https://mainnet.etherscan.io/address/${address}`,
 		[WEB3_NETWORKS.RINKEBY]: `https://rinkeby.etherscan.io/address/${address}`,
 		[WEB3_NETWORKS.BINANCE]: `https://rinkeby.etherscan.io/address/${address}`,
+		[WEB3_NETWORKS.POLYGON]: `https://polygonscan.com/address/${address}`,
 	});
 
 	return (

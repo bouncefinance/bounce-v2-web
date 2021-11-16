@@ -51,8 +51,6 @@ export const CreateProposal: FC<MaybeWithClassName> = () => {
 	const { push: routerPush } = useRouter();
 
 	const handleCreate = (info: ConfirmationInType) => {
-		console.log("in handleCreate");
-
 		if (!info.title || !info.description || !info.agreeFor || !info.againstFor) {
 			return;
 		}

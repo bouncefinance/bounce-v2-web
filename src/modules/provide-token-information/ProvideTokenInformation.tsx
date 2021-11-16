@@ -54,7 +54,10 @@ export const ProvideTokenInformation: FC<ProvideTokenInformationType> = ({
 	href,
 	withoutEth,
 }) => {
-	const notEtherium = useCallback((token: TokenInfo) => token.symbol !== "ETH", []);
+	const notEtherium = useCallback(
+		(token: TokenInfo) => token.address !== "0x0000000000000000000000000000000000000000",
+		[]
+	);
 
 	return (
 		<Form onSubmit={onSubmit} className={styles.form} initialValues={initialState}>

@@ -1,9 +1,7 @@
 import classNames from "classnames";
 import Head from "next/head";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import React, { createContext, FC, memo, ReactNode, useEffect, useState } from "react";
-
-import { CSSProperties } from "react";
 
 import { ApplicationWrappers } from "@app/layout/ApplicationWrappers";
 import { BlockPopUp } from "@app/modules/block-pop-up";
@@ -70,7 +68,6 @@ export const Layout: FC<LayoutType> = ({
 		try {
 			const result = await fetch("https://geolocation-db.com/json/");
 			const res = await result.json();
-			console.log("res: ", res);
 
 			if (!res) return;
 
@@ -87,10 +84,6 @@ export const Layout: FC<LayoutType> = ({
 
 	useEffect(() => {
 		checkIP();
-	}, [router]);
-
-	useEffect(() => {
-		console.log("router: ", router);
 	}, [router]);
 
 	return (
