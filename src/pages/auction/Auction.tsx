@@ -148,8 +148,6 @@ export const Auction = () => {
 	});
 
 	const onSubmit = async (values: any) => {
-		console.log("BOUNCE", " app.bounce.finance");
-
 		if (!provider) {
 			if (!(await walletControl.requestAuthorization())) {
 				return {
