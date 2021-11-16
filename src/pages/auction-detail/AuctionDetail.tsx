@@ -153,7 +153,7 @@ export const AuctionDetail: FC<{ poolID: number; auctionType: POOL_TYPE }> = ({
 		const userBid = await getMyAmount0(contract, account, poolID);
 		// const userPay = await getMyAmount1(contract, account, poolID);
 		// console.log('userBid',userBid)  // 100000000000000000
-		// console.log('userPay',userPay)	// 0
+		// console.log('userPay',userPay)	//  0
 		const whitelistStatus = await getWhitelistedStatus(contract, poolID, account);
 		const creatorClaim = await getCreatorClaimed(contract, account, poolID);
 		const userClaim = await getMyClaimed(contract, account, poolID);
