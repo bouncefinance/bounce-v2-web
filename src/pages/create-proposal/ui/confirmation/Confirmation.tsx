@@ -60,8 +60,6 @@ export const ConfirmationImp: FC = () => {
 		timing,
 	} = useFlowData<ConfirmationInType>();
 
-	console.log("flow data: ", useFlowData<ConfirmationInType>());
-
 	return (
 		<ConfirmationView
 			title={title}
