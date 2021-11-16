@@ -170,6 +170,7 @@ const chainConfig: IChainConfig[] = [
 			rpcUrls: ["https://rpc.ftm.tools/"],
 			blockExplorerUrls: ["https://ftmscan.com/"],
 		},
+		isHidden: true,
 	},
 	{
 		chainId: 42161,
@@ -187,6 +188,7 @@ const chainConfig: IChainConfig[] = [
 			rpcUrls: ["https://arb1.arbitrum.io/rpc"],
 			blockExplorerUrls: ["https://explorer.arbitrum.io/"],
 		},
+		isHidden: true,
 	},
 	{
 		chainId: 43114,
@@ -204,6 +206,7 @@ const chainConfig: IChainConfig[] = [
 			rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"],
 			blockExplorerUrls: ["https://snowtrace.io/"],
 		},
+		isHidden: true,
 	},
 ];
 
