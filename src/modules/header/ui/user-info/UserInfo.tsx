@@ -153,14 +153,57 @@ const chainConfig: IChainConfig[] = [
 			rpcUrls: ["https://polygon-rpc.com"],
 			blockExplorerUrls: ["https://polygonscan.com/"],
 		},
-		// isHidden: true,
 	},
 	{
-		chainId: 0,
+		chainId: 250,
 		name: "Fantom",
-		fullName: "Fantom",
-		icon: require("./assets/chain-layer2.svg"),
-		isHidden: true,
+		fullName: "Fantom Opera",
+		icon: require("./assets/chain-ftm.svg"),
+		config: {
+			chainId: "0xfa",
+			chainName: "Fantom Opera",
+			nativeCurrency: {
+				name: "FTM",
+				symbol: "FTM",
+				decimals: 18,
+			},
+			rpcUrls: ["https://rpc.ftm.tools/"],
+			blockExplorerUrls: ["https://ftmscan.com/"],
+		},
+	},
+	{
+		chainId: 42161,
+		name: "Arbitrum",
+		fullName: "Arbitrum One",
+		icon: require("./assets/chain-arbitrum.svg"),
+		config: {
+			chainId: "0xa4b1",
+			chainName: "Arbitrum One",
+			nativeCurrency: {
+				name: "AETH",
+				symbol: "AETH",
+				decimals: 18,
+			},
+			rpcUrls: ["https://arb1.arbitrum.io/rpc"],
+			blockExplorerUrls: ["https://explorer.arbitrum.io/"],
+		},
+	},
+	{
+		chainId: 43114,
+		name: "Avalanche",
+		fullName: "Avalanche Mainnet",
+		icon: require("./assets/chain-avax.svg"),
+		config: {
+			chainId: "0xfa",
+			chainName: "Avalanche Mainnet",
+			nativeCurrency: {
+				name: "AVAX",
+				symbol: "AVAX",
+				decimals: 18,
+			},
+			rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"],
+			blockExplorerUrls: ["https://snowtrace.io/"],
+		},
 	},
 ];
 
