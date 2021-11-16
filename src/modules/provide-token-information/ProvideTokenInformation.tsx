@@ -10,6 +10,9 @@ import { TextField } from "@app/modules/text-field";
 import { NavLink, PrimaryButton } from "@app/ui/button";
 import { RightArrow2 } from "@app/ui/icons/arrow-right-2";
 
+import { useChainId } from "@app/web3/hooks/use-web3";
+import { CHAINS_INFO } from "@app/web3/networks/const";
+
 import styles from "./ProvideTokenInformation.module.scss";
 
 type EffectorType = {
@@ -59,6 +62,8 @@ export const ProvideTokenInformation: FC<ProvideTokenInformationType> = ({
 		[]
 	);
 
+	const chainId = useChainId();
+
 	return (
 		<Form onSubmit={onSubmit} className={styles.form} initialValues={initialState}>
 			<Effector decimal={decimal} address={address} onTokenChange={onTokenChange} />
@@ -90,7 +95,7 @@ export const ProvideTokenInformation: FC<ProvideTokenInformationType> = ({
 				color="dark-grey"
 				weight="regular"
 			>
-				View on Etherscan
+				{`View on ${CHAINS_INFO[chainId].explorer.name}`}
 			</NavLink>
 			<FormSpy>
 				{(form) => (

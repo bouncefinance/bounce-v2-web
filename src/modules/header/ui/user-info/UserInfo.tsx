@@ -21,7 +21,7 @@ import { getEthBalance } from "@app/web3/api/bounce/erc";
 import { useWalletConnection } from "@app/web3/hooks/use-connection";
 import { useChainId, useWeb3 } from "@app/web3/hooks/use-web3";
 
-import { NETWROKS } from "@app/web3/networks/const";
+import { CHAINS_INFO } from "@app/web3/networks/const";
 
 import styles from "./UserInfo.module.scss";
 
@@ -323,7 +323,7 @@ export const UserInfo = () => {
 		<>
 			<UserInfoView
 				address={account}
-				token={NETWROKS[chainId].toUpperCase()}
+				token={CHAINS_INFO[chainId].currency}
 				balance={parseFloat(fromWei(balance, 18).toFixed(4, 1)).toString()}
 				onLogout={disconnectWallet}
 			/>
