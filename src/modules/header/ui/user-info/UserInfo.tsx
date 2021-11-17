@@ -21,7 +21,7 @@ import { getEthBalance } from "@app/web3/api/bounce/erc";
 import { useWalletConnection } from "@app/web3/hooks/use-connection";
 import { useChainId, useWeb3 } from "@app/web3/hooks/use-web3";
 
-import { NETWROKS } from "@app/web3/networks/const";
+import { CHAINS_INFO } from "@app/web3/networks/const";
 
 import styles from "./UserInfo.module.scss";
 
@@ -153,13 +153,59 @@ const chainConfig: IChainConfig[] = [
 			rpcUrls: ["https://polygon-rpc.com"],
 			blockExplorerUrls: ["https://polygonscan.com/"],
 		},
-		// isHidden: true,
 	},
 	{
-		chainId: 0,
+		chainId: 250,
 		name: "Fantom",
-		fullName: "Fantom",
-		icon: require("./assets/chain-layer2.svg"),
+		fullName: "Fantom Opera",
+		icon: require("./assets/chain-ftm.svg"),
+		config: {
+			chainId: "0xfa",
+			chainName: "Fantom Opera",
+			nativeCurrency: {
+				name: "FTM",
+				symbol: "FTM",
+				decimals: 18,
+			},
+			rpcUrls: ["https://rpc.ftm.tools/"],
+			blockExplorerUrls: ["https://ftmscan.com/"],
+		},
+		isHidden: true,
+	},
+	{
+		chainId: 42161,
+		name: "Arbitrum",
+		fullName: "Arbitrum One",
+		icon: require("./assets/chain-arbitrum.svg"),
+		config: {
+			chainId: "0xa4b1",
+			chainName: "Arbitrum One",
+			nativeCurrency: {
+				name: "AETH",
+				symbol: "AETH",
+				decimals: 18,
+			},
+			rpcUrls: ["https://arb1.arbitrum.io/rpc"],
+			blockExplorerUrls: ["https://arbiscan.io/"],
+		},
+		isHidden: true,
+	},
+	{
+		chainId: 43114,
+		name: "Avalanche",
+		fullName: "Avalanche Mainnet",
+		icon: require("./assets/chain-avax.svg"),
+		config: {
+			chainId: "0xfa",
+			chainName: "Avalanche Mainnet",
+			nativeCurrency: {
+				name: "AVAX",
+				symbol: "AVAX",
+				decimals: 18,
+			},
+			rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"],
+			blockExplorerUrls: ["https://snowtrace.io/"],
+		},
 		isHidden: true,
 	},
 ];
@@ -280,7 +326,7 @@ export const UserInfo = () => {
 		<>
 			<UserInfoView
 				address={account}
-				token={NETWROKS[chainId].toUpperCase()}
+				token={CHAINS_INFO[chainId].currency}
 				balance={parseFloat(fromWei(balance, 18).toFixed(4, 1)).toString()}
 				onLogout={disconnectWallet}
 			/>
