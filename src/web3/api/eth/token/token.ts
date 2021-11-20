@@ -30,8 +30,8 @@ const getBaseToken = (chainId: number) => {
 				chainId,
 				"0x0000000000000000000000000000000000000000",
 				18,
-				"POLYGON",
-				"Polygon",
+				"MATIC",
+				"Matic",
 				POLYGON
 			);
 
