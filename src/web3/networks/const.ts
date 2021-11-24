@@ -3,9 +3,9 @@ export enum WEB3_NETWORKS {
 	RINKEBY = 4,
 	BINANCE = 56,
 	POLYGON = 137,
-	// AVALANCHE = 43114,
-	// ARBITRUM = 42161,
-	// FANTOM = 250,
+	AVALANCHE = 43114,
+	ARBITRUM = 42161,
+	FANTOM = 250,
 }
 
 export const CHAINS_INFO = {
