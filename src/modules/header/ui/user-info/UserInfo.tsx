@@ -155,24 +155,6 @@ const chainConfig: IChainConfig[] = [
 		},
 	},
 	{
-		chainId: 250,
-		name: "Fantom",
-		fullName: "Fantom Opera",
-		icon: require("./assets/chain-ftm.svg"),
-		config: {
-			chainId: "0xfa",
-			chainName: "Fantom Opera",
-			nativeCurrency: {
-				name: "FTM",
-				symbol: "FTM",
-				decimals: 18,
-			},
-			rpcUrls: ["https://rpc.ftm.tools/"],
-			blockExplorerUrls: ["https://ftmscan.com/"],
-		},
-		isHidden: true,
-	},
-	{
 		chainId: 42161,
 		name: "Arbitrum",
 		fullName: "Arbitrum One",
@@ -187,6 +169,24 @@ const chainConfig: IChainConfig[] = [
 			},
 			rpcUrls: ["https://arb1.arbitrum.io/rpc"],
 			blockExplorerUrls: ["https://arbiscan.io/"],
+		},
+		// isHidden: true,
+	},
+	{
+		chainId: 250,
+		name: "Fantom",
+		fullName: "Fantom Opera",
+		icon: require("./assets/chain-ftm.svg"),
+		config: {
+			chainId: "0xfa",
+			chainName: "Fantom Opera",
+			nativeCurrency: {
+				name: "FTM",
+				symbol: "FTM",
+				decimals: 18,
+			},
+			rpcUrls: ["https://rpc.ftm.tools/"],
+			blockExplorerUrls: ["https://ftmscan.com/"],
 		},
 		isHidden: true,
 	},
@@ -222,7 +222,7 @@ export const SelectChain: FC<ISelectChain> = ({ currentChain }) => {
 				await provider
 					.request({
 						method: "wallet_switchEthereumChain",
-						params: [{ chainId: `0x${parseInt(tarChain.chainId + "", 16)}` }],
+						params: [{ chainId: `0x${tarChain.chainId.toString(16)}` }],
 					})
 					.then(() => {
 						window.location.reload();
@@ -240,6 +240,7 @@ export const SelectChain: FC<ISelectChain> = ({ currentChain }) => {
 								window.location.reload();
 							});
 					} catch (addError) {
+						console.log("addError: ", addError);
 						// handle "add" error
 					}
 				}
@@ -254,7 +255,7 @@ export const SelectChain: FC<ISelectChain> = ({ currentChain }) => {
 
 	return (
 		<div>
-			<div
+			<Button
 				className={styles.currentChain}
 				onClick={() => {
 					setActive(!active);
@@ -263,7 +264,7 @@ export const SelectChain: FC<ISelectChain> = ({ currentChain }) => {
 				<img src={curChain?.icon || require("./assets/chain-eth.svg")} alt="" />
 				<span>{curChain?.name || "ErrorChain"}</span>
 				<img className={styles.arrow} src={require("./assets/arrow-down.svg")} alt="" />
-			</div>
+			</Button>
 
 			{active && (
 				<ul

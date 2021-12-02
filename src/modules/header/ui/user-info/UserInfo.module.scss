@@ -204,6 +204,7 @@
 	border-radius: 32px;
 	cursor: pointer;
 	user-select: none;
+	font-size: 0.875rem;
 
 	span {
 		margin-left: 5px;
@@ -227,6 +228,7 @@
 		align-items: center;
 		font-size: 12px;
 		padding-left: 5px;
+
 		.imgBox {
 			width: 20px;
 			display: flex;
