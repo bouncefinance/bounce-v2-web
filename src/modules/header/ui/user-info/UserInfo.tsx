@@ -155,24 +155,6 @@ const chainConfig: IChainConfig[] = [
 		},
 	},
 	{
-		chainId: 250,
-		name: "Fantom",
-		fullName: "Fantom Opera",
-		icon: require("./assets/chain-ftm.svg"),
-		config: {
-			chainId: "0xfa",
-			chainName: "Fantom Opera",
-			nativeCurrency: {
-				name: "FTM",
-				symbol: "FTM",
-				decimals: 18,
-			},
-			rpcUrls: ["https://rpc.ftm.tools/"],
-			blockExplorerUrls: ["https://ftmscan.com/"],
-		},
-		// isHidden: true,
-	},
-	{
 		chainId: 42161,
 		name: "Arbitrum",
 		fullName: "Arbitrum One",
@@ -191,6 +173,24 @@ const chainConfig: IChainConfig[] = [
 		// isHidden: true,
 	},
 	{
+		chainId: 250,
+		name: "Fantom",
+		fullName: "Fantom Opera",
+		icon: require("./assets/chain-ftm.svg"),
+		config: {
+			chainId: "0xfa",
+			chainName: "Fantom Opera",
+			nativeCurrency: {
+				name: "FTM",
+				symbol: "FTM",
+				decimals: 18,
+			},
+			rpcUrls: ["https://rpc.ftm.tools/"],
+			blockExplorerUrls: ["https://ftmscan.com/"],
+		},
+		isHidden: true,
+	},
+	{
 		chainId: 43114,
 		name: "Avalanche",
 		fullName: "Avalanche Mainnet",
@@ -206,7 +206,7 @@ const chainConfig: IChainConfig[] = [
 			rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"],
 			blockExplorerUrls: ["https://snowtrace.io/"],
 		},
-		// isHidden: true,
+		isHidden: true,
 	},
 ];
 

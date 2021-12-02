@@ -18,18 +18,8 @@ export const useWeb3 = (): Web3 => {
 	return useMemo(() => (provider ? new Web3(provider) : (undefined as any)), [provider]);
 };
 
-export const useChainId = (): WEB3_NETWORKS | undefined => {
+export const useChainId = (): WEB3_NETWORKS => {
 	const { chainId = WEB3_NETWORKS.ETH } = useWeb3React();
-
-	// const [chainId, setChainId] = useState<WEB3_NETWORKS | undefined>(undefined);
-
-	// window.ethereum.request({ method: "eth_chainId" }).then((res: string) => {
-	// 	setChainId(parseInt(res, 16));
-	// });
-
-	// useEffect(() => {
-	// 	console.log("chainId: ", chainId);
-	// }, [chainId]);
 
 	useDebugValue(chainId);
 
