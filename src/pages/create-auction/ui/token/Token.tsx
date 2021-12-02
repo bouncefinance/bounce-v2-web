@@ -54,9 +54,9 @@ const TokenImp = () => {
 		[WEB3_NETWORKS.RINKEBY]: `https://rinkeby.etherscan.io/address/${address}`,
 		[WEB3_NETWORKS.BINANCE]: `https://bscscan.com/address/${address}`,
 		[WEB3_NETWORKS.POLYGON]: `https://polygonscan.com/address/${address}`,
-		[WEB3_NETWORKS.FANTOM]: `https://ftmscan.com/address/${address}`,
 		[WEB3_NETWORKS.ARBITRUM]: `https://arbiscan.io/address/${address}`,
-		[WEB3_NETWORKS.AVALANCHE]: `https://snowtrace.io/address/${address}`,
+		// [WEB3_NETWORKS.FANTOM]: `https://ftmscan.com/address/${address}`,
+		// [WEB3_NETWORKS.AVALANCHE]: `https://snowtrace.io/address/${address}`,
 	});
 
 	return (
