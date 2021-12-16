@@ -170,7 +170,6 @@ const chainConfig: IChainConfig[] = [
 			rpcUrls: ["https://arb1.arbitrum.io/rpc"],
 			blockExplorerUrls: ["https://arbiscan.io/"],
 		},
-		// isHidden: true,
 	},
 	{
 		chainId: 250,
