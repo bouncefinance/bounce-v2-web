@@ -45,13 +45,13 @@ export const queryERC20Token = async (
 			// 		address,
 			// 		antiFake: true,
 			// 	};
-			// case WEB3_NETWORKS.FANTOM:
-			// 	return {
-			// 		symbol: "FTM",
-			// 		decimals: 18,
-			// 		address,
-			// 		antiFake: true,
-			// 	};
+			case WEB3_NETWORKS.FANTOM:
+				return {
+					symbol: "FTM",
+					decimals: 18,
+					address,
+					antiFake: true,
+				};
 			default:
 				return {
 					symbol: "ETH",
