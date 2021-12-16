@@ -188,7 +188,6 @@ const chainConfig: IChainConfig[] = [
 			rpcUrls: ["https://rpc.ftm.tools/"],
 			blockExplorerUrls: ["https://ftmscan.com/"],
 		},
-		isHidden: true,
 	},
 	{
 		chainId: 43114,

@@ -5,7 +5,7 @@ export enum WEB3_NETWORKS {
 	POLYGON = 137,
 	ARBITRUM = 42161,
 	// AVALANCHE = 43114,
-	// FANTOM = 250,
+	FANTOM = 250,
 }
 
 export const CHAINS_INFO = {
@@ -20,6 +20,6 @@ export const CHAINS_INFO = {
 		currency: "ETH",
 		explorer: { name: "arbiscan", Url: "https://arbiscan.io" },
 	},
+	250: { currency: "FTM", explorer: { name: "ftmscan", Url: "https://ftmscan.com" } },
 	// 43114: { currency: "AVAX", explorer: { name: "snowtrace", Url: "https://snowtrace.io" } },
-	// 250: { currency: "FTM", explorer: { name: "ftmscan", Url: "https://ftmscan.com" } },
 };
