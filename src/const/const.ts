@@ -30,7 +30,7 @@ export const SOCIAL = {
 export const ABOUT_LINKS = {
 	Docs: DOCS_PATH,
 	"Auditing Report": AUDIT_PATH,
-	Github: GITHUB_PATH,
+	// Github: GITHUB_PATH,
 	Community: COMMUNITY_PATH,
 };
 

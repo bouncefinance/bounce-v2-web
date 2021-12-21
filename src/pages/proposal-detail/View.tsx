@@ -104,8 +104,6 @@ export const View: FC<IProposalView & ProposalDetailViewType> = ({
 					setVoted(true);
 				})
 				.on("error", (err, receipt) => {
-					console.log("error1", err);
-
 					if (err.code === 4001) {
 						setProcessState(ProcessStateEnum.CANCEL);
 						setPopUpText(PopUpTextObj.CANCEL);
@@ -115,8 +113,6 @@ export const View: FC<IProposalView & ProposalDetailViewType> = ({
 					}
 				});
 		} catch (err) {
-			console.log("err", err);
-
 			if (err.code === 4001) {
 				setProcessState(ProcessStateEnum.CANCEL);
 				setPopUpText(PopUpTextObj.CANCEL);

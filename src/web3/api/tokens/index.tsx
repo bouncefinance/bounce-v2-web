@@ -93,6 +93,11 @@ const generateTokenList = inboxed(
 	)
 );
 
+/**
+ * `mapToTokenLookup` is an function
+ * @param `tokens` An array of `ExtendedTokenInfo`
+ * @returns An object whose keys are string and values are `ExtendedTokenInfo`
+ */
 const mapToTokenLookup = kashe(
 	(tokens: ExtendedTokenInfo[]): TokenLookup<ExtendedTokenInfo> =>
 		tokens.reduce((acc, token) => {
@@ -106,6 +111,7 @@ export const useAllTokens = (filter: (list: TokenList) => boolean) => {
 	const tokenList = useTokenList();
 	const chainId = useChainId();
 	const ether = getEtherChain(chainId);
+
 	const [customTokenList] = useLocallyDefinedTokens();
 
 	// note: cache is split on filter, then on ether
@@ -154,6 +160,10 @@ const cachedERC20Query = async (
 
 const STABLE_REF = {};
 
+/**
+ * `useTokenQuery` returns a function through which can query tokens by account address
+ * @returns a function whose type is `(address: string): Promise<TokenInfo>`
+ */
 export const useTokenQuery = () => {
 	const tokens = useAllTokensSearch(passAll);
 	const provider = useWeb3Provider();

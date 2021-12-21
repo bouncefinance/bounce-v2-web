@@ -104,12 +104,10 @@ export const Auction = () => {
 			});
 			setTotalCount(total);
 			setPoolList(foundPools);
-			console.log("Auctions", foundPools);
 		})();
 	}, [page, chainId, type, status]);
 
 	const queryToken = useTokenSearchWithFallbackService();
-	console.log("poolList", poolList);
 
 	useEffect(() => {
 		if (poolList.length > 0) {

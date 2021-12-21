@@ -23,20 +23,42 @@ export const queryERC20Token = async (
 	const address = dirtyAddress?.toLowerCase();
 
 	if (isEqualTo(address, 0)) {
-		if (chainID === WEB3_NETWORKS.BINANCE) {
-			return {
-				symbol: "BNB",
-				decimals: 18,
-				address,
-				antiFake: true,
-			};
-		} else {
-			return {
-				symbol: "ETH",
-				decimals: 18,
-				address,
-				antiFake: true,
-			};
+		switch (chainID) {
+			case WEB3_NETWORKS.BINANCE:
+				return {
+					symbol: "BNB",
+					decimals: 18,
+					address,
+					antiFake: true,
+				};
+			case WEB3_NETWORKS.POLYGON:
+				return {
+					symbol: "POLYGON",
+					decimals: 18,
+					address,
+					antiFake: true,
+				};
+			// case WEB3_NETWORKS.AVALANCHE:
+			// 	return {
+			// 		symbol: "AVAX",
+			// 		decimals: 18,
+			// 		address,
+			// 		antiFake: true,
+			// 	};
+			case WEB3_NETWORKS.FANTOM:
+				return {
+					symbol: "FTM",
+					decimals: 18,
+					address,
+					antiFake: true,
+				};
+			default:
+				return {
+					symbol: "ETH",
+					decimals: 18,
+					address,
+					antiFake: true,
+				};
 		}
 	}
 

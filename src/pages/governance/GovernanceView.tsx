@@ -29,8 +29,6 @@ type GovernanceType = {
 	onSubmit?(values: any): any;
 };
 
-// console.log("window.location: ", window.location);
-
 function getUrlParam(name) {
 	const reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
 
