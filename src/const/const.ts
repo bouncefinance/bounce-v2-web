@@ -12,6 +12,7 @@ export const V2_PATH = "https://v1.app.bounce.finance";
 
 export const AUCTION_PATH = "/auction";
 export const OTC_PATH = "/otc";
+export const LBP_PATH = "/lbp";
 export const FARM_PATH = "/farm";
 export const GOVERNANCE_PATH = "/governance";
 export const CREATE_PATH = "/create";
@@ -36,6 +37,7 @@ export const ABOUT_LINKS = {
 export const HEADER_LINKS = {
 	Auction: AUCTION_PATH,
 	OTC: OTC_PATH,
+	LBP: LBP_PATH,
 	Farm: FARM_PATH,
 	Governance: GOVERNANCE_PATH,
 	About: ABOUT_LINKS,
@@ -44,6 +46,7 @@ export const HEADER_LINKS = {
 export const MOBILE_HEADER_LINKS = {
 	Auction: AUCTION_PATH,
 	OTC: OTC_PATH,
+	LBP: LBP_PATH,
 	Farm: FARM_PATH,
 	Governance: GOVERNANCE_PATH,
 };
