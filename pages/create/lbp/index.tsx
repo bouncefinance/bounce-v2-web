@@ -15,7 +15,7 @@ const LBPCreatePage = pageWithLayout(
 		return (
 			<NoSsr>
 				<RequireConnectedWallet>
-					<CreateLBP type={type as OTC_TYPE} />
+					<CreateLBP />
 				</RequireConnectedWallet>
 			</NoSsr>
 		);
