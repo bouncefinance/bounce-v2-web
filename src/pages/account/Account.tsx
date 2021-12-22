@@ -11,12 +11,36 @@ import { Auction } from "@app/pages/account/Auction";
 import { Otc } from "@app/pages/account/Otc";
 import { NavLink } from "@app/ui/button";
 import { GutterBox } from "@app/ui/gutter-box";
-
 import { Body1 } from "@app/ui/typography";
-
 import styles from "./Account.module.scss";
+import { uid } from "react-uid";
+import { Lbp } from "./Lbp";
 
-export const Account: FC<{ type: "otc" | "auction" | "activity" } & MaybeWithClassName> = ({
+type TabType = "auction" | "otc" | 'lbp' | "activity"
+
+const tabsConfig: {
+	tab: TabType
+	name: string
+	href: string
+}[] = [{
+	tab: 'auction',
+	name: 'My Auction',
+	href: `${ACCOUNT_PATH}`
+}, {
+	tab: 'otc',
+	name: 'My OTC',
+	href: `${ACCOUNT_PATH}/otc`
+}, {
+	tab: 'lbp',
+	name: 'My LBP',
+	href: `${ACCOUNT_PATH}/lbp`
+}, {
+	tab: 'activity',
+	name: 'Activity',
+	href: `${ACCOUNT_PATH}/activity`
+}]
+
+export const Account: FC<{ type: TabType } & MaybeWithClassName> = ({
 	className,
 	type,
 }) => {
@@ -53,37 +77,26 @@ export const Account: FC<{ type: "otc" | "auction" | "activity" } & MaybeWithCla
 						</span>
 					</Body1> */}
 					<div className={styles.tabs}>
-						<NavLink
-							className={styles.tab}
-							activeClassName={styles.active}
-							href={`${ACCOUNT_PATH}`}
-							weight="bold"
-							exact
-						>
-							My Auctions
-						</NavLink>
-						<NavLink
-							className={styles.tab}
-							activeClassName={styles.active}
-							href={`${ACCOUNT_PATH}/otc`}
-							weight="bold"
-						>
-							My OTC
-						</NavLink>
-						<NavLink
-							className={styles.tab}
-							activeClassName={styles.active}
-							href={`${ACCOUNT_PATH}/activity`}
-							weight="bold"
-						>
-							Activity
-						</NavLink>
+						{tabsConfig.map(item => {
+							return <div key={uid(item)}>
+								<NavLink
+									className={styles.tab}
+									activeClassName={styles.active}
+									href={item.href}
+									weight="bold"
+									exact
+								>
+									{item.name}
+								</NavLink>
+							</div>
+						})}
 					</div>
 				</GutterBox>
 			</section>
 			<section className={className}>
 				<GutterBox>
 					{type === "otc" && <Otc />}
+					{type === 'lbp' && <Lbp />}
 					{type === "auction" && <Auction />}
 					{type === "activity" && <Activity />}
 				</GutterBox>
