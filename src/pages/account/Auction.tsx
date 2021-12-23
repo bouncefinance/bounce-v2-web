@@ -62,7 +62,7 @@ const ToAuctionStatus = {
 	3: POOL_STATUS.CLOSED,
 };
 
-export const Auction = () => {
+const Auction = () => {
 	const chainId = useChainId();
 	const { account } = useWeb3React();
 	const provider = useWeb3Provider();
@@ -203,3 +203,5 @@ export const Auction = () => {
 		</div>
 	);
 };
+
+export default Auction
