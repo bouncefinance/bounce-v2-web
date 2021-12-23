@@ -3,48 +3,56 @@ import { useState } from "react";
 import { defineFlowStep } from "@app/modules/flow/definition";
 import { useFlowControl } from "@app/modules/flow/hooks";
 
-import { ProvideTokenInformation } from "@app/modules/provide-token-information";
+import { LBPTokenInformation } from "@app/modules/provide-token-information";
 import { useTokenSearch } from "@app/web3/api/tokens";
 import { useChainId } from "@app/web3/hooks/use-web3";
 import { WEB3_NETWORKS } from "@app/web3/networks/const";
 import { defineNetworkMapper } from "@app/web3/networks/utils";
+import { TokenInfo } from "@uniswap/token-lists";
 
 export type TokenOutType = {
-	tokenFrom: string;
-	tokenFromAddress: string;
-	tokenDecimal: string;
-	tokenFormValues: any;
+	tokenFrom: TokenInfo
+	tokenTo: TokenInfo
 };
 
 const TokenImp = () => {
 	const { moveForward, addData, data } = useFlowControl<TokenOutType>();
-
 	const chainId = useChainId();
-	const initialState = data.tokenFormValues;
+	const initialState = {
+		tokenFrom: data.tokenFrom?.address,
+		address: data.tokenFrom?.address,
+		tokenTo: data.tokenTo?.address,
+	};
 
-	const onSubmit = async (values: any) => {
+	const [tokenFrom, setTokenFrom] = useState<TokenInfo>()
+	const [tokenTo, setTokenTo] = useState<TokenInfo>()
+
+	const onSubmit = async (_values: any) => {
 		addData({
-			tokenFrom: values.tokenFrom,
-			tokenFromAddress: values.address,
-			tokenDecimal: values.decimal,
-			tokenFormValues: values,
+			tokenFrom: tokenFrom,
+			tokenTo: tokenTo
 		});
 
 		moveForward();
 	};
 
-	const [decimal, setDecimal] = useState<number | undefined>();
 	const [address, setAddress] = useState<string | undefined>();
 
 	const findToken = useTokenSearch();
 
-	const onTokenChange = (token: string) => {
-		if (token) {
-			const record = findToken(token);
+	const onTokenChange = (tokenFrom: string, tokenTo: string) => {
+		if (tokenFrom) {
+			const record1 = findToken(tokenFrom);
 
-			if (record) {
-				setDecimal(record.decimals);
-				setAddress(record.address);
+			if (record1) {
+				setTokenFrom(record1)
+				setAddress(record1.address);
+			}
+		}
+		if (tokenTo) {
+			const record2 = findToken(tokenTo);
+			if (record2) {
+				setTokenTo(record2)
 			}
 		}
 	};
@@ -60,12 +68,11 @@ const TokenImp = () => {
 	});
 
 	return (
-		<ProvideTokenInformation
+		<LBPTokenInformation
 			onSubmit={onSubmit}
 			onTokenChange={onTokenChange}
 			initialState={initialState}
 			address={address}
-			decimal={decimal}
 			href={getLinkByNetwork(chainId)}
 		/>
 	);

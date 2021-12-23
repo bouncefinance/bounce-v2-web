@@ -17,26 +17,22 @@ import styles from "./ProvideTokenInformation.module.scss";
 
 type EffectorType = {
 	address?: string;
-	decimal?: number;
-	onTokenChange(token: string): void;
+	onTokenChange(token0: string, token1: string): void;
 };
 
-const Effector: FC<EffectorType> = ({ decimal, address, onTokenChange }) => {
+const Effector: FC<EffectorType> = ({ address, onTokenChange }) => {
 	const form = useForm();
-	const {
-		values: { tokenFrom },
-	} = useFormState();
+	const { values: { tokenFrom, tokenTo } } = useFormState();
 
 	useEffect(() => {
-		onTokenChange(tokenFrom);
-	}, [onTokenChange, tokenFrom]);
+		onTokenChange(tokenFrom, tokenTo);
+	}, [onTokenChange, tokenFrom, tokenTo]);
 
 	useEffect(() => {
 		form.batch(() => {
-			form.change("decimal", decimal);
 			form.change("address", address);
 		});
-	}, [decimal, address, form]);
+	}, [address, form]);
 
 	return null;
 };
@@ -48,10 +44,9 @@ type ProvideTokenInformationType = EffectorType & {
 	onSubmit(values): void;
 };
 
-export const ProvideTokenInformation: FC<ProvideTokenInformationType> = ({
+export const LBPTokenInformation: FC<ProvideTokenInformationType> = ({
 	onSubmit,
 	onTokenChange,
-	decimal,
 	address,
 	initialState,
 	href,
@@ -61,12 +56,13 @@ export const ProvideTokenInformation: FC<ProvideTokenInformationType> = ({
 		(token: TokenInfo) => token.address !== "0x0000000000000000000000000000000000000000",
 		[]
 	);
+
 	const chainId = useChainId();
 
 	return (
 		<Form onSubmit={onSubmit} className={styles.form} initialValues={initialState}>
-			<Effector decimal={decimal} address={address} onTokenChange={onTokenChange} />
-			<Label className={styles.label} Component="div" label="Token" tooltip="Select a ERC20 token.">
+			<Effector address={address} onTokenChange={onTokenChange} />
+			<Label className={styles.label} Component="div" label="Launch Token" tooltip="Select a ERC20 token.">
 				<SelectTokenField
 					name="tokenFrom"
 					placeholder="Select a token"
@@ -83,9 +79,6 @@ export const ProvideTokenInformation: FC<ProvideTokenInformationType> = ({
 					required
 				/>
 			</Label>
-			<Label Component="label" className={styles.label} label="Token decimal">
-				<TextField type="text" name="decimal" placeholder="0" readOnly required />
-			</Label>
 			<NavLink
 				className={styles.link}
 				href={href}
@@ -96,6 +89,15 @@ export const ProvideTokenInformation: FC<ProvideTokenInformationType> = ({
 			>
 				{`View on ${CHAINS_INFO[chainId].explorer.name}`}
 			</NavLink>
+
+			<Label className={styles.label} Component="div" label="Collected Token" tooltip="Select a ERC20 token.">
+				<SelectTokenField
+					name="tokenTo"
+					placeholder="Select a token"
+					filter={withoutEth ? notEtherium : undefined}
+					required
+				/>
+			</Label>
 			<FormSpy>
 				{(form) => (
 					<PrimaryButton

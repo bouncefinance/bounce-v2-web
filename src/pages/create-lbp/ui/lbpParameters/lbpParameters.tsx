@@ -1,11 +1,13 @@
 import { defineFlowStep } from '@app/modules/flow/definition';
 import { useFlowControl, useFlowData } from '@app/modules/flow/hooks';
+import { TokenInfo } from '@uniswap/token-lists';
 import { useMemo } from 'react';
 import { LbpParametersView } from './LbpParametersView';
 
 
 type ParameterInType = {
-    tokenFrom: string;
+    tokenFrom: TokenInfo
+	tokenTo: TokenInfo
 };
 
 export type ParameterOutType = {
@@ -17,7 +19,8 @@ export type ParameterOutType = {
 
 const LbpParameterImp = () => {
     const { moveForward, addData, data } = useFlowControl<ParameterOutType>();
-    const { tokenFrom } = useFlowData<ParameterInType>();
+    const { tokenFrom, tokenTo } = useFlowData<ParameterInType>();
+  
     const initialValues = useMemo(
         () => ({ tokenFrom, allocation: "limited", ...data.buyingFormValues }),
         [data.buyingFormValues, tokenFrom]
@@ -57,7 +60,7 @@ const LbpParameterImp = () => {
     return (
         <LbpParametersView
             onSubmit={onSubmit}
-            tokenFrom={tokenFrom}
+            tokenFrom={''}
             balance={0.888}
             initialValues={initialValues}
         />

@@ -47,6 +47,8 @@ export const CreateFlowForLbp: FC<CreateFlowType & MaybeWithClassName> = ({
 								currentStep={currentStep}
 								moveForward={moveForward}
 								moveToStep={moveToStep}
+								// LBP Parameters、 Advanced Setting 需要大页面
+								bigScreen={currentStep === 1 || currentStep === 2}
 							>
 								{body}
 							</CreateSteps>
