@@ -7,7 +7,6 @@ import { MaybeWithClassName } from "@app/helper/react/types";
 
 import { CopyAddress } from "@app/modules/copy-to-clipboard";
 import { Activity } from "@app/pages/account/Activity";
-import { Auction } from "@app/pages/account/Auction";
 import { Otc } from "@app/pages/account/Otc";
 import { NavLink } from "@app/ui/button";
 import { GutterBox } from "@app/ui/gutter-box";
@@ -15,6 +14,7 @@ import { Body1 } from "@app/ui/typography";
 import styles from "./Account.module.scss";
 import { uid } from "react-uid";
 import { Lbp } from "./Lbp";
+import Auction from "./Auction";
 
 type TabType = "auction" | "otc" | 'lbp' | "activity"
 
