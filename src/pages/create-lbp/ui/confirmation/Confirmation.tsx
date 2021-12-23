@@ -86,15 +86,8 @@ export type ConfirmationInType = BuyingConfirmationType | SellingConfirmationTyp
 
 export const ConfirmationImp: FC<CommonType> = ({ type }) => {
 	const {
-		poolName,
-		tokenFromAddress,
-		tokenFrom,
-		tokenDecimal,
-		tokenTo,
 		unitPrice,
 		amount,
-		whitelist,
-		startPool,
 	} = useFlowData<ConfirmationInType>();
 
 	const convertDate = useConvertDate();
