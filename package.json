@@ -15,6 +15,7 @@
     "build-storybook": "build-storybook",
     "update-web-3": "yarn add @walletconnect/client @walletconnect/qrcode-modal @web3-react/core @web3-react/injected-connector @web3-react/walletconnect-connector"
   },
+  
   "dependencies": {
     "@ethersproject/contracts": "^5.2.0",
     "@ethersproject/providers": "^5.2.0",
