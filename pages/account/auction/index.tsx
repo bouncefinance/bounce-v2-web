@@ -4,7 +4,7 @@ import { RequireConnectedWallet } from "@app/modules/require-connected-wallet";
 import { Account } from "@app/pages/account";
 import { pageWithLayout } from "@app/utils/pageInLayout";
 
-export const AuctionPage = pageWithLayout(
+const AuctionPage = pageWithLayout(
 	() => {
 		return (
 			<NoSsr>
@@ -20,3 +20,5 @@ export const AuctionPage = pageWithLayout(
 		</Layout>
 	)
 );
+
+export default AuctionPage

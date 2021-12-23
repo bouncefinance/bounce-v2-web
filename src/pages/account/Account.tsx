@@ -13,8 +13,8 @@ import { GutterBox } from "@app/ui/gutter-box";
 import { Body1 } from "@app/ui/typography";
 import styles from "./Account.module.scss";
 import { uid } from "react-uid";
-import { Lbp } from "./Lbp";
-import Auction from "./Auction";
+import { Lbp } from "@app/pages/account/Lbp";
+import Auction from "@app/pages/account/Auction";
 
 type TabType = "auction" | "otc" | 'lbp' | "activity"
 
@@ -97,8 +97,8 @@ export const Account: FC<{ type: TabType } & MaybeWithClassName> = ({
 				<GutterBox>
 					{type === "otc" && <Otc />}
 					{type === 'lbp' && <Lbp />}
-					{type === "auction" && <Auction />}
 					{type === "activity" && <Activity />}
+					{type === "auction" && <Auction />}
 				</GutterBox>
 			</section>
 		</div>

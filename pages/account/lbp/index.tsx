@@ -21,4 +21,4 @@ const LBPPage = pageWithLayout(
 	)
 );
 
-export default LBPPage;
+export default LBPPage
