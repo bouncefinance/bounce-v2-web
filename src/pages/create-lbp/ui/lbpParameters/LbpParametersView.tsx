@@ -28,11 +28,12 @@ import { Currency } from "@app/modules/currency";
 import { DateField } from "@app/modules/date-field";
 import { SliderField } from "@app/modules/slider-field";
 import { Charts } from "./Charts";
+import { TokenInfo } from "@uniswap/token-lists";
 
 type BuyingViewType = {
     onSubmit(values): void;
-    tokenFrom: string;
-    balance: number;
+    tokenFrom: TokenInfo;
+    tokenTo: TokenInfo;
     initialValues: any;
 };
 
@@ -41,17 +42,16 @@ const FLOAT = "0.0001";
 export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
     onSubmit,
     tokenFrom,
-    balance,
+    tokenTo,
     initialValues,
 }) => {
     const [alert, setAlert] = useState<AlertType | undefined>();
-    const [tokenTo, setTokenTo] = useState();
     const [newBalance, setNewBalance] = useState(0);
     const findToken = useTokenSearch();
     const web3 = useWeb3();
     const provider = useWeb3Provider();
     const { account } = useWeb3React();
-    const tokenContract = getTokenContract(provider, findToken(tokenTo)?.address);
+    const tokenContract = getTokenContract(provider, tokenTo.address);
     const [blockStartRef, setBlockStartRef] = useState<HTMLElement | null>(null);
     const [blockEndRef, setBlockEndRef] = useState<HTMLElement | null>(null);
 
@@ -62,17 +62,27 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
     };
 
     useEffect(() => {
-        if (!tokenTo) {
+        if (!tokenFrom || !tokenTo) {
             return;
         }
 
-        if (!isEth(findToken(tokenTo).address)) {
+        if (!isEth(tokenFrom.address)) {
             getBalance(tokenContract, account).then((b) =>
-                setNewBalance(parseFloat(fromWei(b, findToken(tokenTo).decimals).toFixed(6, 1)))
+                setNewBalance(parseFloat(fromWei(b, tokenFrom.decimals).toFixed(6, 1)))
             );
         } else {
             getEthBalance(web3, account).then((b) =>
-                setNewBalance(parseFloat(fromWei(b, findToken(tokenTo).decimals).toFixed(4, 1)))
+                setNewBalance(parseFloat(fromWei(b, tokenFrom.decimals).toFixed(4, 1)))
+            );
+        }
+
+        if (!isEth(tokenTo.address)) {
+            getBalance(tokenContract, account).then((b) =>
+                setNewBalance(parseFloat(fromWei(b, tokenTo.decimals).toFixed(6, 1)))
+            );
+        } else {
+            getEthBalance(web3, account).then((b) =>
+                setNewBalance(parseFloat(fromWei(b, tokenTo.decimals).toFixed(4, 1)))
             );
         }
     }, [web3, tokenContract, account, findToken, tokenTo]);
@@ -83,9 +93,7 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
             className={styles.form}
             initialValues={initialValues}
             validate={(values) => {
-                setTokenTo(values.tokenTo);
-
-                return { tokenTo: isFromToTokensDifferent<string>(tokenFrom, values.tokenTo) };
+                return { tokenTo: isFromToTokensDifferent<string>(tokenFrom.address, tokenTo.address) };
             }}
         >
             <div className={styles.container}>
@@ -125,9 +133,10 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
                                                     >
                                                         MAX
                                                     </button>
+
                                                 )}
                                             </FormSpy>
-                                            <Currency token={tokenFrom} small />
+                                            <Currency token={tokenFrom.address} small />
                                         </div>
                                     }
                                     validate={composeValidators(isEqualZero, isValidWei)}
@@ -174,7 +183,7 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
                                                     </button>
                                                 )}
                                             </FormSpy>
-                                            <Currency token={tokenFrom} small />
+                                            <Currency token={tokenTo.address} small />
                                         </div>
                                     }
                                     validate={composeValidators(isEqualZero, isValidWei)}

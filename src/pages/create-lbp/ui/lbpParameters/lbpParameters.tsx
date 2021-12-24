@@ -22,8 +22,9 @@ const LbpParameterImp = () => {
     const { tokenFrom, tokenTo } = useFlowData<ParameterInType>();
   
     const initialValues = useMemo(
-        () => ({ tokenFrom, allocation: "limited", ...data.buyingFormValues }),
-        [data.buyingFormValues, tokenFrom]
+        () => {
+            return {}
+        },[]
     );
 
     // const findToken = useTokenSearch();
@@ -60,8 +61,8 @@ const LbpParameterImp = () => {
     return (
         <LbpParametersView
             onSubmit={onSubmit}
-            tokenFrom={''}
-            balance={0.888}
+            tokenFrom={tokenFrom}
+            tokenTo={tokenTo}
             initialValues={initialValues}
         />
     );

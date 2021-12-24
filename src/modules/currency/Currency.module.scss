@@ -4,6 +4,9 @@
   grid-column-gap: calc(var(--spacing-unit) * 1);
   justify-content: start;
   align-content: center;
+  font-size: 1em;
+  font-weight: 500;
+  line-height: 1.5em;
 }
 
 .small {
@@ -11,7 +14,7 @@
 }
 
 .small>img {
-  width: 0.875rem;
-  height: 0.875rem;
+  width: 1.5rem;
+  height: 1.5rem;
   vertical-align: top;
 }

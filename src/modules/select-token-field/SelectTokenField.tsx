@@ -35,7 +35,7 @@ export const SelectTokenField: FC<SelectTokenFieldType & MaybeWithClassName> = (
 				<SelectToken
 					className={className}
 					name={input.name}
-					value={input.value}
+					value={String(input.value).toLowerCase()}
 					onChange={input.onChange}
 					onBlur={input.onBlur}
 					filter={filter}

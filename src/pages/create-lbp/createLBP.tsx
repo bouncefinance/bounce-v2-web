@@ -27,7 +27,6 @@ import { useTokenSearch } from "@app/web3/api/tokens";
 import { useWeb3Provider } from "@app/web3/hooks/use-web3";
 
 import styles from "./CreateLBP.module.scss";
-import { Buying } from "./ui/buying";
 import { Confirmation, BuyingConfirmationType } from "./ui/confirmation";
 import { Settings } from "./ui/settings";
 import { Token } from "./ui/token";
