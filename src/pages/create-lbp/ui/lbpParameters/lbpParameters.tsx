@@ -8,6 +8,7 @@ import { LbpParametersView } from './LbpParametersView';
 type ParameterInType = {
     tokenFrom: TokenInfo
 	tokenTo: TokenInfo
+    tokenFromImg: string
 };
 
 export type ParameterOutType = {
@@ -19,11 +20,13 @@ export type ParameterOutType = {
 
 const LbpParameterImp = () => {
     const { moveForward, addData, data } = useFlowControl<ParameterOutType>();
-    const { tokenFrom, tokenTo } = useFlowData<ParameterInType>();
+    const { tokenFrom, tokenTo, tokenFromImg } = useFlowData<ParameterInType>();
   
     const initialValues = useMemo(
         () => {
-            return {}
+            return {
+                tokenFromImg: tokenFromImg
+            }
         },[]
     );
 

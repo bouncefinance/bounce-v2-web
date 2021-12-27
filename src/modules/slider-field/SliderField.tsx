@@ -7,6 +7,7 @@ import { DateInterval } from "@app/ui/calendar/types";
 import { DatePicker, DropdownPositionType, QuickNavType } from "@app/ui/date-picker";
 import { isDateRequired } from "@app/utils/validation";
 import { Slider, Tooltip } from "@material-ui/core";
+import styles from './SliderField.module.scss'
 
 type DateFieldType = {
 	className?: string;
@@ -26,13 +27,13 @@ type DateFieldType = {
 
 function ValueLabelComponent(props) {
 	const { children, open, value } = props;
-  
+
 	return (
-	  <Tooltip open={open} enterTouchDelay={0} placement="top" title={value}>
-		{children}
-	  </Tooltip>
+		<Tooltip open={open} enterTouchDelay={0} placement="top" title={value}>
+			{children}
+		</Tooltip>
 	);
-  }
+}
 
 export const SliderField: FC<DateFieldType & MaybeWithClassName> = ({
 	className,
@@ -56,6 +57,9 @@ export const SliderField: FC<DateFieldType & MaybeWithClassName> = ({
 					ValueLabelComponent={ValueLabelComponent}
 					aria-label="custom thumb label"
 					defaultValue={20}
+					className={styles.slider}
+					step={1}
+					// color={'#4B70FF'}
 				/>
 			)}
 		</Field>

@@ -16,6 +16,7 @@ import { CHAINS_INFO } from "@app/web3/networks/const";
 import styles from "./ProvideTokenInformation.module.scss";
 import { Currency } from "../currency";
 import { TokenLogo } from "./TokenLogo";
+import { isFromToTokensDifferent } from "@app/utils/validation";
 
 type EffectorType = {
 	address?: string;
@@ -80,7 +81,14 @@ export const LBPTokenInformation: FC<ProvideTokenInformationType> = ({
 	const chainId = useChainId();
 
 	return (
-		<Form onSubmit={onSubmit} className={styles.form} initialValues={initialState}>
+		<Form
+			onSubmit={onSubmit}
+			className={styles.form}
+			initialValues={initialState}
+			validate={(values) => {
+				return { tokenTo: isFromToTokensDifferent<string>(values.tokenFrom, values.tokenTo) };
+			}}
+		>
 			<Effector address={address} onImgChange={(value) => {
 				onImgChange(value)
 				setTokenFromImg(value)

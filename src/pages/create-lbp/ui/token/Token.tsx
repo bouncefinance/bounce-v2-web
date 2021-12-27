@@ -18,7 +18,6 @@ export type TokenOutType = {
 
 const TokenImp = () => {
 	const { moveForward, addData, data } = useFlowControl<TokenOutType>();
-	console.log('data', data)
 	const chainId = useChainId();
 	const initialState = {
 		tokenFrom: data.tokenFrom?.address,
@@ -32,7 +31,10 @@ const TokenImp = () => {
 
 	const onSubmit = async (_values: any) => {
 		addData({
-			tokenFrom: tokenFrom,
+			tokenFrom: {
+				...tokenFrom,
+				logoURI: tokenFromUrl
+			},
 			tokenTo: tokenTo,
 			tokenFromImg: tokenFromUrl
 		});

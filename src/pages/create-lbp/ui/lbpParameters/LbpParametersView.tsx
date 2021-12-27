@@ -46,12 +46,12 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
     initialValues,
 }) => {
     const [alert, setAlert] = useState<AlertType | undefined>();
-    const [newBalance, setNewBalance] = useState(0);
+    const [newBalanceFrom, setNewBalanceFrom] = useState(0);
+    const [newBalanceTo, setNewBalanceTo] = useState(0);
     const findToken = useTokenSearch();
     const web3 = useWeb3();
     const provider = useWeb3Provider();
     const { account } = useWeb3React();
-    const tokenContract = getTokenContract(provider, tokenTo.address);
     const [blockStartRef, setBlockStartRef] = useState<HTMLElement | null>(null);
     const [blockEndRef, setBlockEndRef] = useState<HTMLElement | null>(null);
 
@@ -65,36 +65,33 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
         if (!tokenFrom || !tokenTo) {
             return;
         }
-
         if (!isEth(tokenFrom.address)) {
-            getBalance(tokenContract, account).then((b) =>
-                setNewBalance(parseFloat(fromWei(b, tokenFrom.decimals).toFixed(6, 1)))
+            getBalance(getTokenContract(provider, tokenFrom.address), account).then((b) =>
+                setNewBalanceFrom(parseFloat(fromWei(b, tokenFrom.decimals).toFixed(6, 1)))
             );
         } else {
             getEthBalance(web3, account).then((b) =>
-                setNewBalance(parseFloat(fromWei(b, tokenFrom.decimals).toFixed(4, 1)))
+                setNewBalanceFrom(parseFloat(fromWei(b, tokenFrom.decimals).toFixed(4, 1)))
             );
         }
 
         if (!isEth(tokenTo.address)) {
-            getBalance(tokenContract, account).then((b) =>
-                setNewBalance(parseFloat(fromWei(b, tokenTo.decimals).toFixed(6, 1)))
+            getBalance(getTokenContract(provider, tokenTo.address), account).then((b) =>
+                setNewBalanceTo(parseFloat(fromWei(b, tokenTo.decimals).toFixed(6, 1)))
             );
         } else {
             getEthBalance(web3, account).then((b) =>
-                setNewBalance(parseFloat(fromWei(b, tokenTo.decimals).toFixed(4, 1)))
+                setNewBalanceTo(parseFloat(fromWei(b, tokenTo.decimals).toFixed(4, 1)))
             );
         }
-    }, [web3, tokenContract, account, findToken, tokenTo]);
+    }, [web3, getTokenContract, account, findToken, tokenTo]);
 
     return (
         <Form
             onSubmit={onSubmit}
             className={styles.form}
             initialValues={initialValues}
-            validate={(values) => {
-                return { tokenTo: isFromToTokensDifferent<string>(tokenFrom.address, tokenTo.address) };
-            }}
+
         >
             <div className={styles.container}>
                 <div className={styles.left}>
@@ -106,13 +103,13 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
                                 label="Launch Token Amount"
                                 after={
                                     <span className={styles.balance}>
-                                        Balance: {newBalance} <Symbol token={props.values.tokenTo} />
+                                        Balance: {newBalanceFrom} <Symbol token={props.values.tokenTo} />
                                     </span>
                                 }
                             >
                                 <TextField
                                     type="number"
-                                    name="amount"
+                                    name="amountFrom"
                                     placeholder="0.00"
                                     step={FLOAT}
                                     after={
@@ -121,13 +118,14 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
                                                 {({ form }) => (
                                                     <button
                                                         className={styles.max}
-                                                        onClick={() =>
+                                                        onClick={() => {
                                                             form.change(
-                                                                "amount",
-                                                                props.values.unitPrice
-                                                                    ? (newBalance / props.values.unitPrice).toString()
+                                                                "amountFrom",
+                                                                newBalanceFrom
+                                                                    ? newBalanceFrom.toString()
                                                                     : 0
                                                             )
+                                                        }
                                                         }
                                                         type="button"
                                                     >
@@ -136,7 +134,10 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
 
                                                 )}
                                             </FormSpy>
-                                            <Currency token={tokenFrom.address} small />
+                                            {
+                                                <Currency coin={tokenFrom} small />
+                                            }
+                                            {/* <Currency token={tokenFrom.address} small /> */}
                                         </div>
                                     }
                                     validate={composeValidators(isEqualZero, isValidWei)}
@@ -154,13 +155,13 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
                                 label="Collected Token Amount"
                                 after={
                                     <span className={styles.balance}>
-                                        Balance: {newBalance} <Symbol token={props.values.tokenTo} />
+                                        Balance: {newBalanceTo} <Symbol token={props.values.tokenTo} />
                                     </span>
                                 }
                             >
                                 <TextField
                                     type="number"
-                                    name="amount"
+                                    name="amountTo"
                                     placeholder="0.00"
                                     step={FLOAT}
                                     after={
@@ -171,9 +172,9 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
                                                         className={styles.max}
                                                         onClick={() =>
                                                             form.change(
-                                                                "amount",
-                                                                props.values.unitPrice
-                                                                    ? (newBalance / props.values.unitPrice).toString()
+                                                                "amountTo",
+                                                                newBalanceTo
+                                                                    ? newBalanceTo.toString()
                                                                     : 0
                                                             )
                                                         }
@@ -209,10 +210,10 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
                         </div>
 
                         <div ref={setBlockEndRef}>
-                            <Label Component="div" label="Start Time (Local Time)">
+                            <Label Component="div" label="End Time (Local Time)">
                                 <DateField
                                     placeholder="10.01.2021"
-                                    name="startPool"
+                                    name="endPool"
                                     min={getDateIntervalStart(new Date()).toString()}
                                     dropdownWidth={`${100}px`}
                                     labels={["1. Choose start date", "2. Choose start time"]}
@@ -223,15 +224,27 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
                         </div>
                     </div>
 
-                    <div className="weightSlider">
-                        <Label Component="div" label="Start Time (Local Time)">
-                            <SliderField name={"startSlider"} labels={[]} />
-                        </Label>
+                    <FormSpy>
+                        {(props) => {
+                            return <div className="weightSlider">
+                                <Label Component="div" label="Starting Weights (Price Ceiling)">
+                                    <div className={styles.weightView}>
+                                        <Currency token={tokenFrom.address} small />
+                                        <Currency token={tokenTo.address} small />
+                                    </div>
+                                    <SliderField name={"startSlider"} labels={[]} />
+                                </Label>
 
-                        <Label Component="div" label="Start Time (Local Time)">
-                            <SliderField name={"endSlider"} labels={[]} />
-                        </Label>
-                    </div>
+                                <Label Component="div" label="End Weights">
+                                    <div className={styles.weightView}>
+                                        <Currency token={tokenFrom.address} small />
+                                        <Currency token={tokenTo.address} small />
+                                    </div>
+                                    <SliderField name={"endSlider"} labels={[]} />
+                                </Label>
+                            </div>
+                        }}
+                    </FormSpy>
                 </div>
 
                 <div className="right">

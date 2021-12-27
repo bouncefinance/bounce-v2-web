@@ -18,5 +18,5 @@ export const Icon: React.FC<IIconProps> = ({ src }) => {
 		return <img src={EmptySVG} alt="" />;
 	}
 
-	return <img src={src as string} onError={() => setError(true)} alt="" />;
+	return <img style={{borderRadius: '50%'}} src={src as string} onError={() => setError(true)} alt="" />;
 };
