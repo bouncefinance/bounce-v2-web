@@ -4,7 +4,7 @@ import styles from './lbpParameters.module.scss'
 
 const option = {
     xAxis: {
-        data: ['6 Dec', '12 Dec', '18 Dec', '24 Dec']
+        data: ['6 Dec', '12 Dec', '18 Dec', '24 Dec', '30 Dec']
     },
     tooltip: {
         trigger: 'axis',
@@ -14,7 +14,8 @@ const option = {
         backgroundColor: 'rgba(255, 255, 255, 0.8)',
         formatter: (data: any) => {
             // console.log(data)
-            return `$${data[0].value}`
+            const value = data[0].value === '-' ? data[1].value : data[0].value
+            return `$${value}`
         }
     },
     yAxis: {
@@ -26,7 +27,8 @@ const option = {
     },
     series: [
         {
-            data: [2.4, 1.2, 0.4, 0.1],
+            name: 'before',
+            data: [2.4, 1.2, 1.4, '-', '-'],
             itemStyle: {
                 normal: {
                     label: {
@@ -37,9 +39,26 @@ const option = {
                 }
             },
             type: 'line',
-            smooth: true
+            smooth: true,
+            color: 'rgba(75, 112, 255, 1)'
+        },
+        {
+            name: 'after',
+            data: ['-', '-', 1.4, 1.2, 0.2],
+            itemStyle: {
+                normal: {
+                    label: {
+                        formatter: (value: number) => {
+                            return `$${value}`
+                        }
+                    }
+                }
+            },
+            type: 'line',
+            smooth: true,
+            color: 'rgba(75, 112, 255, .3)'
         }
-    ]
+    ],
 };
 
 export function Charts() {

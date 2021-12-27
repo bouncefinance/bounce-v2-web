@@ -13,24 +13,28 @@ import { TokenInfo } from "@uniswap/token-lists";
 export type TokenOutType = {
 	tokenFrom: TokenInfo
 	tokenTo: TokenInfo
+	tokenFromImg: string
 };
 
 const TokenImp = () => {
 	const { moveForward, addData, data } = useFlowControl<TokenOutType>();
+	console.log('data', data)
 	const chainId = useChainId();
 	const initialState = {
 		tokenFrom: data.tokenFrom?.address,
-		address: data.tokenFrom?.address,
+		tokenFromUrl: data.tokenFromImg,
 		tokenTo: data.tokenTo?.address,
 	};
 
 	const [tokenFrom, setTokenFrom] = useState<TokenInfo>()
 	const [tokenTo, setTokenTo] = useState<TokenInfo>()
+	const [tokenFromUrl, setTokenFromUrl] = useState<string>()
 
 	const onSubmit = async (_values: any) => {
 		addData({
 			tokenFrom: tokenFrom,
-			tokenTo: tokenTo
+			tokenTo: tokenTo,
+			tokenFromImg: tokenFromUrl
 		});
 
 		moveForward();
@@ -49,12 +53,17 @@ const TokenImp = () => {
 				setAddress(record1.address);
 			}
 		}
+
 		if (tokenTo) {
 			const record2 = findToken(tokenTo);
 			if (record2) {
 				setTokenTo(record2)
 			}
 		}
+	};
+
+	const onImgChange = (tokenFromUrl: string | null) => {
+		setTokenFromUrl(tokenFromUrl || tokenFrom?.logoURI)
 	};
 
 	const getLinkByNetwork = defineNetworkMapper({
@@ -66,12 +75,12 @@ const TokenImp = () => {
 		[WEB3_NETWORKS.FANTOM]: `https://ftmscan.com/address/${address}`,
 	});
 
-	console.log('initialState', initialState)
 
 	return (
 		<LBPTokenInformation
 			onSubmit={onSubmit}
 			onTokenChange={onTokenChange}
+			onImgChange={onImgChange}
 			initialState={initialState}
 			address={address}
 			href={getLinkByNetwork(chainId)}

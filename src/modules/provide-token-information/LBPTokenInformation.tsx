@@ -1,5 +1,5 @@
 import { TokenInfo } from "@uniswap/token-lists";
-import { FC, useCallback, useEffect } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { useForm, useFormState, FormSpy } from "react-final-form";
 
 import { Form } from "@app/modules/form";
@@ -14,15 +14,18 @@ import { useChainId } from "@app/web3/hooks/use-web3";
 import { CHAINS_INFO } from "@app/web3/networks/const";
 
 import styles from "./ProvideTokenInformation.module.scss";
+import { Currency } from "../currency";
+import { TokenLogo } from "./TokenLogo";
 
 type EffectorType = {
 	address?: string;
+	onImgChange?: (imgUrl: string | null) => void;
 	onTokenChange(token0: string, token1: string): void;
 };
 
-const Effector: FC<EffectorType> = ({ address, onTokenChange }) => {
+const Effector: FC<EffectorType> = ({ address, onImgChange, onTokenChange }) => {
 	const form = useForm();
-	const { values: { tokenFrom, tokenTo } } = useFormState();
+	const { values: { tokenFrom, tokenTo, tokenFromUrl } } = useFormState();
 
 	useEffect(() => {
 		onTokenChange(tokenFrom, tokenTo);
@@ -33,6 +36,22 @@ const Effector: FC<EffectorType> = ({ address, onTokenChange }) => {
 			form.change("address", address);
 		});
 	}, [address, form]);
+
+	useEffect(() => {
+		(async () => {
+			try {
+				await fetch(tokenFromUrl).then(res => {
+					if (res.status === 200) {
+						onImgChange(tokenFromUrl)
+					} else {
+						onImgChange(null)
+					}
+				})
+			} catch (error) {
+				onImgChange(null)
+			}
+		})()
+	}, [tokenFromUrl, onImgChange])
 
 	return null;
 };
@@ -47,6 +66,7 @@ type ProvideTokenInformationType = EffectorType & {
 export const LBPTokenInformation: FC<ProvideTokenInformationType> = ({
 	onSubmit,
 	onTokenChange,
+	onImgChange,
 	address,
 	initialState,
 	href,
@@ -56,12 +76,15 @@ export const LBPTokenInformation: FC<ProvideTokenInformationType> = ({
 		(token: TokenInfo) => token.address !== "0x0000000000000000000000000000000000000000",
 		[]
 	);
-
+	const [tokenFromImg, setTokenFromImg] = useState(initialState.tokenFromUrl)
 	const chainId = useChainId();
 
 	return (
 		<Form onSubmit={onSubmit} className={styles.form} initialValues={initialState}>
-			<Effector address={address} onTokenChange={onTokenChange} />
+			<Effector address={address} onImgChange={(value) => {
+				onImgChange(value)
+				setTokenFromImg(value)
+			}} onTokenChange={onTokenChange} />
 			<Label className={styles.label} Component="div" label="Launch Token" tooltip="Select a ERC20 token.">
 				<SelectTokenField
 					name="tokenFrom"
@@ -69,26 +92,32 @@ export const LBPTokenInformation: FC<ProvideTokenInformationType> = ({
 					filter={withoutEth ? notEtherium : undefined}
 					required
 				/>
+				{address && <NavLink
+					className={styles.link}
+					href={href}
+					size="medium"
+					variant="text"
+					color="dark-grey"
+					weight="regular"
+				>
+					{`View on ${CHAINS_INFO[chainId].explorer.name}`}
+				</NavLink>}
 			</Label>
-			<Label Component="label" className={styles.label} label="Token contact address">
-				<TextField
-					type="text"
-					name="address"
-					placeholder="0x00A9b7ED8C71C6910Fb4A9bc41de2391b74c0000"
-					readOnly
-					required
-				/>
+			<Label Component="label" className={styles.label} label="Token Logo URL">
+				<div className={styles.tokenFromLogoWrapper}>
+					<TextField
+						className={styles.tokenFromLogoInput}
+						type="text"
+						name="tokenFromUrl"
+						placeholder="URL of token image"
+					/>
+					<div className={styles.tokenFromPre}>
+						{tokenFromImg ?
+							<img src={tokenFromImg} alt='' /> : <Currency token={address} small isShowSymbol={false} />}
+					</div>
+				</div>
+				<p style={{ fontSize: 12, color: 'rgba(0,0,0,.5)' }}>Please enter a valid URL starting with "https://" and ending in".jpeg",".jpg",or ".png"</p>
 			</Label>
-			<NavLink
-				className={styles.link}
-				href={href}
-				size="medium"
-				variant="text"
-				color="dark-grey"
-				weight="regular"
-			>
-				{`View on ${CHAINS_INFO[chainId].explorer.name}`}
-			</NavLink>
 
 			<Label className={styles.label} Component="div" label="Collected Token" tooltip="Select a ERC20 token.">
 				<SelectTokenField

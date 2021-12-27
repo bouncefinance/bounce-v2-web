@@ -42,9 +42,10 @@ export const CurrencyView: FC<ICurrencyViewProps> = ({
 interface ICurrencyProps extends ICurrencyViewProps {
 	coin?: IToken;
 	token?: string;
+	isShowSymbol?: boolean
 }
 
-export const Currency: FC<ICurrencyProps> = ({ token, coin, small }) => {
+export const Currency: FC<ICurrencyProps> = ({ token, coin, small, isShowSymbol = true,  }) => {
 	const detail = useTokenSearchWithFallback(coin?.address || token, coin) as any;
 	const logoURI = detail?.logoURI || detail?.thumbURL || detail?.smallURL || undefined;
 
@@ -55,7 +56,7 @@ export const Currency: FC<ICurrencyProps> = ({ token, coin, small }) => {
 	return (
 		<CurrencyView
 			cacheKey={detail.address}
-			symbol={detail?.symbol?.toUpperCase()}
+			symbol={isShowSymbol ? detail?.symbol?.toUpperCase() : ''}
 			img={logoURI}
 			small={small}
 		/>
