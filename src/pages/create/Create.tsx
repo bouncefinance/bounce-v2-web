@@ -60,7 +60,7 @@ export const Create: FC<MaybeWithClassName> = ({ className }) => {
 
 							<RadioField
 								name="createType"
-								label="LBP"
+								label="LBPs"
 								value="lbp"
 								tooltip="Liquidity Providers Auction"
 							/>

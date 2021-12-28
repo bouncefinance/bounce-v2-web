@@ -21,6 +21,7 @@ type TextFieldType = {
 	after?: string | ReactNode;
 	min?: number;
 	max?: number;
+	hasTip?: boolean
 };
 
 export const TextField: FC<TextFieldType & MaybeWithClassName> = ({
@@ -38,6 +39,7 @@ export const TextField: FC<TextFieldType & MaybeWithClassName> = ({
 	step,
 	min,
 	max,
+	hasTip
 }) => {
 	return (
 		<Field
@@ -66,6 +68,7 @@ export const TextField: FC<TextFieldType & MaybeWithClassName> = ({
 					after={after}
 					inputProps={{ step, min, max }}
 					error={(meta.error && meta.touched ? meta.error : undefined) || meta.submitError}
+					hasTip={hasTip}
 				/>
 			)}
 		</Field>

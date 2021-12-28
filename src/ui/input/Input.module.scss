@@ -108,6 +108,9 @@
 .error span {
   position: absolute;
   top: calc(var(--spacing-unit) * 1.5);
-
   color: rgba(var(--error), 1);
+}
+
+.hasTip span {
+  top: calc(var(--spacing-unit) * 3.5) !important;
 }
