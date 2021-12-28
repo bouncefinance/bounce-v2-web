@@ -73,7 +73,7 @@ export const GeckoToken: FC<IGeckoTokenProps> = ({
 	cacheKey,
 	isGecko = true,
 	token,
-	className,
+	className
 }) => {
 	return (
 		<Caption className={classNames(className, styles.component, styles.small)} Component="span">

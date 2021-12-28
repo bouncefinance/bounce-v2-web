@@ -1,28 +1,14 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { Field } from "react-final-form";
-
 import { MaybeWithClassName } from "@app/helper/react/types";
 
-import { DateInterval } from "@app/ui/calendar/types";
-import { DatePicker, DropdownPositionType, QuickNavType } from "@app/ui/date-picker";
-import { isDateRequired } from "@app/utils/validation";
-import { Slider, Tooltip } from "@material-ui/core";
-import styles from './SliderField.module.scss'
+import { Slider, Tooltip, withStyles } from "@material-ui/core";
 
-type DateFieldType = {
+type SliderFieldType = {
 	className?: string;
-	value?: Date;
-	name: string;
-	placeholder?: string;
-	readOnly?: boolean;
-	required?: boolean;
-	labels: string[];
-	quickNav?: Array<QuickNavType>;
-	dropdownWidth?: string;
-	dropdownPosition?: DropdownPositionType;
-	min?: string;
-	max?: string;
-	selection?: DateInterval;
+	value?: number;
+	onChange?: (e: any) => void,
+	setValue?: (e: any) => void
 };
 
 function ValueLabelComponent(props) {
@@ -35,33 +21,59 @@ function ValueLabelComponent(props) {
 	);
 }
 
-export const SliderField: FC<DateFieldType & MaybeWithClassName> = ({
-	className,
-	name,
-	placeholder,
-	readOnly,
+export const SliderField: FC<SliderFieldType & MaybeWithClassName> = ({
 	value,
-	required,
-	labels,
-	quickNav,
-	dropdownWidth,
-	dropdownPosition,
-	min,
-	max,
-	selection,
+	setValue,
+	onChange
 }) => {
+
+	const handleChange = (_e: any, newValue: number) => {
+		setValue(newValue)
+		onChange && onChange(newValue)
+	}
+
 	return (
-		<Field name={name} value={value} validate={required ? isDateRequired : undefined}>
-			{({ input, meta }) => (
-				<Slider
-					ValueLabelComponent={ValueLabelComponent}
-					aria-label="custom thumb label"
-					defaultValue={20}
-					className={styles.slider}
-					step={1}
-					// color={'#4B70FF'}
-				/>
-			)}
-		</Field>
+		<PrettoSlider
+			ValueLabelComponent={ValueLabelComponent}
+			aria-label="thumb track rail"
+			valueLabelFormat={(x) => x + ' %'}
+			valueLabelDisplay="on"
+			value={value}
+			min={1}
+			max={99}
+			onChange={handleChange}
+		/>
 	);
 };
+
+const PrettoSlider = withStyles({
+	root: {
+		color: '#4B70FF',
+		height: 4,
+	},
+	thumb: {
+		height: 18,
+		width: 18,
+		backgroundColor: '#eee',
+		border: '4px solid currentColor',
+		boxSizing: "border-box",
+		marginTop: -5,
+		marginLeft: -5,
+		'&:focus, &:hover, &$active': {
+			boxShadow: 'inherit',
+		},
+	},
+	active: {},
+	valueLabel: {
+		left: 'calc(-50% + 4px)',
+	},
+	track: {
+		height: 8,
+		borderRadius: 4,
+	},
+	rail: {
+		backgroundColor: '#4B70FF',
+		height: 8,
+		borderRadius: 4,
+	},
+})(Slider);

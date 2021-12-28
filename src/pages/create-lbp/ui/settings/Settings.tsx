@@ -20,6 +20,8 @@ export type SettingsOutType = {
 const SettingsImp = () => {
 	const { moveForward, addData, data } = useFlowControl<SettingsOutType>();
 
+	// console.log(data)
+
 	const onSubmit = async (values: any) => {
 		addData({
 			// poolName: values.poolName,

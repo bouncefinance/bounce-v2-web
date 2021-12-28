@@ -7,55 +7,45 @@ import { LbpParametersView } from './LbpParametersView';
 
 type ParameterInType = {
     tokenFrom: TokenInfo
-	tokenTo: TokenInfo
+    tokenTo: TokenInfo
     tokenFromImg: string
 };
 
 export type ParameterOutType = {
-    tokenTo: string;
-    unitPrice: number;
-    amount: number;
-    buyingFormValues: any;
+    amountFrom: number,
+    amountTo: number,
+    startDate: Date,
+    endDate: Date,
+    startWeight: number,
+    endWeight: number
 };
 
 const LbpParameterImp = () => {
     const { moveForward, addData, data } = useFlowControl<ParameterOutType>();
     const { tokenFrom, tokenTo, tokenFromImg } = useFlowData<ParameterInType>();
-  
+
     const initialValues = useMemo(
         () => {
             return {
-                tokenFromImg: tokenFromImg
+                tokenFromImg: tokenFromImg,
+                amountFrom: data.amountFrom,
+                amountTo: data.amountTo,
+                startDate: data.startDate,
+                endDate: data.endDate,
+                startWeight: data.startWeight,
+                endWeight: data.endWeight
             }
-        },[]
+        }, []
     );
-
-    // const findToken = useTokenSearch();
-    // const web3 = useWeb3();
-    // const provider = useWeb3Provider();
-    // const { account } = useWeb3React();
-
-    // const [balance, setBalance] = useState(0);
-    // const tokenContract = getTokenContract(provider, findToken(tokenFrom).address);
-
-    // useEffect(() => {
-    // 	if (!isEth(findToken(tokenFrom).address)) {
-    // 		getBalance(tokenContract, account).then((b) =>
-    // 			setBalance(parseFloat(fromWei(b, findToken(tokenFrom).decimals).toFixed(6, 1)))
-    // 		);
-    // 	} else {
-    // 		getEthBalance(web3, account).then((b) =>
-    // 			setBalance(parseFloat(fromWei(b, findToken(tokenFrom).decimals).toFixed(4, 1)))
-    // 		);
-    // 	}
-    // }, [web3, tokenContract, account, findToken, tokenFrom]);
 
     const onSubmit = async (values: any) => {
         addData({
-            // tokenTo: values.tokenTo,
-            // unitPrice: parseFloat(values.unitPrice),
-            // amount: parseFloat(values.amount),
-            // buyingFormValues: values,
+            amountFrom: values.amountFrom,
+            amountTo: values.amountFrom,
+            startDate: values.startDate,
+            endDate: values.endDate,
+            startWeight: values.startWeight,
+            endWeight: values.endWeight
         });
 
         moveForward();

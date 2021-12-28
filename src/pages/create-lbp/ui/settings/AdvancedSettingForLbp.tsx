@@ -85,7 +85,7 @@ export const AdvancedSettingForLbp: FC<MaybeWithClassName & BuyingViewType> = ({
                         size="large"
                         iconAfter={<RightArrow2 width={18} style={{ marginLeft: 12 }} />}
                         submit
-                    >
+                    > 
                         {initialValues.amount && form.dirty ? "Save" : "Next Step"}
                     </PrimaryButton>
                 )}

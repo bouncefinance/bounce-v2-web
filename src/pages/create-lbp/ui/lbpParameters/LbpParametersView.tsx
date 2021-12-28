@@ -45,7 +45,6 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
     tokenTo,
     initialValues,
 }) => {
-    const [alert, setAlert] = useState<AlertType | undefined>();
     const [newBalanceFrom, setNewBalanceFrom] = useState(0);
     const [newBalanceTo, setNewBalanceTo] = useState(0);
     const findToken = useTokenSearch();
@@ -54,6 +53,8 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
     const { account } = useWeb3React();
     const [blockStartRef, setBlockStartRef] = useState<HTMLElement | null>(null);
     const [blockEndRef, setBlockEndRef] = useState<HTMLElement | null>(null);
+    const [startWeight, setStartWeight] = useState(initialValues.startWeight || 50)
+    const [endWeight, setEndWeight] = useState(initialValues.endWeight || 50)
 
     type AlertType = {
         title: string;
@@ -86,9 +87,17 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
         }
     }, [web3, getTokenContract, account, findToken, tokenTo]);
 
+    const handleSubmit = (values: any) => {
+        onSubmit({
+            ...values,
+            startWeight: startWeight,
+            endWeight: endWeight
+        })
+    }
+
     return (
         <Form
-            onSubmit={onSubmit}
+            onSubmit={handleSubmit}
             className={styles.form}
             initialValues={initialValues}
 
@@ -137,7 +146,6 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
                                             {
                                                 <Currency coin={tokenFrom} small />
                                             }
-                                            {/* <Currency token={tokenFrom.address} small /> */}
                                         </div>
                                     }
                                     validate={composeValidators(isEqualZero, isValidWei)}
@@ -199,7 +207,7 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
                             <Label Component="div" label="Start Time (Local Time)">
                                 <DateField
                                     placeholder="10.01.2021"
-                                    name="startPool"
+                                    name="startDate"
                                     min={getDateIntervalStart(new Date()).toString()}
                                     dropdownWidth={`${100}px`}
                                     labels={["1. Choose start date", "2. Choose start time"]}
@@ -213,7 +221,7 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
                             <Label Component="div" label="End Time (Local Time)">
                                 <DateField
                                     placeholder="10.01.2021"
-                                    name="endPool"
+                                    name="endDate"
                                     min={getDateIntervalStart(new Date()).toString()}
                                     dropdownWidth={`${100}px`}
                                     labels={["1. Choose start date", "2. Choose start time"]}
@@ -225,14 +233,18 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
                     </div>
 
                     <FormSpy>
-                        {(props) => {
+                        {({ form }) => {
                             return <div className="weightSlider">
                                 <Label Component="div" label="Starting Weights (Price Ceiling)">
                                     <div className={styles.weightView}>
                                         <Currency token={tokenFrom.address} small />
                                         <Currency token={tokenTo.address} small />
                                     </div>
-                                    <SliderField name={"startSlider"} labels={[]} />
+                                    <SliderField value={startWeight} setValue={setStartWeight} onChange={(newValue: number) => {
+                                        if (newValue < endWeight) {
+                                            setEndWeight(newValue)
+                                        }
+                                    }} />
                                 </Label>
 
                                 <Label Component="div" label="End Weights">
@@ -240,7 +252,11 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
                                         <Currency token={tokenFrom.address} small />
                                         <Currency token={tokenTo.address} small />
                                     </div>
-                                    <SliderField name={"endSlider"} labels={[]} />
+                                    <SliderField value={endWeight} setValue={setEndWeight} onChange={(newValue: number) => {
+                                        if (newValue > startWeight) {
+                                            setStartWeight(newValue)
+                                        }
+                                    }} />
                                 </Label>
                             </div>
                         }}
