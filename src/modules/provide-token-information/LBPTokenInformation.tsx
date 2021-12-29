@@ -28,6 +28,8 @@ const Effector: FC<EffectorType> = ({ address, onImgChange, onTokenChange }) => 
 	const form = useForm();
 	const { values: { tokenFrom, tokenTo, tokenFromUrl } } = useFormState();
 
+	console.log(tokenFromUrl)
+
 	useEffect(() => {
 		onTokenChange(tokenFrom, tokenTo);
 	}, [onTokenChange, tokenFrom, tokenTo]);

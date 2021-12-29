@@ -1,6 +1,6 @@
 import { walletConversion } from "@app/utils/convertWallet";
+import { ConfirmationView } from "./ConfirmationView";
 
-import { ConfirmationView } from "./Confirmation";
 
 export const Default = () => {
 	return (
@@ -16,6 +16,7 @@ export const Default = () => {
 				whitelist="Yes"
 				start="Start"
 				type="Fixed Swap Auction"
+				children={undefined}
 			/>
 		</div>
 	);

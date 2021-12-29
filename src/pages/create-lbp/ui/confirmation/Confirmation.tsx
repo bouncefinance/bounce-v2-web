@@ -20,110 +20,39 @@ import { SettingsOutType } from "../settings";
 import { TokenOutType } from "../token";
 
 import styles from "./Confirmation.module.scss";
+import { ConfirmationView } from "./ConfirmationView";
+import { ParameterOutType } from "../lbpParameters/lbpParameters";
 
-type ConfirmationType = {
-	name: string;
-	type: string;
-	address: string;
-	tokenFrom: ReactNode;
-	declaim: string;
-	tokenTo: ReactNode;
-	unitPrice: ReactNode;
-	amount: ReactNode;
-	whitelist: string;
-	start: string;
-};
+
 
 type CommonType = {
 	type: string;
 };
 
-export const ConfirmationView: FC<MaybeWithClassName & ConfirmationType & CommonType> = ({
-	className,
-	name,
-	type,
-	address,
-	tokenFrom,
-	declaim,
-	tokenTo,
-	unitPrice,
-	amount,
-	whitelist,
-	start,
-}) => {
-	const TOKEN_DATA = {
-		"Contact address": address,
-		"Token symbol": tokenFrom,
-		"Token declaim": declaim,
-	};
-
-	const PARAMETERS_DATA = {
-		"Pool type": type,
-		"Desired Amount": amount,
-		"Receipt Currency": tokenTo,
-		"Unit Price": unitPrice,
-	};
-
-	const SETTINGS_DATA = {
-		Participations: whitelist,
-		"Start time": start,
-	};
-
-	return (
-		<div className={classNames(className, styles.component)}>
-			<Heading3 className={styles.title}>{name}</Heading3>
-			<DescriptionList title="Token Information" data={TOKEN_DATA} />
-			<DescriptionList title="OTC Parameters" data={PARAMETERS_DATA} />
-			<DescriptionList title="Advanced Setting" data={SETTINGS_DATA} />
-		</div>
-	);
-};
-
-export type BuyingConfirmationType = TokenOutType & SettingsOutType & BuyingOutType;
-export type SellingConfirmationType = TokenOutType & SettingsOutType & SellingOutType;
-
-export type ConfirmationInType = BuyingConfirmationType | SellingConfirmationType;
+export type ConfirmationInType = TokenOutType & ParameterOutType & SettingsOutType;
 
 export const ConfirmationImp: FC<CommonType> = ({ type }) => {
 	const {
-		unitPrice,
-		amount,
+		tokenFrom, tokenTo
 	} = useFlowData<ConfirmationInType>();
 
-	const convertDate = useConvertDate();
-	const val = new BigNumber(amount).multipliedBy(new BigNumber(unitPrice)).toString();
-	const am = parseInt((Number(val) * 1000000).toString()) / 1000000;
+	console.log(tokenFrom, tokenTo)
 
 	return (
 		<div>
-			{/* <ConfirmationView
-				name={`${poolName} OTC Pool`}
-				address={walletConversion(tokenFromAddress)}
-				tokenFrom={<Currency token={tokenFrom} small={true} />}
-				declaim={tokenDecimal}
-				tokenTo={<Currency token={tokenTo} small={true} />}
-				unitPrice={
-					<>
-						1 <Symbol token={tokenFrom} /> = {unitPrice} <Symbol token={tokenTo} />
-					</>
-				}
-				amount={
-					type === OTC_TYPE.sell ? (
-						<>
-							{am}&nbsp;
-							<Symbol token={tokenTo} />
-						</>
-					) : (
-						<>
-							{amount} <Symbol token={tokenFrom} />
-						</>
-					)
-				}
-				whitelist={whitelist ? "Whitelist" : "Public"}
-				start={convertDate(new Date(startPool), "long")}
-				type={OTC_SHORT_NAME_MAPPING[type]}
-			/> */}
-			<h1>ConfirmationLBPView</h1>
+			<ConfirmationView
+				name="Test"
+				address={walletConversion("0xF2e62668f6Fd9Bb71fc4E80c44CeF32940E27a45")}
+				tokenFrom="ETH"
+				declaim="18"
+				tokenTo="ETH"
+				unitPrice={`1 ETH = 10 ETH`}
+				amount={"100 ETH"}
+				whitelist="Yes"
+				start="Start"
+				type="Fixed Swap Auction"
+				children={undefined}
+			/>
 		</div>
 	);
 };

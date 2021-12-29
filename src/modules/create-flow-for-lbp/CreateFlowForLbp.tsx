@@ -53,7 +53,12 @@ export const CreateFlowForLbp: FC<CreateFlowType & MaybeWithClassName> = ({
 								{body}
 							</CreateSteps>
 						) : (
-							<CreateConfirmation onComplete={moveForward} alert={alert} moveBack={moveBack}>
+							<CreateConfirmation
+								onComplete={moveForward}
+								alert={alert}
+								moveBack={moveBack}
+								bigScreen
+							>
 								{body}
 							</CreateConfirmation>
 						)}

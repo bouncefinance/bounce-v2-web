@@ -27,7 +27,7 @@ import { useTokenSearch } from "@app/web3/api/tokens";
 import { useWeb3Provider } from "@app/web3/hooks/use-web3";
 
 import styles from "./CreateLBP.module.scss";
-import { Confirmation, BuyingConfirmationType } from "./ui/confirmation";
+import { Confirmation, ConfirmationInType } from "./ui/confirmation";
 import { Settings } from "./ui/settings";
 import { Token } from "./ui/token";
 import { CreateFlowForLbp } from "@app/modules/create-flow-for-lbp";
@@ -82,7 +82,7 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 
 	const [lastOperation, setLastOperation] = useState<(() => void) | null>(null);
 
-	const onComplete = async (data: BuyingConfirmationType) => {
+	const onComplete = async (data: ConfirmationInType) => {
 		// const operation = async () => {
 		// 	setOperation(OPERATION.approval);
 

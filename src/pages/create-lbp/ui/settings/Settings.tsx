@@ -34,7 +34,7 @@ const SettingsImp = () => {
 		moveForward();
 	};
 
-	return <AdvancedSettingForLbp onSubmit={onSubmit} initialValues={initialValues} tokenFrom={""} balance={0} />;
+	return <AdvancedSettingForLbp onSubmit={onSubmit} initialValues={initialValues} />;
 };
 
 export const Settings = defineFlowStep<{}, SettingsOutType, {}>({
