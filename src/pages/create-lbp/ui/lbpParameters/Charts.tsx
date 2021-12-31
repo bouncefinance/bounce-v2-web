@@ -1,76 +1,57 @@
-import { useEffect, useRef } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import * as echarts from 'echarts';
 import styles from './lbpParameters.module.scss'
+import { getDateSlice, getOption, getPriceSlice } from "./chartDate";
 
-const option = {
-    xAxis: {
-        data: ['6 Dec', '12 Dec', '18 Dec', '24 Dec', '30 Dec']
-    },
-    tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-            type: 'cross'
-        },
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-        formatter: (data: any) => {
-            // console.log(data)
-            const value = data[0].value === '-' ? data[1].value : data[0].value
-            return `$${value}`
-        }
-    },
-    yAxis: {
-        axisLabel: {
-            formatter: (value: number) => {
-                return `$${value}`
-            }
-        },
-    },
-    series: [
-        {
-            name: 'before',
-            data: [2.4, 1.2, 1.4, '-', '-'],
-            itemStyle: {
-                normal: {
-                    label: {
-                        formatter: (value: number) => {
-                            return `$${value}`
-                        }
-                    }
-                }
-            },
-            type: 'line',
-            smooth: true,
-            color: 'rgba(75, 112, 255, 1)'
-        },
-        {
-            name: 'after',
-            data: ['-', '-', 1.4, 1.2, 0.2],
-            itemStyle: {
-                normal: {
-                    label: {
-                        formatter: (value: number) => {
-                            return `$${value}`
-                        }
-                    }
-                }
-            },
-            type: 'line',
-            smooth: true,
-            color: 'rgba(75, 112, 255, .3)'
-        }
-    ],
-};
+const SLICE = 3
 
-export function Charts() {
+
+interface IChartsParams {
+    amountTokenFrom: number
+    amountTokenTo: number
+    startWeight: number
+    endWeight: number
+    startDate: Date
+    endDate: Date
+}
+
+export const Charts: FC<IChartsParams> = ({
+    amountTokenFrom,
+    amountTokenTo,
+    startWeight,
+    endWeight,
+    startDate,
+    endDate
+}) => {
     const ref = useRef<HTMLDivElement | null>(null)
+    const [dateSlice, setDateSlice] = useState(getDateSlice())
+    const [priceSlice, setPriceSlice] = useState([])
+
+    useEffect(() => {
+        const dateSlice = getDateSlice(startDate, endDate, SLICE)
+        setDateSlice(dateSlice)
+    }, [startDate, endDate])
+
+    useEffect(() => {
+        (async () => {
+            const priceSlice = await getPriceSlice(dateSlice, amountTokenFrom, amountTokenTo, startWeight, endWeight)
+            // console.log('priceSlice', priceSlice)
+            setPriceSlice(priceSlice)
+        })()
+    }, [dateSlice, amountTokenFrom, amountTokenTo, startWeight, endWeight])
+
 
     useEffect(() => {
         if (ref && ref.current) {
             const myChart = echarts.init(ref.current);
-            myChart.setOption(option)
+            myChart.setOption(getOption({
+                dateSlice: dateSlice,
+                priceSlice: priceSlice,
+                model: (dateSlice.length >= 2 && dateSlice[dateSlice.length - 1] - dateSlice[0] > 1000 * 60 * 60 * 24) ? 'day' : 'hour'
+            }))
         }
 
-    }, [ref])
+    }, [ref, dateSlice, priceSlice])
 
     return (
         <div className={styles.echartsBox}>

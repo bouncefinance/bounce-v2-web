@@ -29,6 +29,7 @@ import { DateField } from "@app/modules/date-field";
 import { SliderField } from "@app/modules/slider-field";
 import { Charts } from "./Charts";
 import { TokenInfo } from "@uniswap/token-lists";
+import moment from "moment";
 
 type BuyingViewType = {
     onSubmit(values): void;
@@ -53,7 +54,7 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
     const { account } = useWeb3React();
     const [blockStartRef, setBlockStartRef] = useState<HTMLElement | null>(null);
     const [blockEndRef, setBlockEndRef] = useState<HTMLElement | null>(null);
-    const [startWeight, setStartWeight] = useState(initialValues.startWeight || 50)
+    const [startWeight, setStartWeight] = useState(initialValues.startWeight || 80)
     const [endWeight, setEndWeight] = useState(initialValues.endWeight || 50)
 
     type AlertType = {
@@ -206,7 +207,7 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
                         <div ref={setBlockStartRef}>
                             <Label Component="div" label="Start Time (Local Time)">
                                 <DateField
-                                    placeholder="10.01.2021"
+                                    placeholder={moment().format('MM.DD.YYYY HH:MM')}
                                     name="startDate"
                                     min={getDateIntervalStart(new Date()).toString()}
                                     dropdownWidth={`${100}px`}
@@ -220,7 +221,7 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
                         <div ref={setBlockEndRef}>
                             <Label Component="div" label="End Time (Local Time)">
                                 <DateField
-                                    placeholder="10.01.2021"
+                                    placeholder={moment(new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 3)).format('MM.DD.YYYY HH:MM')}
                                     name="endDate"
                                     min={getDateIntervalStart(new Date()).toString()}
                                     dropdownWidth={`${100}px`}
@@ -264,7 +265,19 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
                 </div>
 
                 <div className="right">
-                    <Charts />
+                    <FormSpy>
+                        {(form) => (
+                            <Charts
+                                amountTokenFrom={form.values.amountFrom}
+                                amountTokenTo={form.values.amountTo}
+                                startWeight={startWeight}
+                                endWeight={endWeight}
+                                startDate={form.values.startDate}
+                                endDate={form.values.endDate}
+                            />
+                        )}
+                    </FormSpy>
+
                 </div>
             </div>
 
