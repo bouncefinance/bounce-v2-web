@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useContext } from "react";
 
 import React from "react";
 import { uid } from "react-uid";
@@ -9,6 +9,7 @@ import { CreateSteps } from "@app/modules/create-steps";
 import { Flow } from "@app/modules/flow";
 
 import styles from "./CreateFlowForLbp.module.scss";
+import { SubmitContext } from "@app/pages/create-lbp/createLBP";
 
 type CreateFlowType = {
 	alert?: ReactNode;
@@ -28,6 +29,9 @@ export const CreateFlowForLbp: FC<CreateFlowType & MaybeWithClassName> = ({
 	alert,
 	onComplete,
 }) => {
+	const { canSubmit, setCanSubmit } = useContext(SubmitContext)
+	console.log('canSubmit', canSubmit)
+
 	return (
 		<Flow
 			key={uid(steps)}
@@ -58,6 +62,7 @@ export const CreateFlowForLbp: FC<CreateFlowType & MaybeWithClassName> = ({
 								alert={alert}
 								moveBack={moveBack}
 								bigScreen
+								canSubmit={canSubmit}
 							>
 								{body}
 							</CreateConfirmation>

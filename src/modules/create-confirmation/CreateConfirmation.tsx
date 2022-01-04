@@ -15,7 +15,8 @@ type CreateConfirmationType = {
 	alert?: ReactNode;
 	moveBack(): void;
 	onComplete(): void;
-	bigScreen?: boolean
+	bigScreen?: boolean;
+	canSubmit?: boolean
 };
 
 export const CreateConfirmation: FC<CreateConfirmationType & MaybeWithClassName & WithChildren> = ({
@@ -24,7 +25,8 @@ export const CreateConfirmation: FC<CreateConfirmationType & MaybeWithClassName 
 	moveBack,
 	onComplete,
 	children,
-	bigScreen
+	bigScreen,
+	canSubmit = true
 }) => {
 	const [loading, setLoading] = useState(false);
 
@@ -59,7 +61,7 @@ export const CreateConfirmation: FC<CreateConfirmationType & MaybeWithClassName 
 					<PrimaryButton
 						className={styles.submit}
 						onClick={handleOnComplete}
-						disabled={loading}
+						disabled={loading || !canSubmit}
 						size="large"
 					>
 						{loading ? <Spinner size="small" /> : "Confirm"}

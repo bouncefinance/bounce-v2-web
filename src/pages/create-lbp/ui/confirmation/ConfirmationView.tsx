@@ -4,58 +4,49 @@ import { DescriptionList } from '@app/ui/description-list';
 import { Spinner } from '@app/ui/spinner';
 import { Heading3 } from '@app/ui/typography';
 import classNames from 'classnames';
-import React, { FC, ReactNode, useState } from 'react'
+import React, { Children, FC, ReactChild, ReactNode, useEffect, useState } from 'react'
 import styles from './Confirmation.module.scss'
-import { SerialNo } from './SerialNo';
-import approved from './approved.svg'
 
 type ConfirmationType = {
-    name: string;
-    type: string;
-    address: string;
-    tokenFrom: ReactNode;
-    declaim: string;
-    tokenTo: ReactNode;
-    unitPrice: ReactNode;
-    amount: ReactNode;
-    whitelist: string;
-    start: string;
+    // chaildren: ReactChild
+    name?: string;
+    launchToken: ReactNode
+    contactAddress: string
+    collectedToken: ReactNode
+    tokenLaunchDescription: string
+    tradingFee: string
+    poolDuration: string
+    amount: ReactNode
+    weights: ReactNode
 };
 
 export const ConfirmationView: FC<MaybeWithClassName & ConfirmationType & CommonType> = ({
     className,
-    name,
-    type,
-    address,
-    tokenFrom,
-    declaim,
-    tokenTo,
-    unitPrice,
+    launchToken,
+    contactAddress,
+    collectedToken,
+    tokenLaunchDescription,
+    tradingFee,
+    poolDuration,
     amount,
-    whitelist,
-    start,
+    weights,
+    children
 }) => {
-    const [approveTokenFrom, setApproveTokenFrom] = useState(false)
-    const [approveTokenTo, setApproveTokenTo] = useState(false)
-    const [approveTokenFromloading, setApproveTokenFromLoading] = useState(false)
-    const [approveTokenToLoading, setApproveTokenToLoading] = useState(false)
-
     const TOKEN_DATA = {
-        "Contact address": address,
-        "Token symbol": tokenFrom,
-        "Token declaim": declaim,
+        "Launch Token": launchToken,
+        "Contact address": contactAddress,
+        "Collected Token": collectedToken,
     };
 
     const PARAMETERS_DATA = {
-        "Pool type": type,
-        "Desired Amount": amount,
-        "Receipt Currency": tokenTo,
-        "Unit Price": unitPrice,
+        "Token Launch Description": tokenLaunchDescription,
+        "Trading Fee (%)": tradingFee
     };
 
     const SETTINGS_DATA = {
-        Participations: whitelist,
-        "Start time": start,
+        'Pool Duration': poolDuration,
+        "Amount": amount,
+        'Weights': weights
     };
 
     return (
@@ -76,56 +67,7 @@ export const ConfirmationView: FC<MaybeWithClassName & ConfirmationType & Common
                     </div>
                 </div>
                 <div className={styles.rightOption}>
-                    <div className={styles.step}>
-                        <SerialNo
-                            no={1}
-                            text='Confirm all parameters and launch the auction'
-                            hasNext
-                        />
-
-                        <SerialNo
-                            no={2}
-                            text='Approve interactions with auctioned and collateral tokens'
-                        >
-                            <div className={styles.approveButtonBox}>
-                                <div className={styles.approveFrom}>
-                                    <Button
-                                        onClick={() => { }}
-                                        variant="outlined"
-                                        color="primary-white"
-                                        disabled={approveTokenFromloading}
-                                        size="large"
-                                    >
-                                        {approveTokenFromloading ?
-                                            <Spinner size="small" /> : "Approve MONICA interactions"}
-                                    </Button>
-                                    <img src={approved} alt="" />
-                                </div>
-
-
-                                <div className={styles.approveTo}>
-                                    <Button
-                                        onClick={() => { }}
-                                        disabled={approveTokenToLoading}
-                                        variant='contained'
-                                        color="primary-black"
-                                        size="large"
-                                    >
-                                        {approveTokenToLoading ? <Spinner size="small" /> : "Approve ETH interactions"}
-                                    </Button>
-                                </div>
-
-                                {/*  <Button
-                                    size="medium"
-                                    variant="outlined"
-                                    color="primary-white"
-                                    onClick={()=>{history.push('/create/lbp')}}
-                                    >
-                                        Create Auction
-                                    </Button> */}
-                            </div>
-                        </SerialNo>
-                    </div>
+                    {children}
                 </div>
             </div>
         </div>

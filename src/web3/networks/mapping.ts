@@ -22,6 +22,15 @@ const getOtcAddress = defineNetworkMapper({
 	[WEB3_NETWORKS.FANTOM]: "0x94aCe08a344efa23Ac118AA94A66A8D699E8a1A1",
 });
 
+const getLbpAddress = defineNetworkMapper({
+	[WEB3_NETWORKS.ETH]: "",
+	[WEB3_NETWORKS.RINKEBY]: "0xA863CAE06C3E31243b609887EC4AA20Fd45E69F9",
+	[WEB3_NETWORKS.BINANCE]: "",
+	[WEB3_NETWORKS.POLYGON]: "",
+	[WEB3_NETWORKS.ARBITRUM]: "",
+	[WEB3_NETWORKS.FANTOM]: "",
+});
+
 export enum ADDRESS_MAPPING {
 	FIX_SWAP,
 }
@@ -35,4 +44,8 @@ export const getChainAddressMapping = (target: ADDRESS_MAPPING, chainId: WEB3_NE
 
 export const getOtcChainAddressMapping = (chainId: WEB3_NETWORKS) => {
 	return getOtcAddress(chainId);
+};
+
+export const getLbpChainAddressMapping = (chainId: WEB3_NETWORKS) => {
+	return getLbpAddress(chainId);
 };

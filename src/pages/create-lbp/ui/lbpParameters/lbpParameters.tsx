@@ -41,7 +41,7 @@ const LbpParameterImp = () => {
     const onSubmit = async (values: any) => {
         addData({
             amountFrom: values.amountFrom,
-            amountTo: values.amountFrom,
+            amountTo: values.amountTo,
             startDate: values.startDate,
             endDate: values.endDate,
             startWeight: values.startWeight,

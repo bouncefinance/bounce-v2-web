@@ -1,7 +1,7 @@
 import { useWeb3React } from "@web3-react/core";
 import BigNumber from "bignumber.js";
 import { useRouter } from "next/router";
-import { FC, useEffect, useMemo, useState } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useMemo, useState } from "react";
 
 import { OTC_TYPE } from "@app/api/otc/const";
 import { LBP_PATH, OTC_PATH } from "@app/const/const";
@@ -32,10 +32,12 @@ import { Settings } from "./ui/settings";
 import { Token } from "./ui/token";
 import { CreateFlowForLbp } from "@app/modules/create-flow-for-lbp";
 import lbpParameters from "./ui/lbpParameters";
+import React from "react";
+import { createLbpPool } from "@app/web3/api/bounce/lbp";
 
 const BUYING_STEPS = defineFlow(Token, lbpParameters, Settings, Confirmation);
 
-enum OPERATION {
+export enum OPERATION {
 	default = "default",
 	approval = "approval",
 	confirm = "confirm",
@@ -67,9 +69,22 @@ const CONTENT = {
 	[OPERATION.cancel]: "Sorry! Your transaction is canceled. Please try again.",
 };
 
+
+export const SubmitContext = React.createContext<{
+	canSubmit: boolean,
+	setCanSubmit: Dispatch<SetStateAction<boolean>>
+	setOperation: Dispatch<SetStateAction<OPERATION>>
+}>({
+	canSubmit: false,
+	setCanSubmit: () => { },
+	setOperation: () => { }
+});
+
 export const CreateLBP: FC<MaybeWithClassName> = () => {
 	const provider = useWeb3Provider();
 	const { account, chainId } = useWeb3React();
+
+	const [canSubmit, setCanSubmit] = useState(false)
 
 	const contract = useMemo(() => getBounceOtcContract(provider, chainId), [chainId, provider]);
 
@@ -83,86 +98,64 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 	const [lastOperation, setLastOperation] = useState<(() => void) | null>(null);
 
 	const onComplete = async (data: ConfirmationInType) => {
-		// const operation = async () => {
-		// 	setOperation(OPERATION.approval);
-
-		// 	const tokenFrom = findToken(data.tokenFrom);
-		// 	const tokenTo = findToken(data.tokenTo);
-
-		// 	const fromAmount = numToWei(data.amount, tokenFrom.decimals, 0);
-		// 	const toAmount = numToWei(
-		// 		new BigNumber(data.amount).multipliedBy(new BigNumber(data.unitPrice)).toNumber(),
-		// 		tokenTo.decimals,
-		// 		0
-		// 	);
-
-		// 	try {
-		// 		if (!isEth(tokenTo.address)) {
-		// 			const tokenContract = getTokenContract(provider, tokenTo.address);
-
-		// 			const allowance = await getOtcAllowance(tokenContract, chainId, account);
-
-		// 			if (isLessThan(allowance, toAmount)) {
-		// 				const result = await approveOtcPool(tokenContract, chainId, account, toAmount);
-
-		// 				if (!result.status) {
-		// 					setOperation(OPERATION.error);
-
-		// 					return;
-		// 				}
-		// 			}
-		// 		}
-
-		// 		setOperation(OPERATION.confirm);
-
-		// 		await createOtcPool(
-		// 			contract,
-		// 			account,
-		// 			{
-		// 				name: data.poolName,
-		// 				token0: tokenTo.address,
-		// 				token1: tokenFrom.address,
-		// 				amountTotal0: toAmount,
-		// 				amountTotal1: fromAmount,
-		// 				openAt: +data.startPool / 1000,
-		// 				enableWhiteList: data.whitelist,
-		// 				onlyBot: false,
-		// 				poolType: 1,
-		// 				creator: account,
-		// 			},
-		// 			data.whiteListList,
-		// 			isEth(tokenTo.address) ? toAmount : undefined
-		// 		)
-		// 			.on("transactionHash", (h) => {
-		// 				console.log("hash", h);
-		// 				setOperation(OPERATION.pending);
-		// 			})
-		// 			.on("receipt", (r) => {
-		// 				console.log("receipt", r);
-		// 				setOperation(OPERATION.success);
-		// 				setLastOperation(null);
-		// 				setPoolId(r.events.Created.returnValues[0]);
-		// 			})
-		// 			.on("error", (e) => {
-		// 				console.error("error", e);
-		// 				setOperation(OPERATION.error);
-		// 			});
-		// 	} catch (e) {
-		// 		if (e.code === 4001) {
-		// 			setOperation(OPERATION.cancel);
-		// 		} else {
-		// 			setOperation(OPERATION.error);
-		// 		}
-
-		// 		console.log("err", e);
-		// 	} finally {
-		// 		// close modal
-		// 	}
-		// };
-
 		const operation = async () => {
-			alert('调用后端保存数据并调用合约创建')
-		}
+
+			// string name;
+			// string symbol;
+			// address[] tokens;
+			// uint256[] amounts;
+			// uint256[] weights;
+			// uint256[] endWeights;
+			// bool isCorrectOrder;
+			// uint256 swapFeePercentage;
+			// bytes userData;
+			// uint256 startTime;
+			// uint256 endTime;
+
+
+			try {
+				await createLbpPool(
+					contract,
+					account,
+					{
+						// name: data.poolName,
+						// token0: tokenTo.address,
+						// token1: tokenFrom.address,
+						// amountTotal0: toAmount,
+						// amountTotal1: fromAmount,
+						// openAt: +data.startPool / 1000,
+						// enableWhiteList: data.whitelist,
+						// onlyBot: false,
+						// poolType: 1,
+						// creator: account,
+					}
+				)
+					.on("transactionHash", (h) => {
+						console.log("hash", h);
+						setOperation(OPERATION.pending);
+					})
+					.on("receipt", (r) => {
+						console.log("receipt", r);
+						setOperation(OPERATION.success);
+						setLastOperation(null);
+						setPoolId(r.events.Created.returnValues[0]);
+					})
+					.on("error", (e) => {
+						console.error("error", e);
+						setOperation(OPERATION.error);
+					});
+			} catch (e) {
+				if (e.code === 4001) {
+					setOperation(OPERATION.cancel);
+				} else {
+					setOperation(OPERATION.error);
+				}
+
+				console.log("err", e);
+			} finally {
+				// close modal
+			}
+		};
 
 		setLastOperation(() => operation);
 
@@ -186,10 +179,13 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 	return (
 		<>
 			<div className={styles.component}>
-				<CreateFlowForLbp steps={BUYING_STEPS} onComplete={onComplete} />
+				<SubmitContext.Provider value={{ canSubmit, setCanSubmit, setOperation }}>
+					<CreateFlowForLbp steps={BUYING_STEPS} onComplete={onComplete} />
+				</SubmitContext.Provider>
 			</div>
+
 			{popUp.defined ? (
-				<ProcessingPopUp 
+				<ProcessingPopUp
 					title={TITLE[operation]}
 					text={CONTENT[operation]}
 					onSuccess={() => {

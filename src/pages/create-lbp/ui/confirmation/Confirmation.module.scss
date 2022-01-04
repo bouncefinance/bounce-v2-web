@@ -67,17 +67,26 @@
 .approveButtonBox {
   width: 100%;
   margin: 12px 0;
-  button{
+
+  button {
     width: 360px;
     margin: 12px;
     margin-left: 40px;
   }
 
-  &>div{
+  &>div {
     display: flex;
     align-items: center;
-    img{
+
+    img {
       margin-left: 18px;
     }
+  }
+}
+
+.aligned {
+  img {
+    width: 14px;
+    height: 14px;
   }
 }
