@@ -23,7 +23,7 @@ import { useAccount, useChainId, useWeb3, useWeb3Provider } from '@app/web3/hook
 import { getAllowance } from '@app/web3/api/bounce/pool';
 import { isEqualZero } from '@app/utils/validation';
 import { POOL_ADDRESS_MAPPING } from '@app/api/pool/const';
-import { getLbpChainAddressMapping } from '@app/web3/networks/mapping';
+import { getBounceProxyChainAddressMapping } from '@app/web3/networks/mapping';
 import { approveLbpPool, getLbpAllowance } from '@app/web3/api/bounce/lbp';
 import { isLessThan } from '@app/utils/bn';
 import { OPERATION, SubmitContext } from "../../createLBP";
@@ -141,7 +141,6 @@ export const ConfirmationImp: FC<CommonType> = ({ type }) => {
 				console.log("receipt", r);
 				setApproveTokenTo(true)
 				setOperation(OPERATION.success);
-				// setLastOperation(null);
 				// setPoolId(r.events.Created.returnValues[0]);
 			})
 			.on("error", (e) => {
@@ -175,8 +174,8 @@ export const ConfirmationImp: FC<CommonType> = ({ type }) => {
 
 	const wrapperWeight = (tokenFrom: TokenInfo, tokenTo: TokenInfo, startWeight: number, endWeight: number) => {
 		return <div>
-			<p>Start:	{startWeight}% {tokenFrom.symbol} + {100 - startWeight} {tokenTo.symbol}</p>
-			<p>End:		{endWeight}% {tokenFrom.symbol} + {100 - endWeight} {tokenTo.symbol}</p>
+			<p>Start:	{startWeight}% {tokenFrom.symbol} + {100 - startWeight}% {tokenTo.symbol}</p>
+			<p>End:		{endWeight}% {tokenFrom.symbol} + {100 - endWeight}% {tokenTo.symbol}</p>
 		</div>
 	}
 

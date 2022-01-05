@@ -23,6 +23,7 @@ import {
 } from "@app/web3/api/bounce/otc";
 
 import { isEth } from "@app/web3/api/eth/use-eth";
+import { defaultAbiCoder } from '@ethersproject/abi';
 import { useTokenSearch } from "@app/web3/api/tokens";
 import { useWeb3Provider } from "@app/web3/hooks/use-web3";
 
@@ -33,7 +34,8 @@ import { Token } from "./ui/token";
 import { CreateFlowForLbp } from "@app/modules/create-flow-for-lbp";
 import lbpParameters from "./ui/lbpParameters";
 import React from "react";
-import { createLbpPool } from "@app/web3/api/bounce/lbp";
+import { createLbpPool, getBounceProxyContract } from "@app/web3/api/bounce/lbp";
+import { isEqualZero } from "@app/utils/validation";
 
 const BUYING_STEPS = defineFlow(Token, lbpParameters, Settings, Confirmation);
 
@@ -86,10 +88,10 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 
 	const [canSubmit, setCanSubmit] = useState(false)
 
-	const contract = useMemo(() => getBounceOtcContract(provider, chainId), [chainId, provider]);
+	const contract = useMemo(() => getBounceProxyContract(provider, chainId), [chainId, provider]);
 
 	const findToken = useTokenSearch();
-	const { push: routerPush } = useRouter();
+	// const { push: routerPush } = useRouter();
 
 	const [poolId, setPoolId] = useState(undefined);
 
@@ -97,39 +99,38 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 
 	const [lastOperation, setLastOperation] = useState<(() => void) | null>(null);
 
+	const getUserDate = async (initBalances: string[]) => {
+		const JoinKindInit = 0;
+		// const initBalances = [1e18, 2e18];
+		const abi = ['uint256', 'uint256[]'];
+		const data = [JoinKindInit, initBalances];
+		const userDataEncoded = defaultAbiCoder.encode(abi, data);
+		return userDataEncoded
+	}
+
 	const onComplete = async (data: ConfirmationInType) => {
 		const operation = async () => {
-
-			// string name;
-			// string symbol;
-			// address[] tokens;
-			// uint256[] amounts;
-			// uint256[] weights;
-			// uint256[] endWeights;
-			// bool isCorrectOrder;
-			// uint256 swapFeePercentage;
-			// bytes userData;
-			// uint256 startTime;
-			// uint256 endTime;
-
-
+			const { tokenFrom, tokenTo, amountFrom, amountTo, startWeight, endWeight, tradingFee, startDate, endDate } = data
 			try {
 				await createLbpPool(
 					contract,
 					account,
 					{
-						// name: data.poolName,
-						// token0: tokenTo.address,
-						// token1: tokenFrom.address,
-						// amountTotal0: toAmount,
-						// amountTotal1: fromAmount,
-						// openAt: +data.startPool / 1000,
-						// enableWhiteList: data.whitelist,
-						// onlyBot: false,
-						// poolType: 1,
-						// creator: account,
-					}
+						name: 'BOUNCE_LBP',
+						symbol: "BOUNCE_LP",
+						tokens: [tokenFrom.address, tokenTo.address],
+						amounts: [numToWei(amountFrom, tokenFrom.decimals, 0), numToWei(amountTo, tokenTo.decimals, 0)],
+						weights: [numToWei(startWeight, 16, 0), numToWei(100 - startWeight, 16, 0)],
+						endWeights: [numToWei(endWeight, 16, 0), numToWei(100 - endWeight, 16, 0)],
+						isCorrectOrder: false,
+						swapFeePercentage: numToWei(Number(tradingFee), 16, 0),
+						userData: await getUserDate([numToWei(amountFrom, tokenFrom.decimals, 0), numToWei(amountTo, tokenTo.decimals, 0)]),
+						startTime: startDate.getTime() / 1000,
+						endTime: endDate.getTime() / 1000
+					},
+					isEqualZero(tokenTo.address) ? numToWei(amountTo, tokenTo.decimals, 0) : ''
 				)
+
 					.on("transactionHash", (h) => {
 						console.log("hash", h);
 						setOperation(OPERATION.pending);
@@ -156,7 +157,6 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 				// close modal
 			}
 		};
-
 		setLastOperation(() => operation);
 
 		return operation();
@@ -189,7 +189,7 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 					title={TITLE[operation]}
 					text={CONTENT[operation]}
 					onSuccess={() => {
-						routerPush(`${LBP_PATH}/${poolId}`);
+						// routerPush(`${LBP_PATH}/${poolId}`);
 						setOperation(OPERATION.default);
 						close();
 					}}

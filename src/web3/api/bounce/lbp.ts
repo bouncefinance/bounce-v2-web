@@ -2,14 +2,17 @@ import { AbstractProvider } from "web3-core";
 
 import { getContract } from "@app/web3/contracts/helpers";
 import { WEB3_NETWORKS } from "@app/web3/networks/const";
-import { getLbpChainAddressMapping, getOtcChainAddressMapping } from "@app/web3/networks/mapping";
+import {
+	getBounceProxyChainAddressMapping,
+	getOtcChainAddressMapping,
+} from "@app/web3/networks/mapping";
 
-import BounceOTCABI from "./BounceOTC.abi.json";
+import BounceProxyABI from "./BounceProxy.json";
 
 import type { Contract as ContractType } from "web3-eth-contract";
 
-export const getBounceOtcContract = (provider: AbstractProvider, chainId: WEB3_NETWORKS) => {
-	return getContract(provider, BounceOTCABI.abi, getOtcChainAddressMapping(chainId));
+export const getBounceProxyContract = (provider: AbstractProvider, chainId: WEB3_NETWORKS) => {
+	return getContract(provider, BounceProxyABI, getBounceProxyChainAddressMapping(chainId));
 };
 
 export const approveLbpPool = (
@@ -19,7 +22,7 @@ export const approveLbpPool = (
 	amount: string
 ) => {
 	return contract.methods
-		.approve(getLbpChainAddressMapping(chainId), amount)
+		.approve(getBounceProxyChainAddressMapping(chainId), amount)
 		.send({ from: account });
 };
 
@@ -28,10 +31,26 @@ export const getLbpAllowance = async (
 	chainId: WEB3_NETWORKS,
 	account: string
 ) => {
-	return contract.methods.allowance(account, getLbpChainAddressMapping(chainId)).call();
+	return contract.methods.allowance(account, getBounceProxyChainAddressMapping(chainId)).call();
 };
 
-export type OtcPoolType = {};
+// export interface IUserData {
+
+// }
+
+export type OtcPoolType = {
+	name: string;
+	symbol: string;
+	tokens: string[];
+	amounts: string[];
+	weights: string[];
+	endWeights: string[];
+	isCorrectOrder: boolean;
+	swapFeePercentage: string;
+	userData: any;
+	startTime: number;
+	endTime: number;
+};
 
 export const createLbpPool = (
 	contract: ContractType,
@@ -39,7 +58,9 @@ export const createLbpPool = (
 	data: OtcPoolType,
 	value?: string
 ) => {
-	const action = contract.methods.create(data);
+	console.log(data);
+
+	const action = contract.methods.createAuction(data);
 
 	action.estimateGas();
 
