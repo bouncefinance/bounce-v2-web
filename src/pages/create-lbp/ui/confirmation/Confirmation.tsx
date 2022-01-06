@@ -110,20 +110,24 @@ export const ConfirmationImp: FC<CommonType> = ({ type }) => {
 	const handleApproveTokenFrom = async () => {
 		if (isEqualZero(tokenFrom.address)) return
 		const tokenContract = getTokenContract(provider, tokenFrom.address);
-		approveLbpPool(tokenContract, chainId, account, amountFrom_wei)
+		approveLbpPool(tokenContract, chainId, account, numToWei(
+			new BigNumber(amountFrom).multipliedBy(100).toNumber(),
+			tokenFrom.decimals,
+			0
+		))
 			.on("transactionHash", (h) => {
-				console.log("hash", h);
+				// console.log("hash", h);7
 				setOperation(OPERATION.approval);
 			})
 			.on("receipt", (r) => {
-				console.log("receipt", r);
+				// console.log("receipt", r);
 				setApproveTokenFrom(true)
 				setOperation(OPERATION.success);
 				// setLastOperation(null);
 				// setPoolId(r.events.Created.returnValues[0]);
 			})
 			.on("error", (e) => {
-				console.error("error", e);
+				// console.error("error", e);
 				setOperation(OPERATION.error);
 			});
 
@@ -132,7 +136,11 @@ export const ConfirmationImp: FC<CommonType> = ({ type }) => {
 	const handleApproveTokenTo = async () => {
 		if (isEqualZero(tokenTo.address)) return
 		const tokenContract = getTokenContract(provider, tokenTo.address);
-		approveLbpPool(tokenContract, chainId, account, amountTo_wei)
+		approveLbpPool(tokenContract, chainId, account, numToWei(
+			new BigNumber(amountTo).multipliedBy(100).toNumber(),
+			tokenTo.decimals,
+			0
+		))
 			.on("transactionHash", (h) => {
 				console.log("hash", h);
 				setOperation(OPERATION.pending);
@@ -151,7 +159,7 @@ export const ConfirmationImp: FC<CommonType> = ({ type }) => {
 
 	}
 
-	useEffect(()=>{
+	useEffect(() => {
 		setCanSubmit(approveTokenFrom && approveTokenTo)
 	}, [approveTokenFrom, approveTokenTo])
 

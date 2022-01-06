@@ -58,11 +58,9 @@ export const createLbpPool = (
 	data: OtcPoolType,
 	value?: string
 ) => {
-	console.log(data);
-
 	const action = contract.methods.createAuction(data);
 
-	action.estimateGas();
+	// action.estimateGas();
 
 	return action.send({ from: account, value });
 };

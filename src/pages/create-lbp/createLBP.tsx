@@ -35,7 +35,7 @@ import { CreateFlowForLbp } from "@app/modules/create-flow-for-lbp";
 import lbpParameters from "./ui/lbpParameters";
 import React from "react";
 import { createLbpPool, getBounceProxyContract } from "@app/web3/api/bounce/lbp";
-import { isEqualZero } from "@app/utils/validation";
+import { isEqualZero, isThanGreateAddrss } from "@app/utils/validation";
 
 const BUYING_STEPS = defineFlow(Token, lbpParameters, Settings, Confirmation);
 
@@ -111,6 +111,12 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 	const onComplete = async (data: ConfirmationInType) => {
 		const operation = async () => {
 			const { tokenFrom, tokenTo, amountFrom, amountTo, startWeight, endWeight, tradingFee, startDate, endDate } = data
+			const isReversal = isThanGreateAddrss(tokenFrom.address, tokenTo.address)
+			const tokens = isReversal ? [tokenFrom.address, tokenTo.address].reverse() : [tokenFrom.address, tokenTo.address]
+			const amounts = isReversal ? [numToWei(amountFrom, tokenFrom.decimals, 0), numToWei(amountTo, tokenTo.decimals, 0)].reverse() : [numToWei(amountFrom, tokenFrom.decimals, 0), numToWei(amountTo, tokenTo.decimals, 0)]
+			const weights = isReversal ? [numToWei(startWeight, 16, 0), numToWei(100 - startWeight, 16, 0)].reverse() : [numToWei(startWeight, 16, 0), numToWei(100 - startWeight, 16, 0)]
+			const endWeights = isReversal ? [numToWei(endWeight, 16, 0), numToWei(100 - endWeight, 16, 0)].reverse() : [numToWei(endWeight, 16, 0), numToWei(100 - endWeight, 16, 0)]
+
 			try {
 				await createLbpPool(
 					contract,
@@ -118,13 +124,13 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 					{
 						name: 'BOUNCE_LBP',
 						symbol: "BOUNCE_LP",
-						tokens: [tokenFrom.address, tokenTo.address],
-						amounts: [numToWei(amountFrom, tokenFrom.decimals, 0), numToWei(amountTo, tokenTo.decimals, 0)],
-						weights: [numToWei(startWeight, 16, 0), numToWei(100 - startWeight, 16, 0)],
-						endWeights: [numToWei(endWeight, 16, 0), numToWei(100 - endWeight, 16, 0)],
-						isCorrectOrder: false,
+						tokens: tokens,
+						amounts: amounts,
+						weights: weights,
+						endWeights: endWeights,
+						isCorrectOrder: isReversal,
 						swapFeePercentage: numToWei(Number(tradingFee), 16, 0),
-						userData: await getUserDate([numToWei(amountFrom, tokenFrom.decimals, 0), numToWei(amountTo, tokenTo.decimals, 0)]),
+						userData: await getUserDate(amounts),
 						startTime: startDate.getTime() / 1000,
 						endTime: endDate.getTime() / 1000
 					},
