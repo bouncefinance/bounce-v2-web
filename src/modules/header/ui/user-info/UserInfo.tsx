@@ -189,6 +189,23 @@ const chainConfig: IChainConfig[] = [
 		},
 	},
 	{
+		chainId: -101,
+		name: "Solana",
+		fullName: "Solana",
+		icon: require("./assets/chain-solana.svg"),
+		config: {
+			chainId: "-0x65",
+			chainName: "Solana",
+			nativeCurrency: {
+				name: "SOL",
+				symbol: "SOL",
+				decimals: 9,
+			},
+			rpcUrls: [""],
+			blockExplorerUrls: [""],
+		},
+	},
+	{
 		chainId: 43114,
 		name: "Avalanche",
 		fullName: "Avalanche Mainnet",
@@ -281,13 +298,19 @@ export const SelectChain: FC<ISelectChain> = ({ currentChain }) => {
 								<li
 									key={item.chainId}
 									onClick={() => {
+										if (item.name === "Solana") {
+											window.location.href = "https://solana.bounce.finance/auction";
+
+											return;
+										}
+
 										if (curChain?.chainId !== item.chainId) {
 											handelChangeChain(item);
 										}
 									}}
 								>
 									<div className={styles.imgBox}>
-										<img src={item.icon} alt="" />
+										<img src={item.icon} alt="" style={{ maxWidth: "16px", maxHeight: "16px" }} />
 									</div>
 									<span>{item.fullName}</span>
 								</li>
