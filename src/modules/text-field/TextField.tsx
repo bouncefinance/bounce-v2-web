@@ -22,6 +22,7 @@ type TextFieldType = {
 	min?: number;
 	max?: number;
 	hasTip?: boolean
+	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
 };
 
 export const TextField: FC<TextFieldType & MaybeWithClassName> = ({
@@ -39,7 +40,8 @@ export const TextField: FC<TextFieldType & MaybeWithClassName> = ({
 	step,
 	min,
 	max,
-	hasTip
+	hasTip,
+	onChange
 }) => {
 	return (
 		<Field
@@ -58,7 +60,10 @@ export const TextField: FC<TextFieldType & MaybeWithClassName> = ({
 					name={input.name}
 					type={input.type}
 					value={input.value}
-					onChange={input.onChange}
+					onChange={(e) => {
+						input.onChange(e)
+						onChange && onChange(e)
+					}}
 					onBlur={input.onBlur}
 					onFocus={input.onFocus}
 					placeholder={placeholder}

@@ -1,5 +1,5 @@
 import classnames from "classnames";
-import { FC, ReactNode, useCallback } from "react";
+import { FC, ReactChild, ReactNode, useCallback } from "react";
 
 import { CopyAddress } from "@app/modules/copy-to-clipboard";
 import { Currency } from "@app/modules/currency";
@@ -21,6 +21,7 @@ import styles from "./View.module.scss";
 import { Charts } from "./Charts";
 
 type LBPDetailViewType = {
+	children: ReactChild
 	id: number
 	name: string
 	status: POOL_STATUS
@@ -37,7 +38,7 @@ const ONEHOUR = 1000 * 60 * 60
 const ONEDAY = ONEHOUR * 24
 
 export const View: FC<LBPDetailViewType> = ({
-	id, name, status, openAt, closeAt, onZero, totalVolume, liquidity, tokenSold
+	children, id, name, status, openAt, closeAt, onZero, totalVolume, liquidity, tokenSold,
 }) => {
 	const STATUS: Record<POOL_STATUS, ReactNode> = {
 		[POOL_STATUS.COMING]: (
@@ -134,7 +135,7 @@ export const View: FC<LBPDetailViewType> = ({
 						</div>
 
 						<div className={styles.contentRight}>
-
+							{children}
 						</div>
 					</div>
 				</div>

@@ -22,7 +22,7 @@ type InputType = {
 	onBlur?(e: React.FocusEvent): void;
 	onFocus?(e: React.FocusEvent): void;
 	inputProps?: Partial<InputHTMLAttributes<HTMLInputElement>>;
-	hasTip?: boolean
+	hasTip?: boolean;
 };
 
 export const Input: FC<InputType & MaybeWithClassName> = ({

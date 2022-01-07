@@ -101,7 +101,6 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
             onSubmit={handleSubmit}
             className={styles.form}
             initialValues={initialValues}
-
         >
             <div className={styles.container}>
                 <div className={styles.left}>
