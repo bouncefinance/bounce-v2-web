@@ -3,6 +3,6 @@ import { LbpView } from './LbpView'
 
 export const Lbp = () => {
     return (
-        <LbpView />
+        <LbpView type='all' />
     )
 }
