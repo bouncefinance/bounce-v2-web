@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 
 import { IToken } from "@app/api/types";
 import { MaybeWithClassName } from "@app/helper/react/types";
@@ -17,19 +17,22 @@ import { walletConversion } from "@app/utils/convertWallet";
 import { POOL_STATUS } from "@app/utils/pool";
 
 import styles from "./Card.module.scss";
+import { Timer } from "../timer";
 
 export type DisplayPoolInfoType = {
 	href?: string;
 	status: POOL_STATUS;
 	id: string | number;
 	name: string;
-	type: string;
-	total: number;
-	from: IToken;
-	to: IToken;
-	price: number;
-	fill: number;
+	type?: string;
+	total?: number;
+	from?: IToken;
+	to?: IToken;
+	price?: number;
+	fill?: number;
 	needClaim?: boolean;
+	isLbpCard?: boolean;
+	lbpData?: any;
 };
 
 export const Card: FC<DisplayPoolInfoType & MaybeWithClassName & { bordered?: boolean }> = ({
@@ -46,12 +49,28 @@ export const Card: FC<DisplayPoolInfoType & MaybeWithClassName & { bordered?: bo
 	to,
 	price,
 	fill,
+	isLbpCard = false,
+	lbpData
 }) => {
 	const STATUS: Record<POOL_STATUS, string> = {
 		[POOL_STATUS.COMING]: "Coming soon",
 		[POOL_STATUS.LIVE]: "Live",
 		[POOL_STATUS.FILLED]: "Filled",
 		[POOL_STATUS.CLOSED]: "Closed",
+		[POOL_STATUS.ERROR]: "Error",
+	};
+
+	const LBPSTATUS: Record<POOL_STATUS, ReactNode> = {
+		[POOL_STATUS.COMING]: (
+			<span className={styles.lbpComing}>Start in <Timer timer={1641798369} onZero={() => console.log('time start')} /> </span>
+		),
+		[POOL_STATUS.LIVE]: (
+			<span>Live <Timer timer={1641798369} onZero={() => console.log('time start')} /></span>
+		),
+		[POOL_STATUS.FILLED]: "Filled",
+		[POOL_STATUS.CLOSED]: (
+			<span>Closed <Timer timer={1641193569} onZero={() => console.log('close')} /></span>
+		),
 		[POOL_STATUS.ERROR]: "Error",
 	};
 
@@ -73,12 +92,31 @@ export const Card: FC<DisplayPoolInfoType & MaybeWithClassName & { bordered?: bo
 		"Price per unit, $": price,
 	};
 
+
+	const LBP_TOKEN_INFORMATION = {
+		"Launch Token": <Currency coin={from} small />,
+		"Contact address": (
+			<GeckoToken
+				cacheKey={from.address}
+				isGecko={!!from.coinGeckoID}
+				token={walletConversion(from.address)}
+			/>
+		),
+		"Collected Token": <Currency coin={to} small />,
+	};
+
+	const LBP_AUCTION_INFORMATION = {
+		"Start Balance": type,
+		"Current Price,$": price,
+		"Token Sold": total,
+	};
+
 	return (
 		<NavLink
 			className={classNames(className, styles.component, bordered && styles.bordered)}
 			href={href}
 		>
-			<Status className={styles.status} status={status} captions={STATUS} />
+			<Status className={styles.status} status={status} captions={isLbpCard ? LBPSTATUS :  STATUS} />
 			<Caption className={styles.id} Component="span" lighten={50}>
 				#{id}
 			</Caption>
@@ -88,12 +126,12 @@ export const Card: FC<DisplayPoolInfoType & MaybeWithClassName & { bordered?: bo
 			<DescriptionList
 				className={styles.token}
 				title="Token Information"
-				data={TOKEN_INFORMATION}
+				data={isLbpCard ? LBP_TOKEN_INFORMATION : TOKEN_INFORMATION}
 			/>
 			<DescriptionList
 				className={styles.auction}
-				title="Auction Information"
-				data={AUCTION_INFORMATION}
+				title={isLbpCard ? "Auction Details" : "Auction Information"}
+				data={isLbpCard ? LBP_AUCTION_INFORMATION : AUCTION_INFORMATION}
 			/>
 			<ProgressBar className={styles.bar} fillInPercentage={fill} status={status} />
 			{needClaim && <div className={styles.claim}>Need to claim token</div>}
