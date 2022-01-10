@@ -1,10 +1,21 @@
 import { Button } from '@app/ui/button'
 import { ListItem, ListItemSecondaryAction, ListItemText, Switch } from '@material-ui/core'
+import { makeStyles } from '@material-ui/styles'
 import React, { useState } from 'react'
 import styles from './ExtensionInfo.module.scss'
 
-export const AuctionSettingView = () => {
+
+const useStyles = makeStyles({
+    root: {
+        '.MuiSwitch-colorPrimary.Mui-checked': {
+            color: '#000'
+        }
+    }
+})
+
+export const AuctionSettingView = (props: any) => {
     const [isEnabled, setIsEnabled] = useState(false)
+    const classes = useStyles(props);
 
     return (
         <div>
@@ -15,14 +26,14 @@ export const AuctionSettingView = () => {
                         <p>Buy/Sell function is enabled</p>
                         <ListItemSecondaryAction>
                             <Switch
-                                color='default'
+                                color='primary'
+                                classes={classes}
                                 size='medium'
                                 edge="end"
                                 onChange={() => {
                                     setIsEnabled(!isEnabled)
                                 }}
                                 checked={isEnabled}
-                                inputProps={{ 'aria-labelledby': 'switch-list-label-wifi' }}
                             />
                         </ListItemSecondaryAction>
                     </ListItem>
@@ -53,3 +64,4 @@ export const AuctionSettingView = () => {
         </div>
     )
 }
+

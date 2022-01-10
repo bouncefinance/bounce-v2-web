@@ -183,3 +183,9 @@
         border-radius: 30px;
     }
 }
+
+.SwitchBtn {
+    .MuiSwitch-colorPrimary.Mui-checked {
+        color: #000 !important;
+    }
+}

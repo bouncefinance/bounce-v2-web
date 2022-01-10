@@ -65,24 +65,46 @@ export const createLbpPool = (
 	return action.send({ from: account, value });
 };
 
-export const getOtcPools = async (
-	contract: ContractType,
-	poolID: number
-): Promise<Omit<OtcPoolType, "onlyBot">> => {
-	return contract.methods.pools(poolID).call();
+export type setPoolEnabledType = {
+	poolAddress: string;
+	swapEnabled: boolean;
 };
 
-export const getSwap1Amount = async (contract: ContractType, poolID: number) => {
-	return contract.methods.amountSwap1P(poolID).call();
+export const getPoolEnabled = () => {
+	return false;
 };
 
-export const getWhitelistedStatus = async (
+export const setPoolEnabled = (
 	contract: ContractType,
-	poolID: number,
-	address: string
-): Promise<boolean> => {
-	return contract.methods.whitelistP(poolID, address).call();
+	account: string,
+	data: setPoolEnabledType,
+	value?: string
+) => {
+	const action = contract.methods.setSwapEnabled(data);
+
+	action.estimateGas();
+
+	return action.send({ from: account, value });
 };
+
+// export const getOtcPools = async (
+// 	contract: ContractType,
+// 	poolID: number
+// ): Promise<Omit<OtcPoolType, "onlyBot">> => {
+// 	return contract.methods.pools(poolID).call();
+// };
+
+// export const getSwap1Amount = async (contract: ContractType, poolID: number) => {
+// 	return contract.methods.amountSwap1P(poolID).call();
+// };
+
+// export const getWhitelistedStatus = async (
+// 	contract: ContractType,
+// 	poolID: number,
+// 	address: string
+// ): Promise<boolean> => {
+// 	return contract.methods.whitelistP(poolID, address).call();
+// };
 
 export const swapContracts = (
 	contract: ContractType,
