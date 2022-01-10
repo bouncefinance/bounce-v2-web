@@ -1,6 +1,8 @@
 import { TokenInfo } from '@uniswap/token-lists'
 import React, { useMemo, useState } from 'react'
 import { uid } from 'react-uid'
+import { AuctionHistoryView } from './AuctionHistoryView'
+import { AuctionSettingView } from './AuctionSettingView'
 import { AuctuinDetailView } from './AuctuinDetailView'
 import styles from './ExtensionInfo.module.scss'
 
@@ -23,13 +25,9 @@ export const ExtensionInfo = ({
                     tokenFrom={tokenFrom}
                 />
             case 1:
-                return <div>
-                    222
-                </div>
+                return <AuctionHistoryView />
             case 2:
-                return <div>
-                    333
-                </div>
+                return <AuctionSettingView />
             default:
                 return <></>
         }
