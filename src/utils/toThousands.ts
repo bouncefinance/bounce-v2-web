@@ -15,3 +15,28 @@ export const toThousands = (num: number): string => {
 
 	return result + decmial;
 };
+
+// 有小数点则根据位数保留小数点，没有小数点则取整
+export const toDecimal2NoZero = (x: number, fixNum: number) => {
+	const a = Number(`1e${fixNum}`);
+	const f = Math.floor(x * a) / a;
+	const s = f.toString();
+
+	return s;
+};
+
+export const numberFormat = (val: number): string => {
+	if (val >= 1e12) {
+		return `${toDecimal2NoZero(val / 1e12, 1)}T`;
+	} else if (val >= 1e9) {
+		return `${toDecimal2NoZero(val / 1e9, 1)}B`;
+	} else if (val >= 1e6) {
+		return `${toDecimal2NoZero(val / 1e6, 1)}M`;
+	} else if (val >= 1e3) {
+		return `${toDecimal2NoZero(val / 1e3, 1)}K`;
+	} else if (val === 0) {
+		return "0";
+	} else {
+		return toDecimal2NoZero(val, 1);
+	}
+};

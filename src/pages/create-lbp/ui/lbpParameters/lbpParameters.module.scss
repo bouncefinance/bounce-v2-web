@@ -58,23 +58,23 @@
   margin: 0 auto;
 }
 
-.container{
+.container {
   display: flex;
   justify-content: space-between;
 
-  .left{
+  .left {
     width: 540px;
 
-    label{
+    label {
       margin-bottom: 30px;
     }
 
-    .selectTime{
+    .selectTime {
       display: flex;
       justify-content: space-between;
       margin-bottom: 30px;
 
-      &>div{
+      &>div {
         width: 260px;
       }
     }
@@ -82,17 +82,36 @@
 }
 
 
-.echartsBox{
+.echartsBox {
   width: 530px;
   height: 525px;
   box-sizing: border-box;
   position: relative;
-  background-color: rgba(250,250,250,0.8);
+  background-color: rgba(250, 250, 250, 0.8);
   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.07);
   border-radius: 19px;
 }
 
-.weightView{
+.weightView {
   display: flex;
   justify-content: space-between;
+}
+
+.previewEchart {
+  position: absolute;
+  top: 14px;
+  right: 24px;
+
+  .infoLabel {
+    font-family: Roboto;
+    font-size: 12px;
+    line-height: 20px;
+    color: rgba(var(--primary-black), 0.5);
+  }
+
+  .infoValue {
+    font-family: Roboto;
+    font-size: 14px;
+    line-height: 24px;
+  }
 }
