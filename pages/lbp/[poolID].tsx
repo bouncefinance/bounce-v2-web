@@ -6,7 +6,7 @@ import { RequireConnectedWallet } from "@app/modules/require-connected-wallet";
 import { pageWithLayout } from "@app/utils/pageInLayout";
 import { LBPDetail } from "@app/pages/lbp-detail";
 
-const OtcViewPage = pageWithLayout(
+const LbpViewPage = pageWithLayout(
 	() => {
 		const {
 			query: { poolID },
@@ -27,4 +27,4 @@ const OtcViewPage = pageWithLayout(
 	)
 );
 
-export default OtcViewPage;
+export default LbpViewPage;
