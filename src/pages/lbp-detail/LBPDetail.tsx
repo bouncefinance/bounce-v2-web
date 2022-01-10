@@ -12,6 +12,7 @@ import { getBalance, getEthBalance, getTokenContract } from '@app/web3/api/bounc
 import { useWeb3, useWeb3Provider } from '@app/web3/hooks/use-web3'
 import { fromWei } from '@app/utils/bn/wei'
 import { useWeb3React } from '@web3-react/core'
+import { ExtensionInfo } from './ExtensionInfo'
 
 
 
@@ -34,7 +35,7 @@ export const LBPDetail = (props: {
         </div>
     }, [])
 
-    const token0 = findToken('0x5e26fa0fe067d28aae8aff2fb85ac2e693bd9efa')
+    const token0 = findToken('0xc7ad46e0b8a400bb3c915120d284aafba8fc4735')
     const token1 = findToken('0x0000000000000000000000000000000000000000')
     const [token0Amount, setToken0Amount] = useState(0)
     const [token1Amount, setToken1Amount] = useState(0)
@@ -80,6 +81,10 @@ export const LBPDetail = (props: {
                 totalVolume={'$ 1,000,000.5'}
                 liquidity={'$ 500,000.5'}
                 tokenSold={TokenSold}
+                extension={<ExtensionInfo 
+                    poolId={props.poolID}
+                    tokenFrom={token0}
+                />}
             >
                 {token0 && token1 && <Swap
                     token0={token0}
@@ -91,7 +96,3 @@ export const LBPDetail = (props: {
         </div >
     )
 }
-function setNewBalanceFrom(arg0: number): any {
-    throw new Error('Function not implemented.')
-}
-

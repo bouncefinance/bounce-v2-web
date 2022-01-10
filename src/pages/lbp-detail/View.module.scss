@@ -12,7 +12,8 @@
   position: relative;
   display: grid;
   align-content: flex-start;
-  min-width: 1300px;
+  // min-width: 1200px;
+  box-sizing: border-box;
 
   padding: calc(var(--spacing-unit) * 7.5) 0;
   // padding: 30px 0;

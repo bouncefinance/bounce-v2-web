@@ -205,7 +205,7 @@ export const Swap = ({
                                                             onClick={() => {
                                                                 const max = token1.address === tokenFrom.address ? token1Amount : token0Amount
                                                                 form.change(
-                                                                    "amountFrom",
+                                                                    "amountTo",
                                                                     max
                                                                 )
                                                             }

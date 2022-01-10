@@ -32,6 +32,7 @@ type LBPDetailViewType = {
 	totalVolume: string,
 	liquidity: string,
 	tokenSold: ReactNode
+	extension: ReactChild
 };
 
 const ONEHOUR = 1000 * 60 * 60
@@ -39,6 +40,7 @@ const ONEDAY = ONEHOUR * 24
 
 export const View: FC<LBPDetailViewType> = ({
 	children, id, name, status, openAt, closeAt, onZero, totalVolume, liquidity, tokenSold,
+	extension
 }) => {
 	const STATUS: Record<POOL_STATUS, ReactNode> = {
 		[POOL_STATUS.COMING]: (
@@ -138,6 +140,9 @@ export const View: FC<LBPDetailViewType> = ({
 							{children}
 						</div>
 					</div>
+				</div>
+				<div className={styles.extension}>
+					{extension}
 				</div>
 			</GutterBox>
 		</section>
