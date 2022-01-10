@@ -14,12 +14,6 @@ import { uid } from 'react-uid';
 import styles from './auctionList.module.scss';
 
 
-
-
-
-
-
-
 const EMPTY_ARRAY = [];
 const WINDOW_SIZE = 9;
 
