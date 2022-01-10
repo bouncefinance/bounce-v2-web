@@ -16,7 +16,7 @@ interface ExtensionInfoParams {
 export const ExtensionInfo = ({
     poolId, tokenFrom
 }: ExtensionInfoParams) => {
-    const [currentIndex, setCurrentIndex] = useState(0)
+    const [currentIndex, setCurrentIndex] = useState(1)
 
     const renderExtensionContent = useMemo(() => {
         switch (currentIndex) {
