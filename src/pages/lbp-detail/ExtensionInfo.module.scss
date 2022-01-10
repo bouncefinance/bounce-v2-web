@@ -96,7 +96,7 @@
     .infoContentLeft {
         width: 580px;
         box-sizing: border-box;
-        
+
     }
 
     .infoContentRight {
@@ -104,7 +104,7 @@
         box-sizing: border-box;
     }
 
-    h4{
+    h4 {
         font-family: Roboto;
         font-size: 22px;
         font-weight: 700;
@@ -112,7 +112,7 @@
         margin-bottom: 10px;
     }
 
-    h5{
+    h5 {
         margin: 0;
         margin-top: 18px;
         margin-bottom: 6px;
@@ -121,10 +121,65 @@
         font-weight: 400;
     }
 
-    p{
+    p {
         margin: 0;
         font-family: Helvetica Neue;
         color: rgba(31, 25, 27, .6);
         line-height: 1.4em;
+    }
+}
+
+
+.centerWrapper {
+    width: 580px;
+    margin: 30px auto;
+    margin-top: 66px;
+
+    h4 {
+        text-align: center;
+    }
+
+    li {
+        list-style: none;
+    }
+
+    p {
+        font-size: 16px;
+        font-weight: 400;
+        font-family: Helvetica Neue;
+        color: rgba(31, 25, 27, .6);
+    }
+}
+
+.poolCard {
+    width: 100%;
+    background: #FAFAFA;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 20px 50px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+
+    h5 {
+        margin: 0;
+        margin-bottom: 10px;
+    }
+
+    p {
+        margin: 0;
+        line-height: 1.4em;
+        margin-bottom: 10px;
+    }
+}
+
+.poolCardRight {
+    display: flex;
+    align-items: center;
+
+    .withdrawBtn {
+        width: 134px;
+        height: 44px;
+        border-radius: 30px;
     }
 }
