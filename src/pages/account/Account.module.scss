@@ -246,6 +246,19 @@
 .cellId {
   text-decoration: underline;
 }
+.cellAmount {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  .cell:first-child {
+    padding-left: 0;
+  }
+  
+  .cell:last-child {
+    padding-right: 0;
+  }
+}
 
 .cellEvent {
   grid-column-gap: 10px;
