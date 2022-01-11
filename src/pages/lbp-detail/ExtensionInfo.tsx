@@ -5,16 +5,18 @@ import { AuctionHistoryView } from './AuctionHistoryView'
 import { AuctionSettingView } from './AuctionSettingView'
 import { AuctuinDetailView } from './AuctuinDetailView'
 import styles from './ExtensionInfo.module.scss'
+import { OPERATION } from './LBPDetail'
 
 const TabList = ['Auction Details', 'Auction History (120)', 'Auction Settings（仅卖家可见）']
 
 interface ExtensionInfoParams {
     poolId: number
     tokenFrom: TokenInfo
+    setOperation: React.Dispatch<React.SetStateAction<OPERATION>>
 }
 
 export const ExtensionInfo = ({
-    poolId, tokenFrom
+    poolId, tokenFrom, setOperation
 }: ExtensionInfoParams) => {
     const [currentIndex, setCurrentIndex] = useState(0)
 
@@ -27,7 +29,9 @@ export const ExtensionInfo = ({
             case 1:
                 return <AuctionHistoryView />
             case 2:
-                return <AuctionSettingView />
+                return <AuctionSettingView
+                    setOperation={setOperation}
+                />
             default:
                 return <></>
         }

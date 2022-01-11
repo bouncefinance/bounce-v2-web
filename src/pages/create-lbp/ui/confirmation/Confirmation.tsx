@@ -43,7 +43,6 @@ export const ConfirmationImp: FC<CommonType> = ({ type }) => {
 	const provider = useWeb3Provider();
 	const chainId = useChainId();
 	const account = useAccount();
-	const web3 = useWeb3();
 
 	const {
 		tokenFrom, tokenTo, amountFrom, amountTo, startDate, endDate, startWeight, endWeight, description, socialLink, tradingFee, tokenFromImg

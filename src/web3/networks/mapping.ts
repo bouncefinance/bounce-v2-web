@@ -31,6 +31,15 @@ const getBounceProxyAddress = defineNetworkMapper({
 	[WEB3_NETWORKS.FANTOM]: "",
 });
 
+const getVaultAddress = defineNetworkMapper({
+	[WEB3_NETWORKS.ETH]: "",
+	[WEB3_NETWORKS.RINKEBY]: "0xba12222222228d8ba445958a75a0704d566bf2c8",
+	[WEB3_NETWORKS.BINANCE]: "",
+	[WEB3_NETWORKS.POLYGON]: "",
+	[WEB3_NETWORKS.ARBITRUM]: "",
+	[WEB3_NETWORKS.FANTOM]: "",
+});
+
 export enum ADDRESS_MAPPING {
 	FIX_SWAP,
 }
@@ -48,4 +57,8 @@ export const getOtcChainAddressMapping = (chainId: WEB3_NETWORKS) => {
 
 export const getBounceProxyChainAddressMapping = (chainId: WEB3_NETWORKS) => {
 	return getBounceProxyAddress(chainId);
+};
+
+export const getVaultChainAddressMapping = (chainId: WEB3_NETWORKS) => {
+	return getVaultAddress(chainId);
 };

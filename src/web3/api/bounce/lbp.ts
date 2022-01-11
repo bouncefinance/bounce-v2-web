@@ -5,14 +5,20 @@ import { WEB3_NETWORKS } from "@app/web3/networks/const";
 import {
 	getBounceProxyChainAddressMapping,
 	getOtcChainAddressMapping,
+	getVaultChainAddressMapping,
 } from "@app/web3/networks/mapping";
 
+import BalancerVaultABI from "./BalancerVault.json";
 import BounceProxyABI from "./BounceProxy.json";
 
 import type { Contract as ContractType } from "web3-eth-contract";
 
 export const getBounceProxyContract = (provider: AbstractProvider, chainId: WEB3_NETWORKS) => {
 	return getContract(provider, BounceProxyABI, getBounceProxyChainAddressMapping(chainId));
+};
+
+export const getVaultContract = (provider: AbstractProvider, chainId: WEB3_NETWORKS) => {
+	return getContract(provider, BalancerVaultABI, getVaultChainAddressMapping(chainId));
 };
 
 export const approveLbpPool = (
@@ -80,9 +86,28 @@ export const setPoolEnabled = (
 	data: setPoolEnabledType,
 	value?: string
 ) => {
-	const action = contract.methods.setSwapEnabled(data);
+	const action = contract.methods.setSwapEnabled(data.poolAddress, data.swapEnabled);
 
-	action.estimateGas();
+	// action.estimateGas();
+
+	return action.send({ from: account, value });
+};
+
+type withDrawAllLbpPool = {
+	pool: string;
+	minAmountsOut: number[];
+	maxBPTTokenOut: number[];
+};
+
+export const withDrawAllLbpPool = (
+	contract: ContractType,
+	account: string,
+	data: withDrawAllLbpPool,
+	value?: string
+) => {
+	const action = contract.methods.exitPool(data.pool, data.minAmountsOut, data.maxBPTTokenOut);
+
+	// action.estimateGas();
 
 	return action.send({ from: account, value });
 };
