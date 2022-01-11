@@ -20,6 +20,8 @@ interface IAuctionSettingViewParams {
     setOperation: React.Dispatch<React.SetStateAction<OPERATION>>
 }
 
+const POOLID = '0x7dcb29e2db6f6db2da5d9e9de575a3a7cd8223ba'
+
 export const AuctionSettingView = ({
     setOperation
 }: IAuctionSettingViewParams) => {
@@ -35,7 +37,7 @@ export const AuctionSettingView = ({
         try {
             await withDrawAllLbpPool(contract, account,
                 {
-                    pool: '0xac4df2d3de5d4ebf7be1ec7eeee78f58c1aec903',
+                    pool: POOLID,
                     minAmountsOut: [0, 0],
                     maxBPTTokenOut: [0, 0]
                 }
@@ -67,7 +69,7 @@ export const AuctionSettingView = ({
         setIsEnabled(willEnable)
         try {
             await setPoolEnabled(contract, account, {
-                poolAddress: '0xac4df2d3de5d4ebf7be1ec7eeee78f58c1aec903',
+                poolAddress: POOLID,
                 swapEnabled: willEnable
             })
                 .on("transactionHash", (h) => {
@@ -78,7 +80,7 @@ export const AuctionSettingView = ({
                 .on("receipt", (r) => {
                     // console.log("receipt", r);
                     setOperation(OPERATION.success);
-                    
+
                 })
                 .on("error", (e) => {
                     // console.error("error", e);

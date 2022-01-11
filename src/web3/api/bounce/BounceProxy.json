@@ -304,6 +304,12 @@
 			},
 			{
 				"indexed": false,
+				"internalType": "bool",
+				"name": "isCorrectOrder",
+				"type": "bool"
+			},
+			{
+				"indexed": false,
 				"internalType": "uint256",
 				"name": "swapFeePercentage",
 				"type": "uint256"

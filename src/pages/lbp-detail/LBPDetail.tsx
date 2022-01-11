@@ -111,6 +111,7 @@ export const LBPDetail = (props: {
                     token1={token1}
                     token0Amount={token0Amount}
                     token1Amount={token1Amount}
+                    setOperation={setOperation}
                 />}
             </View>
             {popUp.defined ? (

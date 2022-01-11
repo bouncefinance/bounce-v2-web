@@ -82,6 +82,15 @@ export const SubmitContext = React.createContext<{
 	setOperation: () => { }
 });
 
+export const getUserDate = async (initBalances: string[]) => {
+	const JoinKindInit = 0;
+	// const initBalances = [1e18, 2e18];
+	const abi = ['uint256', 'uint256[]'];
+	const data = [JoinKindInit, initBalances];
+	const userDataEncoded = defaultAbiCoder.encode(abi, data);
+	return userDataEncoded
+}
+
 export const CreateLBP: FC<MaybeWithClassName> = () => {
 	const provider = useWeb3Provider();
 	const { account, chainId } = useWeb3React();
@@ -99,14 +108,7 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 
 	const [lastOperation, setLastOperation] = useState<(() => void) | null>(null);
 
-	const getUserDate = async (initBalances: string[]) => {
-		const JoinKindInit = 0;
-		// const initBalances = [1e18, 2e18];
-		const abi = ['uint256', 'uint256[]'];
-		const data = [JoinKindInit, initBalances];
-		const userDataEncoded = defaultAbiCoder.encode(abi, data);
-		return userDataEncoded
-	}
+	
 
 	const onComplete = async (data: ConfirmationInType) => {
 		const operation = async () => {

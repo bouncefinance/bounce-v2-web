@@ -131,21 +131,42 @@ export const withDrawAllLbpPool = (
 // 	return contract.methods.whitelistP(poolID, address).call();
 // };
 
-export const swapContracts = (
+export interface SingleSwap {
+	poolId: string;
+	kind: 0 | 1;
+	assetIn: string;
+	assetOut: string;
+	amount: string;
+	userData: string;
+}
+
+export interface FundManagement {
+	sender: string;
+	fromInternalBalance: boolean;
+	recipient: string;
+	toInternalBalance: boolean;
+}
+
+export const LbpSwap = (
 	contract: ContractType,
-	amount: string,
 	account: string,
-	poolID: number,
-	sendAmount: string
+	data: {
+		swap_struct: SingleSwap;
+		fund_struct: FundManagement;
+		limit: number;
+		deadline: string;
+	}
 ) => {
-	const action = contract.methods.swap(poolID, amount);
+	const action = contract.methods.swap(
+		data.swap_struct,
+		data.fund_struct,
+		data.limit,
+		data.deadline
+	);
 
-	action.estimateGas({
-		poolID,
-		amount,
-	});
+	// action.estimateGas();
 
-	return action.send({ from: account, value: sendAmount });
+	return action.send({ from: account });
 };
 
 export const getMyAmount0 = async (
