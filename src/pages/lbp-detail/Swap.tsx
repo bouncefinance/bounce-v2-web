@@ -12,7 +12,7 @@ import { Button, PrimaryButton } from '@app/ui/button';
 import { TokenInfo } from '@uniswap/token-lists';
 import Bignumber from 'bignumber.js'
 import ClickAwayListener from 'react-click-away-listener';
-import { approveLbpVault, FundManagement, getBounceProxyContract, getLbpVaultAllowance, getVaultContract, LbpSwap, SingleSwap } from '@app/web3/api/bounce/lbp';
+import { approveLbpVault, FundManagement, getBounceProxyContract, getLbpVaultAllowance, getLiquidityBootstrappingPoolContract, getVaultContract, LbpSwap, SingleSwap } from '@app/web3/api/bounce/lbp';
 import { useAccount, useChainId, useWeb3Provider } from '@app/web3/hooks/use-web3';
 import { OPERATION } from './LBPDetail';
 import { getUserDate } from '../create-lbp/createLBP';
@@ -20,6 +20,7 @@ import { numToWei, toWei, unlimitedAuthorization } from '@app/utils/bn/wei';
 import { isEqualZero } from '@app/utils/validation';
 import { getTokenContract } from '@app/web3/api/bounce/erc';
 import { isLessThan } from '@app/utils/bn';
+import { LBPPairData } from './LBPPairData';
 
 const RATIO = 0.005
 
@@ -33,18 +34,20 @@ export interface ISwapparams {
 }
 
 export const Swap = ({
-    token0, token1, token0Amount, token1Amount, setOperation
+    token0: tokenFrom, token1: tokenTo, token0Amount, token1Amount, setOperation
 }: ISwapparams) => {
+    const POOL_ADDRESS = '0x05cdd556040c1b1a2d1c45d02d3889a318a3ce0b'
+    const POOL_ID = '0x05cdd556040c1b1a2d1c45d02d3889a318a3ce0b000200000000000000000099'
+
     const [isResver, setIsResver] = useState(false)
-    const [tokenFrom, setTokenFrom] = useState(token0)
-    const [tokenTo, setTokenTo] = useState(token1)
     const [tokenIsApprove, setTokenIsApprove] = useState(false)
     const [tragger,] = useState<'from' | 'to'>('from')
     const [isSlip, setIsSlip] = useState(false)
     const provider = useWeb3Provider();
     const chainId = useChainId();
     const account = useAccount();
-    const contract = useMemo(() => getVaultContract(provider, chainId), [chainId, provider]);
+    const vaultContract = useMemo(() => getVaultContract(provider, chainId), [chainId, provider]);
+    const lbpPairContract = useMemo(() => getLiquidityBootstrappingPoolContract(provider, POOL_ADDRESS), [provider, POOL_ADDRESS]);
 
     const handleTranslate = useCallback(({ values, form }) => {
         setIsResver(!isResver)
@@ -99,14 +102,19 @@ export const Swap = ({
             });
     }, [tokenFrom])
 
+    const pairDate = new LBPPairData(lbpPairContract, vaultContract)
 
-    const POOLID = '0x05cdd556040c1b1a2d1c45d02d3889a318a3ce0b000200000000000000000099'
+    const updatePrice = useCallback(async () => {
+        console.log(await pairDate.getPoolIdByte32())
+    }, [])
+
+    updatePrice()
 
     const handleSubmit = async () => {
         if (!tokenIsApprove) return handleApprove()
 
         const singleSwap: SingleSwap = {
-            poolId: POOLID,
+            poolId: POOL_ID,
             kind: 0,    // 0 转入   1  转出
             assetIn: '0x5e26fa0fe067d28aae8aff2fb85ac2e693bd9efa',  // AUCTION 
             assetOut: '0x4dbcdf9b62e891a7cec5a2568c3f4faf9e8abe2b', // USDC
@@ -121,7 +129,7 @@ export const Swap = ({
             toInternalBalance: false
         }
 
-        await LbpSwap(contract, account, {
+        await LbpSwap(vaultContract, account, {
             swap_struct: singleSwap,
             fund_struct: fundManagement,
             // limit: toWei(0.0002, 6).toString(),
@@ -145,7 +153,6 @@ export const Swap = ({
     }
 
     return (
-
         <div className={styles.swapWrapper}>
             <Form
                 onSubmit={handleSubmit}
