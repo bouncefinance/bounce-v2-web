@@ -94,13 +94,13 @@
     }
 
     .infoContentLeft {
-        width: 580px;
+        width: 58.5%;
         box-sizing: border-box;
 
     }
 
     .infoContentRight {
-        width: 394px;
+        width: 38.5%;
         box-sizing: border-box;
     }
 
@@ -184,6 +184,12 @@
     }
 }
 
+.SwitchBtn {
+    .MuiSwitch-colorPrimary.Mui-checked {
+        color: #000 !important;
+    }
+}
+
 .activityInfo {
     .head {
         display: grid;
@@ -229,14 +235,15 @@
 
         border-bottom: 1px solid rgba(var(--primary-black), 0.1);
     }
+
     .cellAmount {
         color: rgba(var(--primary-black), 0.4);
     }
+
     .amount {
         display: flex;
         flex-direction: column;
         justify-content: center;
         justify-content: center;
     }
-
 }

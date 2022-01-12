@@ -5,14 +5,20 @@ import { WEB3_NETWORKS } from "@app/web3/networks/const";
 import {
 	getBounceProxyChainAddressMapping,
 	getOtcChainAddressMapping,
+	getVaultChainAddressMapping,
 } from "@app/web3/networks/mapping";
 
+import BalancerVaultABI from "./BalancerVault.json";
 import BounceProxyABI from "./BounceProxy.json";
 
 import type { Contract as ContractType } from "web3-eth-contract";
 
 export const getBounceProxyContract = (provider: AbstractProvider, chainId: WEB3_NETWORKS) => {
 	return getContract(provider, BounceProxyABI, getBounceProxyChainAddressMapping(chainId));
+};
+
+export const getVaultContract = (provider: AbstractProvider, chainId: WEB3_NETWORKS) => {
+	return getContract(provider, BalancerVaultABI, getVaultChainAddressMapping(chainId));
 };
 
 export const approveLbpPool = (
@@ -65,40 +71,102 @@ export const createLbpPool = (
 	return action.send({ from: account, value });
 };
 
-export const getOtcPools = async (
-	contract: ContractType,
-	poolID: number
-): Promise<Omit<OtcPoolType, "onlyBot">> => {
-	return contract.methods.pools(poolID).call();
+export type setPoolEnabledType = {
+	poolAddress: string;
+	swapEnabled: boolean;
 };
 
-export const getSwap1Amount = async (contract: ContractType, poolID: number) => {
-	return contract.methods.amountSwap1P(poolID).call();
+export const getPoolEnabled = () => {
+	return false;
 };
 
-export const getWhitelistedStatus = async (
+export const setPoolEnabled = (
 	contract: ContractType,
-	poolID: number,
-	address: string
-): Promise<boolean> => {
-	return contract.methods.whitelistP(poolID, address).call();
-};
-
-export const swapContracts = (
-	contract: ContractType,
-	amount: string,
 	account: string,
-	poolID: number,
-	sendAmount: string
+	data: setPoolEnabledType,
+	value?: string
 ) => {
-	const action = contract.methods.swap(poolID, amount);
+	const action = contract.methods.setSwapEnabled(data.poolAddress, data.swapEnabled);
 
-	action.estimateGas({
-		poolID,
-		amount,
-	});
+	// action.estimateGas();
 
-	return action.send({ from: account, value: sendAmount });
+	return action.send({ from: account, value });
+};
+
+type withDrawAllLbpPool = {
+	pool: string;
+	minAmountsOut: number[];
+	maxBPTTokenOut: number[];
+};
+
+export const withDrawAllLbpPool = (
+	contract: ContractType,
+	account: string,
+	data: withDrawAllLbpPool,
+	value?: string
+) => {
+	const action = contract.methods.exitPool(data.pool, data.minAmountsOut, data.maxBPTTokenOut);
+
+	// action.estimateGas();
+
+	return action.send({ from: account, value });
+};
+
+// export const getOtcPools = async (
+// 	contract: ContractType,
+// 	poolID: number
+// ): Promise<Omit<OtcPoolType, "onlyBot">> => {
+// 	return contract.methods.pools(poolID).call();
+// };
+
+// export const getSwap1Amount = async (contract: ContractType, poolID: number) => {
+// 	return contract.methods.amountSwap1P(poolID).call();
+// };
+
+// export const getWhitelistedStatus = async (
+// 	contract: ContractType,
+// 	poolID: number,
+// 	address: string
+// ): Promise<boolean> => {
+// 	return contract.methods.whitelistP(poolID, address).call();
+// };
+
+export interface SingleSwap {
+	poolId: string;
+	kind: 0 | 1;
+	assetIn: string;
+	assetOut: string;
+	amount: string;
+	userData: string;
+}
+
+export interface FundManagement {
+	sender: string;
+	fromInternalBalance: boolean;
+	recipient: string;
+	toInternalBalance: boolean;
+}
+
+export const LbpSwap = (
+	contract: ContractType,
+	account: string,
+	data: {
+		swap_struct: SingleSwap;
+		fund_struct: FundManagement;
+		limit: number;
+		deadline: string;
+	}
+) => {
+	const action = contract.methods.swap(
+		data.swap_struct,
+		data.fund_struct,
+		data.limit,
+		data.deadline
+	);
+
+	// action.estimateGas();
+
+	return action.send({ from: account });
 };
 
 export const getMyAmount0 = async (

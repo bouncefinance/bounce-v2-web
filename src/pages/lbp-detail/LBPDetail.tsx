@@ -13,8 +13,19 @@ import { useWeb3, useWeb3Provider } from '@app/web3/hooks/use-web3'
 import { fromWei } from '@app/utils/bn/wei'
 import { useWeb3React } from '@web3-react/core'
 import { ExtensionInfo } from './ExtensionInfo'
+import { useControlPopUp } from '@app/hooks/use-control-popup'
+import { ProcessingPopUp } from '@app/modules/processing-pop-up'
+import { CONTENT, TITLE } from '../farm/stakingModal'
 
-
+export enum OPERATION {
+    default = "default",
+    approval = "approval",
+    confirm = "confirm",
+    pending = "pending",
+    success = "success",
+    error = "error",
+    cancel = "cancel",
+}
 
 export const LBPDetail = (props: {
     poolID: number
@@ -24,6 +35,8 @@ export const LBPDetail = (props: {
     const findToken = useTokenSearch();
     const { account } = useWeb3React()
     const { back: goBack } = useRouter();
+    const { popUp, close, open } = useControlPopUp();
+    const [operation, setOperation] = useState(OPERATION.default);
 
     const progress = 90
     const TokenSold = useMemo(() => {
@@ -35,10 +48,16 @@ export const LBPDetail = (props: {
         </div>
     }, [])
 
-    const token0 = findToken('0xc7ad46e0b8a400bb3c915120d284aafba8fc4735')
-    const token1 = findToken('0x0000000000000000000000000000000000000000')
+    const token0 = findToken('0x5e26fa0fe067d28aae8aff2fb85ac2e693bd9efa')
+    const token1 = findToken('0xc7ad46e0b8a400bb3c915120d284aafba8fc4735')
     const [token0Amount, setToken0Amount] = useState(0)
     const [token1Amount, setToken1Amount] = useState(0)
+
+    useEffect(() => {
+		if (operation !== OPERATION.default) {
+			open();
+		}
+	}, [open, operation]);
 
     useEffect(() => {
         if (!token0 || !token1) {
@@ -81,9 +100,10 @@ export const LBPDetail = (props: {
                 totalVolume={'$ 1,000,000.5'}
                 liquidity={'$ 500,000.5'}
                 tokenSold={TokenSold}
-                extension={<ExtensionInfo 
+                extension={<ExtensionInfo
                     poolId={props.poolID}
                     tokenFrom={token0}
+                    setOperation={setOperation}
                 />}
             >
                 {token0 && token1 && <Swap
@@ -91,8 +111,33 @@ export const LBPDetail = (props: {
                     token1={token1}
                     token0Amount={token0Amount}
                     token1Amount={token1Amount}
+                    setOperation={setOperation}
                 />}
             </View>
+            {popUp.defined ? (
+                <ProcessingPopUp
+                    title={TITLE[operation]}
+                    text={CONTENT[operation]}
+                    onSuccess={() => {
+                        // routerPush(`${LBP_PATH}/${poolId}`);
+                        setOperation(OPERATION.default);
+                        close();
+                    }}
+                    // onTry={tryAgainAction}
+                    isSuccess={operation === OPERATION.success}
+                    isLoading={
+                        operation === OPERATION.approval ||
+                        operation === OPERATION.pending ||
+                        operation === OPERATION.confirm
+                    }
+                    isError={operation === OPERATION.error || operation === OPERATION.cancel}
+                    control={popUp}
+                    close={() => {
+                        close();
+                        setOperation(OPERATION.default);
+                    }}
+                />
+            ) : undefined}
         </div >
     )
 }

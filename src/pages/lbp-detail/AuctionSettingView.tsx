@@ -1,10 +1,98 @@
 import { Button } from '@app/ui/button'
-import { ListItem, ListItemSecondaryAction, ListItemText, Switch } from '@material-ui/core'
-import React, { useState } from 'react'
+import { getBounceProxyContract, setPoolEnabled, withDrawAllLbpPool } from '@app/web3/api/bounce/lbp'
+import { useAccount, useChainId, useWeb3Provider } from '@app/web3/hooks/use-web3'
+import { ListItem, ListItemSecondaryAction, Switch } from '@material-ui/core'
+import { makeStyles } from '@material-ui/styles'
+import React, { useMemo, useState } from 'react'
 import styles from './ExtensionInfo.module.scss'
+import { OPERATION } from './LBPDetail'
 
-export const AuctionSettingView = () => {
+
+const useStyles = makeStyles({
+    root: {
+        '.MuiSwitch-colorPrimary.Mui-checked': {
+            color: '#000'
+        }
+    }
+})
+
+interface IAuctionSettingViewParams {
+    setOperation: React.Dispatch<React.SetStateAction<OPERATION>>
+}
+
+const POOLID = '0x7dcb29e2db6f6db2da5d9e9de575a3a7cd8223ba'
+
+export const AuctionSettingView = ({
+    setOperation
+}: IAuctionSettingViewParams) => {
     const [isEnabled, setIsEnabled] = useState(false)
+    const [isEnabledLoading, setIsEnabledALoading] = useState(false)
+    const classes = useStyles();
+    const provider = useWeb3Provider();
+    const chainId = useChainId();
+    const account = useAccount();
+    const contract = useMemo(() => getBounceProxyContract(provider, chainId), [chainId, provider]);
+
+    const handleWithdraw = async () => {
+        try {
+            await withDrawAllLbpPool(contract, account,
+                {
+                    pool: POOLID,
+                    minAmountsOut: [0, 0],
+                    maxBPTTokenOut: [0, 0]
+                }
+            )
+                .on("transactionHash", (h) => {
+                    // console.log("hash", h);7
+                    setOperation(OPERATION.pending);
+                })
+                .on("receipt", (r) => {
+                    // console.log("receipt", r);
+                    setOperation(OPERATION.success);
+                    // setLastOperation(null);
+                    // setPoolId(r.events.Created.returnValues[0]);
+                })
+                .on("error", (e) => {
+                    // console.error("error", e);
+                    setOperation(OPERATION.error);
+                });
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const handleChangeEnable = async () => {
+        if (isEnabledLoading) return
+        setIsEnabledALoading(true)
+        const willEnable = !isEnabled
+
+        setIsEnabled(willEnable)
+        try {
+            await setPoolEnabled(contract, account, {
+                poolAddress: POOLID,
+                swapEnabled: willEnable
+            })
+                .on("transactionHash", (h) => {
+                    // console.log("hash", h);7
+                    setOperation(OPERATION.pending);
+                    setIsEnabledALoading(false)
+                })
+                .on("receipt", (r) => {
+                    // console.log("receipt", r);
+                    setOperation(OPERATION.success);
+
+                })
+                .on("error", (e) => {
+                    // console.error("error", e);
+                    setOperation(OPERATION.error);
+                    setIsEnabled(!willEnable)
+                });
+        } catch (error) {
+            console.log(error)
+            setIsEnabled(!willEnable)
+            setIsEnabledALoading(false)
+        }
+    }
 
     return (
         <div>
@@ -15,14 +103,12 @@ export const AuctionSettingView = () => {
                         <p>Buy/Sell function is enabled</p>
                         <ListItemSecondaryAction>
                             <Switch
-                                color='default'
+                                color='primary'
+                                classes={classes}
                                 size='medium'
                                 edge="end"
-                                onChange={() => {
-                                    setIsEnabled(!isEnabled)
-                                }}
+                                onChange={handleChangeEnable}
                                 checked={isEnabled}
-                                inputProps={{ 'aria-labelledby': 'switch-list-label-wifi' }}
                             />
                         </ListItemSecondaryAction>
                     </ListItem>
@@ -44,7 +130,12 @@ export const AuctionSettingView = () => {
                         </p>
                     </div>
                     <div className={styles.poolCardRight}>
-                        <Button className={styles.withdrawBtn} color='primary-black' variant='contained'>
+                        <Button
+                            className={styles.withdrawBtn}
+                            color='primary-black'
+                            variant='contained'
+                            onClick={handleWithdraw}
+                        >
                             Withdraw All
                         </Button>
                     </div>
@@ -53,3 +144,4 @@ export const AuctionSettingView = () => {
         </div>
     )
 }
+

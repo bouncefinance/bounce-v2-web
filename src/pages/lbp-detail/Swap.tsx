@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import styles from './Swap.module.scss'
 import settingIcon from './assets/setting.svg'
 import translateIcon from './assets/translate.svg'
@@ -12,6 +12,11 @@ import { Button, PrimaryButton } from '@app/ui/button';
 import { TokenInfo } from '@uniswap/token-lists';
 import Bignumber from 'bignumber.js'
 import ClickAwayListener from 'react-click-away-listener';
+import { FundManagement, getBounceProxyContract, getVaultContract, LbpSwap, SingleSwap } from '@app/web3/api/bounce/lbp';
+import { useAccount, useChainId, useWeb3Provider } from '@app/web3/hooks/use-web3';
+import { OPERATION } from './LBPDetail';
+import { getUserDate } from '../create-lbp/createLBP';
+import { toWei } from '@app/utils/bn/wei';
 
 const RATIO = 0.005
 
@@ -21,16 +26,21 @@ export interface ISwapparams {
     token1: TokenInfo,
     token0Amount: number
     token1Amount: number
+    setOperation: React.Dispatch<React.SetStateAction<OPERATION>>
 }
 
 export const Swap = ({
-    token0, token1, token0Amount, token1Amount
+    token0, token1, token0Amount, token1Amount, setOperation
 }: ISwapparams) => {
     const [isResver, setIsResver] = useState(false)
     const [tokenFrom, setTokenFrom] = useState(token0)
     const [tokenTo, setTokenTo] = useState(token1)
     const [tragger, setTragger] = useState<'from' | 'to'>('from')
     const [isSlip, setIsSlip] = useState(false)
+    const provider = useWeb3Provider();
+    const chainId = useChainId();
+    const account = useAccount();
+    const contract = useMemo(() => getVaultContract(provider, chainId), [chainId, provider]);
 
     const handleTranslate = useCallback(({ values, form }) => {
         const temp = tokenFrom
@@ -51,13 +61,52 @@ export const Swap = ({
 
     }, [tokenFrom, tokenTo, tragger])
 
+    const POOLID = '0x7dcb29e2db6f6db2da5d9e9de575a3a7cd8223ba000200000000000000000097'
+
+    const handleSubmit = async () => {
+        const singleSwap: SingleSwap = {
+            poolId: POOLID,
+            kind: 1,    // 0 转入   1  转出
+            assetIn: '0x5e26fa0fe067d28aae8aff2fb85ac2e693bd9efa',  // Auction 
+            assetOut: '0xc7ad46e0b8a400bb3c915120d284aafba8fc4735', // DAI
+            amount: toWei(0.01, 18).toString(),
+            userData: await getUserDate([toWei(0.01, 18).toString(), toWei(0.95, 18).toString()])
+        }
+
+        const fundManagement: FundManagement = {
+            sender: account,
+            fromInternalBalance: false,
+            recipient: account,
+            toInternalBalance: false
+        }
+
+        await LbpSwap(contract, account, {
+            swap_struct: singleSwap,
+            fund_struct: fundManagement,
+            limit: 0,
+            deadline: new Bignumber(99999999999999).multipliedBy(new Bignumber(10).pow(5)).toString()
+        })
+            .on("transactionHash", (h) => {
+                // console.log("hash", h);7
+                setOperation(OPERATION.pending);
+            })
+            .on("receipt", (r) => {
+                // console.log("receipt", r);
+                setOperation(OPERATION.success);
+                // setLastOperation(null);
+                // setPoolId(r.events.Created.returnValues[0]);
+            })
+            .on("error", (e) => {
+                // console.error("error", e);
+                setOperation(OPERATION.error);
+            });
+    }
+
     return (
 
         <div className={styles.swapWrapper}>
             <Form
-                onSubmit={() => {
-                    alert('Exchange')
-                }}
+                onSubmit={handleSubmit}
                 className={styles.form}
             // initialValues={''}
             >
