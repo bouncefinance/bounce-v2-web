@@ -32,12 +32,31 @@ export const approveLbpPool = (
 		.send({ from: account });
 };
 
+export const approveLbpVault = (
+	contract: ContractType,
+	chainId: WEB3_NETWORKS,
+	account: string,
+	amount: string
+) => {
+	return contract.methods
+		.approve(getVaultChainAddressMapping(chainId), amount)
+		.send({ from: account });
+};
+
 export const getLbpAllowance = async (
 	contract: ContractType,
 	chainId: WEB3_NETWORKS,
 	account: string
 ) => {
 	return contract.methods.allowance(account, getBounceProxyChainAddressMapping(chainId)).call();
+};
+
+export const getLbpVaultAllowance = async (
+	contract: ContractType,
+	chainId: WEB3_NETWORKS,
+	account: string
+) => {
+	return contract.methods.allowance(account, getVaultChainAddressMapping(chainId)).call();
 };
 
 // export interface IUserData {
@@ -153,7 +172,7 @@ export const LbpSwap = (
 	data: {
 		swap_struct: SingleSwap;
 		fund_struct: FundManagement;
-		limit: number;
+		limit: string;
 		deadline: string;
 	}
 ) => {

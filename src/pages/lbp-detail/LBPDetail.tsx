@@ -49,7 +49,7 @@ export const LBPDetail = (props: {
     }, [])
 
     const token0 = findToken('0x5e26fa0fe067d28aae8aff2fb85ac2e693bd9efa')
-    const token1 = findToken('0xc7ad46e0b8a400bb3c915120d284aafba8fc4735')
+    const token1 = findToken('0x4dbcdf9b62e891a7cec5a2568c3f4faf9e8abe2b')
     const [token0Amount, setToken0Amount] = useState(0)
     const [token1Amount, setToken1Amount] = useState(0)
 
