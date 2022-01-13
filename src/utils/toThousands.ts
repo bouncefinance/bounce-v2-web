@@ -25,6 +25,7 @@ export const toDecimal2NoZero = (x: number, fixNum: number) => {
 	return s;
 };
 
+// 大数据转换字母缩写
 export const numberFormat = (val: number): string => {
 	if (val >= 1e12) {
 		return `${toDecimal2NoZero(val / 1e12, 1)}T`;

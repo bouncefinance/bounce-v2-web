@@ -9,13 +9,13 @@ import { LBPDetail } from "@app/pages/lbp-detail";
 const LbpViewPage = pageWithLayout(
 	() => {
 		const {
-			query: { poolID },
+			query: { poolAddress },
 		} = useRouter();
 
 		return (
 			<NoSsr>
 				<RequireConnectedWallet>
-					<LBPDetail poolID={+poolID}  />
+					<LBPDetail poolAddress={poolAddress as string}  />
 				</RequireConnectedWallet>
 			</NoSsr>
 		);

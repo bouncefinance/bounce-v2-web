@@ -18,6 +18,7 @@ import { POOL_STATUS } from "@app/utils/pool";
 
 import styles from "./Card.module.scss";
 import { Timer } from "../timer";
+import { numberFormat } from "@app/utils/toThousands";
 
 export type DisplayPoolInfoType = {
 	href?: string;
@@ -32,7 +33,9 @@ export type DisplayPoolInfoType = {
 	fill?: number;
 	needClaim?: boolean;
 	isLbpCard?: boolean;
-	lbpData?: any;
+	sold?: number | string;
+	startTs?: number;
+	endTs?: number;
 };
 
 export const Card: FC<DisplayPoolInfoType & MaybeWithClassName & { bordered?: boolean }> = ({
@@ -50,7 +53,9 @@ export const Card: FC<DisplayPoolInfoType & MaybeWithClassName & { bordered?: bo
 	price,
 	fill,
 	isLbpCard = false,
-	lbpData
+	sold,
+	startTs,
+	endTs
 }) => {
 	const STATUS: Record<POOL_STATUS, string> = {
 		[POOL_STATUS.COMING]: "Coming soon",
@@ -62,14 +67,14 @@ export const Card: FC<DisplayPoolInfoType & MaybeWithClassName & { bordered?: bo
 
 	const LBPSTATUS: Record<POOL_STATUS, ReactNode> = {
 		[POOL_STATUS.COMING]: (
-			<span className={styles.lbpComing}>Start in <Timer timer={1641798369} onZero={() => console.log('time start')} /> </span>
+			<span className={styles.lbpComing}>Start in <Timer timer={startTs} onZero={() => console.log('time start')} /> </span>
 		),
 		[POOL_STATUS.LIVE]: (
-			<span>Live <Timer timer={1641798369} onZero={() => console.log('time start')} /></span>
+			<span>Live <Timer timer={endTs} onZero={() => console.log('time start')} /></span>
 		),
 		[POOL_STATUS.FILLED]: "Filled",
 		[POOL_STATUS.CLOSED]: (
-			<span>Closed <Timer timer={1641193569} onZero={() => console.log('close')} /></span>
+			<span>Closed <Timer timer={endTs} onZero={() => console.log('close')} /></span>
 		),
 		[POOL_STATUS.ERROR]: "Error",
 	};
@@ -106,9 +111,9 @@ export const Card: FC<DisplayPoolInfoType & MaybeWithClassName & { bordered?: bo
 	};
 
 	const LBP_AUCTION_INFORMATION = {
-		"Start Balance": type,
+		"Start Balance": `${total} ${from?.symbol}`,
 		"Current Price,$": price,
-		"Token Sold": total,
+		"Token Sold": `${numberFormat(Number(sold))} of ${numberFormat(Number(total))} ( ${fill}% )`,
 	};
 
 	return (

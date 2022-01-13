@@ -2,7 +2,7 @@ import { getJson } from "@app/api/network/json";
 import { getAPIByNetwork } from "@app/api/utils";
 import { WEB3_NETWORKS } from "@app/web3/networks/const";
 
-import { ILBPHistory, ILBPList } from "./types";
+import { ILBPDetail, ILBPHistory, ILBPList } from "./types";
 
 type APIResponse<T> = {
 	code: 200 | 500;
@@ -21,6 +21,7 @@ const fetchInformation = async <T = any>(
 	return getJson(undefined, `${apiPrefix}/${url}`, params);
 };
 
+// lbp auction list
 export const fetchLbpList = async (
 	chainId: WEB3_NETWORKS,
 	status: number | undefined,
@@ -34,7 +35,7 @@ export const fetchLbpList = async (
 		total: number;
 	};
 }> => {
-	const res = await fetchInformation<ILBPList[]>(chainId, "lbp", {
+	const res = await fetchInformation<ILBPList[]>(chainId, "lbps", {
 		status,
 		offset: pagination.page * pagination.perPage,
 		limit: pagination.perPage,
@@ -83,5 +84,24 @@ export const fetchLbpHistory = async (
 		meta: {
 			total: res.total,
 		},
+	};
+};
+
+// LBP detail
+export const fetchLbpDetail = async (
+	chainId: WEB3_NETWORKS,
+	pool_address: string
+): Promise<{
+	data: ILBPDetail;
+}> => {
+	const res = await fetchInformation<ILBPDetail>(chainId, `lbps/${pool_address}`, {});
+
+	if (!res.data) {
+		console.error(res);
+		throw new Error("failed to load data:" + res.error_msg);
+	}
+
+	return {
+		data: res.data,
 	};
 };
