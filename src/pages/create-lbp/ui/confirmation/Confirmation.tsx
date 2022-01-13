@@ -110,7 +110,7 @@ export const ConfirmationImp: FC<CommonType> = ({ type }) => {
 		if (isEqualZero(tokenFrom.address)) return
 		const tokenContract = getTokenContract(provider, tokenFrom.address);
 		approveLbpPool(tokenContract, chainId, account, numToWei(
-			new BigNumber(amountFrom).multipliedBy(100).toNumber(),
+			new BigNumber(amountFrom).toNumber(),
 			tokenFrom.decimals,
 			0
 		))
@@ -136,7 +136,7 @@ export const ConfirmationImp: FC<CommonType> = ({ type }) => {
 		if (isEqualZero(tokenTo.address)) return
 		const tokenContract = getTokenContract(provider, tokenTo.address);
 		approveLbpPool(tokenContract, chainId, account, numToWei(
-			new BigNumber(amountTo).multipliedBy(100).toNumber(),
+			new BigNumber(amountTo).toNumber(),
 			tokenTo.decimals,
 			0
 		))

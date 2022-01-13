@@ -21,6 +21,7 @@ type DateFieldType = {
 	min?: string;
 	max?: string;
 	selection?: DateInterval;
+	nowTime?: boolean
 };
 
 export const DateField: FC<DateFieldType & MaybeWithClassName> = ({
@@ -37,6 +38,7 @@ export const DateField: FC<DateFieldType & MaybeWithClassName> = ({
 	min,
 	max,
 	selection,
+	nowTime = false
 }) => {
 	return (
 		<Field name={name} value={value} validate={required ? isDateRequired : undefined}>
@@ -59,6 +61,7 @@ export const DateField: FC<DateFieldType & MaybeWithClassName> = ({
 						readOnly={readOnly}
 						required={required}
 						error={(meta.error && meta.touched ? meta.error : undefined) || meta.submitError}
+						nowTime={nowTime}
 					/>
 				)
 			}}

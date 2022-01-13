@@ -20,7 +20,7 @@ interface IAuctionSettingViewParams {
     setOperation: React.Dispatch<React.SetStateAction<OPERATION>>
 }
 
-const POOLID = '0x7dcb29e2db6f6db2da5d9e9de575a3a7cd8223ba'
+const POOLID = '0x05cdd556040c1b1a2d1c45d02d3889a318a3ce0b'
 
 export const AuctionSettingView = ({
     setOperation

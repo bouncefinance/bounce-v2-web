@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styles from './Swap.module.scss'
 import settingIcon from './assets/setting.svg'
 import translateIcon from './assets/translate.svg'
@@ -12,11 +12,15 @@ import { Button, PrimaryButton } from '@app/ui/button';
 import { TokenInfo } from '@uniswap/token-lists';
 import Bignumber from 'bignumber.js'
 import ClickAwayListener from 'react-click-away-listener';
-import { FundManagement, getBounceProxyContract, getVaultContract, LbpSwap, SingleSwap } from '@app/web3/api/bounce/lbp';
+import { approveLbpVault, FundManagement, getBounceProxyContract, getLbpVaultAllowance, getLiquidityBootstrappingPoolContract, getVaultContract, LbpSwap, SingleSwap } from '@app/web3/api/bounce/lbp';
 import { useAccount, useChainId, useWeb3Provider } from '@app/web3/hooks/use-web3';
 import { OPERATION } from './LBPDetail';
 import { getUserDate } from '../create-lbp/createLBP';
-import { toWei } from '@app/utils/bn/wei';
+import { numToWei, toWei, unlimitedAuthorization } from '@app/utils/bn/wei';
+import { isEqualZero } from '@app/utils/validation';
+import { getTokenContract } from '@app/web3/api/bounce/erc';
+import { isLessThan } from '@app/utils/bn';
+import { LBPPairData } from './LBPPairData';
 
 const RATIO = 0.005
 
@@ -30,24 +34,23 @@ export interface ISwapparams {
 }
 
 export const Swap = ({
-    token0, token1, token0Amount, token1Amount, setOperation
+    token0: tokenFrom, token1: tokenTo, token0Amount, token1Amount, setOperation
 }: ISwapparams) => {
+    const POOL_ADDRESS = '0x05cdd556040c1b1a2d1c45d02d3889a318a3ce0b'
+    const POOL_ID = '0x05cdd556040c1b1a2d1c45d02d3889a318a3ce0b000200000000000000000099'
+
     const [isResver, setIsResver] = useState(false)
-    const [tokenFrom, setTokenFrom] = useState(token0)
-    const [tokenTo, setTokenTo] = useState(token1)
-    const [tragger, setTragger] = useState<'from' | 'to'>('from')
+    const [tokenIsApprove, setTokenIsApprove] = useState(false)
+    const [tragger,] = useState<'from' | 'to'>('from')
     const [isSlip, setIsSlip] = useState(false)
     const provider = useWeb3Provider();
     const chainId = useChainId();
     const account = useAccount();
-    const contract = useMemo(() => getVaultContract(provider, chainId), [chainId, provider]);
+    const vaultContract = useMemo(() => getVaultContract(provider, chainId), [chainId, provider]);
+    const lbpPairContract = useMemo(() => getLiquidityBootstrappingPoolContract(provider, POOL_ADDRESS), [provider, POOL_ADDRESS]);
 
     const handleTranslate = useCallback(({ values, form }) => {
-        const temp = tokenFrom
         setIsResver(!isResver)
-
-        setTokenFrom(tokenTo)
-        setTokenTo(temp)
 
         if (tragger === 'from') {
             const tempAmount = values.amountFrom
@@ -58,19 +61,65 @@ export const Swap = ({
             form.change('amountFrom', values.amountTo)
             form.change('amountTo', tempAmount)
         }
+    }, [tokenFrom, tokenTo, tragger, isResver])
 
-    }, [tokenFrom, tokenTo, tragger])
+    useEffect(() => {
+        (async () => {
+            try {
+                if (isEqualZero(tokenFrom.address)) return setTokenIsApprove(true)
+                const tokenContract = getTokenContract(provider, tokenFrom.address);
+                const allowance = await getLbpVaultAllowance(
+                    tokenContract,
+                    chainId,
+                    account
+                );
 
-    const POOLID = '0x7dcb29e2db6f6db2da5d9e9de575a3a7cd8223ba000200000000000000000097'
+
+                if (!isLessThan(allowance, isResver ? token1Amount : token0Amount)) {
+                    setTokenIsApprove(true)
+                } else {
+                    setTokenIsApprove(false)
+                }
+            } catch (error) {
+
+            }
+        })()
+    }, [tokenFrom])
+
+    const handleApprove = useCallback(async () => {
+        if (isEqualZero(tokenFrom.address)) return
+        const tokenContract = getTokenContract(provider, tokenFrom.address);
+        approveLbpVault(tokenContract, chainId, account, unlimitedAuthorization)
+            .on("transactionHash", (h) => {
+                setOperation(OPERATION.approval);
+            })
+            .on("receipt", (r) => {
+                setOperation(OPERATION.success);
+                setTokenIsApprove(true)
+            })
+            .on("error", (e) => {
+                setOperation(OPERATION.error);
+            });
+    }, [tokenFrom])
+
+    const pairDate = new LBPPairData(lbpPairContract, vaultContract)
+
+    const updatePrice = useCallback(async () => {
+        console.log(await pairDate.getPoolIdByte32())
+    }, [])
+
+    updatePrice()
 
     const handleSubmit = async () => {
+        if (!tokenIsApprove) return handleApprove()
+
         const singleSwap: SingleSwap = {
-            poolId: POOLID,
-            kind: 1,    // 0 转入   1  转出
-            assetIn: '0x5e26fa0fe067d28aae8aff2fb85ac2e693bd9efa',  // Auction 
-            assetOut: '0xc7ad46e0b8a400bb3c915120d284aafba8fc4735', // DAI
-            amount: toWei(0.01, 18).toString(),
-            userData: await getUserDate([toWei(0.01, 18).toString(), toWei(0.95, 18).toString()])
+            poolId: POOL_ID,
+            kind: 0,    // 0 转入   1  转出
+            assetIn: '0x5e26fa0fe067d28aae8aff2fb85ac2e693bd9efa',  // AUCTION 
+            assetOut: '0x4dbcdf9b62e891a7cec5a2568c3f4faf9e8abe2b', // USDC
+            amount: toWei(0.03, 18).toString(),
+            userData: await getUserDate([toWei(0.033, 18).toString(), toWei(0.01, 6).toString()])
         }
 
         const fundManagement: FundManagement = {
@@ -80,10 +129,11 @@ export const Swap = ({
             toInternalBalance: false
         }
 
-        await LbpSwap(contract, account, {
+        await LbpSwap(vaultContract, account, {
             swap_struct: singleSwap,
             fund_struct: fundManagement,
-            limit: 0,
+            // limit: toWei(0.0002, 6).toString(),
+            limit: '0',
             deadline: new Bignumber(99999999999999).multipliedBy(new Bignumber(10).pow(5)).toString()
         })
             .on("transactionHash", (h) => {
@@ -103,7 +153,6 @@ export const Swap = ({
     }
 
     return (
-
         <div className={styles.swapWrapper}>
             <Form
                 onSubmit={handleSubmit}
@@ -177,10 +226,10 @@ export const Swap = ({
                                 <Label
                                     Component="label"
                                     className={styles.row}
-                                    label={token0.address === tokenFrom.address ? "Launch Token Amount" : 'Currency'}
+                                    label={isResver ? 'Currency' : "Launch Token Amount"}
                                     after={
                                         <span className={styles.balance}>
-                                            Balance: {isResver ? token1Amount : token0Amount} <Symbol token={tokenFrom.address} />
+                                            Balance: {isResver ? token1Amount : token0Amount} <Symbol token={(isResver ? tokenTo : tokenFrom).address} />
                                         </span>
                                     }
                                 >
@@ -190,7 +239,7 @@ export const Swap = ({
                                         placeholder="0.00"
                                         className={styles.inputBox}
                                         onChange={(e) => {
-                                            setTragger('from')
+                                            ('from')
                                             console.log(e.target.value)
                                         }}
                                         after={
@@ -200,7 +249,7 @@ export const Swap = ({
                                                         <button
                                                             className={styles.max}
                                                             onClick={() => {
-                                                                const max = token1.address === tokenFrom.address ? token0Amount : token1Amount
+                                                                const max = isResver ? token1Amount : token0Amount
                                                                 form.change(
                                                                     "amountFrom",
                                                                     max
@@ -215,7 +264,7 @@ export const Swap = ({
                                                     )}
                                                 </FormSpy>
                                                 {
-                                                    <Currency coin={tokenFrom} small />
+                                                    <Currency coin={isResver ? tokenTo : tokenFrom} small />
                                                 }
                                             </div>
                                         }
@@ -225,7 +274,7 @@ export const Swap = ({
                                 <div className={styles.translate}>
                                     <img
                                         onClick={() => { handleTranslate(props) }}
-                                        className={token1.address === tokenFrom.address ? styles.translated : ''}
+                                        className={isResver ? styles.translated : ''}
                                         src={translateIcon}
                                         alt=""
                                     />
@@ -234,10 +283,10 @@ export const Swap = ({
                                 <Label
                                     Component="label"
                                     className={styles.row}
-                                    label={token1.address === tokenFrom.address ? "Launch Token Amount" : 'Currency'}
+                                    label={isResver ? "Launch Token Amount" : 'Currency'}
                                     after={
                                         <span className={styles.balance}>
-                                            Balance: {isResver ? token0Amount : token1Amount} <Symbol token={tokenTo.address} />
+                                            Balance: {isResver ? token0Amount : token1Amount} <Symbol token={(isResver ? tokenFrom : tokenTo).address} />
                                         </span>
                                     }
                                 >
@@ -252,7 +301,7 @@ export const Swap = ({
                                                         <button
                                                             className={styles.max}
                                                             onClick={() => {
-                                                                const max = token1.address === tokenFrom.address ? token1Amount : token0Amount
+                                                                const max = isResver ? token0Amount : token1Amount
                                                                 form.change(
                                                                     "amountTo",
                                                                     max
@@ -267,7 +316,7 @@ export const Swap = ({
                                                     )}
                                                 </FormSpy>
                                                 {
-                                                    <Currency coin={tokenTo} small />
+                                                    <Currency coin={isResver ? tokenFrom : tokenTo} small />
                                                 }
                                             </div>
                                         }
@@ -286,7 +335,9 @@ export const Swap = ({
                                 size="large"
                                 submit
                             >
-                                {'Exchange'}
+                                {
+                                    tokenIsApprove ? 'Exchange' : `Approve ${tokenFrom.symbol}`
+                                }
                             </PrimaryButton>
                         )}
                     </FormSpy>

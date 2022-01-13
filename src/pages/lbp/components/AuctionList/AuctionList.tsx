@@ -11,6 +11,7 @@ import { fromWei } from '@app/utils/bn/wei';
 import { getProgress, getSwapRatio, POOL_STATUS } from '@app/utils/pool';
 import { getIsOpen } from '@app/utils/time';
 import { useChainId } from '@app/web3/hooks/use-web3';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { uid } from 'react-uid';
 import styles from './auctionList.module.scss';
@@ -19,6 +20,13 @@ import styles from './auctionList.module.scss';
 const EMPTY_ARRAY = [];
 const WINDOW_SIZE = 9;
 
+export enum lbpPoolStatus {
+    all,
+    upcoming,
+    live,
+    closed
+}
+
 
 export const LBPAuctionList = ({ }) => {
     const [convertedPoolInformation, setConvertedPoolInformation] = useState<DisplayPoolInfoType[]>([]);
@@ -26,6 +34,21 @@ export const LBPAuctionList = ({ }) => {
     const [auctionListData, setAuctionListData] = useState([])
     const [totalCount, setTotalCount] = useState(0);
     const chainId = useChainId();
+    const router = useRouter();
+    const { pathname } = router;
+    const [poolStatus, setPoolStatus] = useState<lbpPoolStatus | undefined>(undefined)
+    
+    useEffect(() => {
+        if(pathname === '/lbp/upcoming') {
+            setPoolStatus(1);
+        }else if(pathname === '/lbp/live') {
+            setPoolStatus(2);
+        }else if(pathname === '/lbp/closed') {
+            setPoolStatus(3)
+        } else {
+            setPoolStatus(undefined)
+        }
+    }, [pathname])
 
     const numberOfPages = Math.ceil(totalCount / WINDOW_SIZE);
 
@@ -33,6 +56,7 @@ export const LBPAuctionList = ({ }) => {
         (async () => {
             const {data: lbpList, meta: {total}} = await fetchLbpList(
                 chainId,
+                poolStatus,
                 {
                     page,
                     perPage: WINDOW_SIZE
@@ -41,7 +65,7 @@ export const LBPAuctionList = ({ }) => {
             setTotalCount(total);
             setAuctionListData(lbpList)
         })()
-    }, [chainId, page])
+    }, [chainId, page, poolStatus])
 
     useEffect(() => {
         if (auctionListData.length > 0) {
