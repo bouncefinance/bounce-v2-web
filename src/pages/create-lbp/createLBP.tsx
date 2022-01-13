@@ -93,7 +93,7 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 
 	const [lastOperation, setLastOperation] = useState<(() => void) | null>(null);
 
-	
+
 
 	const onComplete = async (data: ConfirmationInType) => {
 		const operation = async () => {
@@ -109,8 +109,8 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 					contract,
 					account,
 					{
-						name: 'BOUNCE_LBP',
-						symbol: "BOUNCE_LP",
+						name: `${tokenFrom.symbol} ${tokenTo.symbol} Bounce Launch`,
+						symbol: `${tokenFrom.symbol}_${tokenTo.symbol}_TLA`,
 						tokens: tokens,
 						amounts: amounts,
 						weights: weights,

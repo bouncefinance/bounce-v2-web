@@ -16,7 +16,7 @@ import { approveLbpVault, FundManagement, getBounceProxyContract, getLbpVaultAll
 import { useAccount, useChainId, useWeb3Provider } from '@app/web3/hooks/use-web3';
 import { OPERATION } from './LBPDetail';
 import { getUserDate } from '../create-lbp/createLBP';
-import { numToWei, toWei, unlimitedAuthorization } from '@app/utils/bn/wei';
+import { numToWei, toWei, unlimitedAuthorization, weiToNum } from '@app/utils/bn/wei';
 import { isEqualZero } from '@app/utils/validation';
 import { getTokenContract } from '@app/web3/api/bounce/erc';
 import { isLessThan } from '@app/utils/bn';
@@ -41,7 +41,7 @@ export const Swap = ({
 
     const [isResver, setIsResver] = useState(false)
     const [tokenIsApprove, setTokenIsApprove] = useState(false)
-    const [tragger,] = useState<'from' | 'to'>('from')
+    const [tragger, setTragger] = useState<'from' | 'to'>('from')
     const [isSlip, setIsSlip] = useState(false)
     const provider = useWeb3Provider();
     const chainId = useChainId();
@@ -49,19 +49,46 @@ export const Swap = ({
     const vaultContract = useMemo(() => getVaultContract(provider, chainId), [chainId, provider]);
     const lbpPairContract = useMemo(() => getLiquidityBootstrappingPoolContract(provider, POOL_ADDRESS), [provider, POOL_ADDRESS]);
 
-    const handleTranslate = useCallback(({ values, form }) => {
+    // Submit loading
+    const [loading, setLoading] = useState(false)
+
+
+    const handleTranslate = useCallback(async ({ values, form }) => {
+        if (loading) return
         setIsResver(!isResver)
+        setLoading(true)
 
         if (tragger === 'from') {
-            const tempAmount = values.amountFrom
-            form.change('amountFrom', values.amountTo)
-            form.change('amountTo', tempAmount)
+            const amountFrom = values.amountFrom
+            form.change('amountTo', amountFrom)
+            setTragger('to')
+            const amountOut = await pairDate._tokenInForExactTokenOut(
+                isResver ? tokenTo.address : tokenFrom.address,
+                toWei(amountFrom,
+                    isResver ? tokenTo.decimals : tokenFrom.decimals
+                ).toString())
+
+            form.change('amountFrom', weiToNum(amountOut, isResver ? tokenFrom.decimals : tokenTo.decimals))
+            setLoading(false)
+            // console.log(weiToNum(amountOut, 6, 4))
         } else {
-            const tempAmount = values.amountFrom
-            form.change('amountFrom', values.amountTo)
-            form.change('amountTo', tempAmount)
+            // const tempAmount = values.amountFrom
+            // form.change('amountFrom', values.amountTo)
+            // form.change('amountTo', tempAmount)
+            const amountTo = values.amountTo
+            form.change('amountFrom', amountTo)
+            setTragger('from')
+
+            const amountOut = await pairDate._tokenInForExactTokenOut(
+                isResver ? tokenFrom.address : tokenTo.address,
+                toWei(amountTo,
+                    isResver ? tokenFrom.decimals : tokenTo.decimals,
+                ).toString())
+
+            form.change('amountTo', weiToNum(amountOut, isResver ? tokenTo.decimals : tokenFrom.decimals))
+            setLoading(false)
         }
-    }, [tokenFrom, tokenTo, tragger, isResver])
+    }, [tokenFrom, tokenTo, tragger, isResver, loading])
 
     useEffect(() => {
         (async () => {
@@ -102,24 +129,22 @@ export const Swap = ({
             });
     }, [tokenFrom])
 
-    const pairDate = new LBPPairData(lbpPairContract, vaultContract)
+    const pairDate = new LBPPairData(lbpPairContract, vaultContract, POOL_ADDRESS)
 
-    const updatePrice = useCallback(async () => {
-        console.log(await pairDate.getPoolIdByte32())
-    }, [])
-
-    updatePrice()
-
-    const handleSubmit = async () => {
+    const handleSubmit = async (values: { amountFrom: number; amountTo: number; }) => {
         if (!tokenIsApprove) return handleApprove()
+        setLoading(true)
 
         const singleSwap: SingleSwap = {
             poolId: POOL_ID,
             kind: 0,    // 0 转入   1  转出
-            assetIn: '0x5e26fa0fe067d28aae8aff2fb85ac2e693bd9efa',  // AUCTION 
-            assetOut: '0x4dbcdf9b62e891a7cec5a2568c3f4faf9e8abe2b', // USDC
-            amount: toWei(0.03, 18).toString(),
-            userData: await getUserDate([toWei(0.033, 18).toString(), toWei(0.01, 6).toString()])
+            assetIn: isResver ? tokenTo.address : tokenFrom.address,  // AUCTION 
+            assetOut: isResver ? tokenFrom.address : tokenTo.address, // USDC
+            amount: toWei(values.amountFrom, isResver ? tokenTo.decimals : tokenFrom.decimals).toString(),
+            userData: await getUserDate([
+                toWei(values.amountFrom, isResver ? tokenTo.decimals : tokenFrom.decimals).toString(),
+                toWei(values.amountTo, isResver ? tokenFrom.decimals : tokenTo.decimals).toString()
+            ])
         }
 
         const fundManagement: FundManagement = {
@@ -145,10 +170,12 @@ export const Swap = ({
                 setOperation(OPERATION.success);
                 // setLastOperation(null);
                 // setPoolId(r.events.Created.returnValues[0]);
+                setLoading(false)
             })
             .on("error", (e) => {
                 // console.error("error", e);
                 setOperation(OPERATION.error);
+                setLoading(false)
             });
     }
 
@@ -226,6 +253,70 @@ export const Swap = ({
                                 <Label
                                     Component="label"
                                     className={styles.row}
+                                    label={isResver ? "Launch Token Amount" : 'Currency'}
+                                    after={
+                                        <span className={styles.balance}>
+                                            Balance: {isResver ? token0Amount : token1Amount} <Symbol token={(isResver ? tokenFrom : tokenTo).address} />
+                                        </span>
+                                    }
+                                >
+                                    <TextField
+                                        type="number"
+                                        name="amountTo"
+                                        placeholder="0.00"
+                                        onChange={async (e) => {
+                                            setTragger('to')
+                                            setLoading(true)
+                                            // console.log(e.target.value)
+                                            const amountOut = await pairDate._tokenInForExactTokenOut(
+                                                isResver ? tokenFrom.address : tokenTo.address,
+                                                toWei(parseFloat(e.target.value), isResver ? tokenFrom.decimals : tokenTo.decimals
+                                                ).toString())
+
+                                            props.form.change('amountFrom', weiToNum(amountOut, isResver ? tokenTo.decimals : tokenFrom.decimals))
+                                            setLoading(false)
+                                        }}
+                                        after={
+                                            <div className={styles.amount}>
+                                                <FormSpy>
+                                                    {({ form }) => (
+                                                        <button
+                                                            className={styles.max}
+                                                            onClick={() => {
+                                                                const max = isResver ? token0Amount : token1Amount
+                                                                form.change(
+                                                                    "amountTo",
+                                                                    max
+                                                                )
+                                                            }
+                                                            }
+                                                            type="button"
+                                                        >
+                                                            MAX
+                                                        </button>
+
+                                                    )}
+                                                </FormSpy>
+                                                {
+                                                    <Currency coin={isResver ? tokenFrom : tokenTo} small />
+                                                }
+                                            </div>
+                                        }
+                                    />
+                                </Label>
+
+                                <div className={styles.translate}>
+                                    <img
+                                        onClick={() => { handleTranslate(props) }}
+                                        className={isResver ? styles.translated : ''}
+                                        src={translateIcon}
+                                        alt=""
+                                    />
+                                </div>
+
+                                <Label
+                                    Component="label"
+                                    className={styles.row}
                                     label={isResver ? 'Currency' : "Launch Token Amount"}
                                     after={
                                         <span className={styles.balance}>
@@ -238,9 +329,17 @@ export const Swap = ({
                                         name="amountFrom"
                                         placeholder="0.00"
                                         className={styles.inputBox}
-                                        onChange={(e) => {
-                                            ('from')
-                                            console.log(e.target.value)
+                                        onChange={async (e) => {
+                                            setTragger('from')
+                                            setLoading(true)
+                                            // console.log(e.target.value)
+                                            const amountOut = await pairDate._tokenInForExactTokenOut(
+                                                isResver ? tokenTo.address : tokenFrom.address,
+                                                toWei(parseFloat(e.target.value), isResver ? tokenTo.decimals : tokenFrom.decimals
+                                                ).toString())
+
+                                            props.form.change('amountTo', weiToNum(amountOut, isResver ? tokenFrom.decimals : tokenTo.decimals))
+                                            setLoading(false)
                                         }}
                                         after={
                                             <div className={styles.amount}>
@@ -270,58 +369,6 @@ export const Swap = ({
                                         }
                                     />
                                 </Label>
-
-                                <div className={styles.translate}>
-                                    <img
-                                        onClick={() => { handleTranslate(props) }}
-                                        className={isResver ? styles.translated : ''}
-                                        src={translateIcon}
-                                        alt=""
-                                    />
-                                </div>
-
-                                <Label
-                                    Component="label"
-                                    className={styles.row}
-                                    label={isResver ? "Launch Token Amount" : 'Currency'}
-                                    after={
-                                        <span className={styles.balance}>
-                                            Balance: {isResver ? token0Amount : token1Amount} <Symbol token={(isResver ? tokenFrom : tokenTo).address} />
-                                        </span>
-                                    }
-                                >
-                                    <TextField
-                                        type="number"
-                                        name="amountTo"
-                                        placeholder="0.00"
-                                        after={
-                                            <div className={styles.amount}>
-                                                <FormSpy>
-                                                    {({ form }) => (
-                                                        <button
-                                                            className={styles.max}
-                                                            onClick={() => {
-                                                                const max = isResver ? token0Amount : token1Amount
-                                                                form.change(
-                                                                    "amountTo",
-                                                                    max
-                                                                )
-                                                            }
-                                                            }
-                                                            type="button"
-                                                        >
-                                                            MAX
-                                                        </button>
-
-                                                    )}
-                                                </FormSpy>
-                                                {
-                                                    <Currency coin={isResver ? tokenFrom : tokenTo} small />
-                                                }
-                                            </div>
-                                        }
-                                    />
-                                </Label>
                                 <div className={styles.tradingFee}>
                                     <span>Trading Fee is 1%</span>
                                 </div>
@@ -333,6 +380,7 @@ export const Swap = ({
                             <PrimaryButton
                                 className={styles.submit}
                                 size="large"
+                                disabled={loading}
                                 submit
                             >
                                 {

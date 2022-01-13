@@ -86,13 +86,13 @@ export const getPriceSlice = async (
 	const tokenToPrice = 3800;
 
 	if (amountTokenFrom && amountTokenTo) {
-		console.log({
-			dateSlice,
-			amountTokenFrom,
-			amountTokenTo,
-			startWeight,
-			endWeight,
-		});
+		// console.log({
+		// 	dateSlice,
+		// 	amountTokenFrom,
+		// 	amountTokenTo,
+		// 	startWeight,
+		// 	endWeight,
+		// });
 
 		const tokenToUSD = amountTokenTo * tokenToPrice;
 		const weightUnit = (endWeight - startWeight) / dateSlice.length;
