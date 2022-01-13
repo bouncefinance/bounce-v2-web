@@ -113,7 +113,7 @@ export const LBPAuctionList = ({ }) => {
                         price: pool?.currentPrice,
                         sold: swapAmount,
                         startTs: pool?.startTs,
-                        endTs: pool?.startTs,
+                        endTs: pool?.endTs,
                         fill: getProgress(swapAmount, pool?.startAmountToken0, token0.decimals),
                         href: `/lbp/${pool?.address}`
                     };

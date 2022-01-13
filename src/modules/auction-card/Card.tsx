@@ -67,14 +67,14 @@ export const Card: FC<DisplayPoolInfoType & MaybeWithClassName & { bordered?: bo
 
 	const LBPSTATUS: Record<POOL_STATUS, ReactNode> = {
 		[POOL_STATUS.COMING]: (
-			<span className={styles.lbpComing}>Start in <Timer timer={startTs} onZero={() => console.log('time start')} /> </span>
+			<span className={styles.lbpComing}>Start in <Timer timer={Number(startTs) * 1000} onZero={() => console.log('time start')} /> </span>
 		),
 		[POOL_STATUS.LIVE]: (
-			<span>Live <Timer timer={endTs} onZero={() => console.log('time start')} /></span>
+			<span>Live <Timer timer={Number(endTs) * 1000} onZero={() => console.log('time start')} /></span>
 		),
 		[POOL_STATUS.FILLED]: "Filled",
 		[POOL_STATUS.CLOSED]: (
-			<span>Closed <Timer timer={endTs} onZero={() => console.log('close')} /></span>
+			<span>Closed <Timer timer={Number(endTs) * 1000} onZero={() => console.log('close')} /></span>
 		),
 		[POOL_STATUS.ERROR]: "Error",
 	};

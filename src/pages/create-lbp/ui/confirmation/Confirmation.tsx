@@ -28,6 +28,7 @@ import { approveLbpPool, getLbpAllowance } from '@app/web3/api/bounce/lbp';
 import { isLessThan } from '@app/utils/bn';
 import { OPERATION, SubmitContext } from "../../createLBP";
 import { numToWei } from "@app/utils/bn/wei";
+import { postLbpCreate } from "@app/api/lbp/api";
 
 
 
@@ -140,11 +141,17 @@ export const ConfirmationImp: FC<CommonType> = ({ type }) => {
 			tokenTo.decimals,
 			0
 		))
-			.on("transactionHash", (h) => {
+			.on("transactionHash", async (h) => {
 				console.log("hash", h);
 				setOperation(OPERATION.pending);
 				// TODO  存额外信息字段 发post请求
-
+				const res = await postLbpCreate(chainId, {
+					address: '',
+					descriptioin: '',
+					learnMoreLink: '',
+					tokenLogoUrl: '',
+				})
+				console.log('提交', res)
 
 			})
 			.on("receipt", (r) => {

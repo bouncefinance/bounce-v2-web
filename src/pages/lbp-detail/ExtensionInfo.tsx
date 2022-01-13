@@ -12,11 +12,12 @@ const TabList = ['Auction Details', 'Auction History (120)', 'Auction Settingsï¼
 interface ExtensionInfoParams {
     poolId: number
     tokenFrom: TokenInfo
-    setOperation: React.Dispatch<React.SetStateAction<OPERATION>>
+    setOperation: React.Dispatch<React.SetStateAction<OPERATION>>,
+    poolAddress: string
 }
 
 export const ExtensionInfo = ({
-    poolId, tokenFrom, setOperation
+    poolId, tokenFrom, setOperation, poolAddress
 }: ExtensionInfoParams) => {
     const [currentIndex, setCurrentIndex] = useState(0)
 
@@ -27,7 +28,7 @@ export const ExtensionInfo = ({
                     tokenFrom={tokenFrom}
                 />
             case 1:
-                return <AuctionHistoryView />
+                return <AuctionHistoryView poolAddress={poolAddress} />
             case 2:
                 return <AuctionSettingView
                     setOperation={setOperation}

@@ -22,7 +22,7 @@ import { Charts } from "./Charts";
 
 type LBPDetailViewType = {
 	children: ReactChild
-	id: number
+	id: number | string
 	name: string
 	status: POOL_STATUS
 	openAt: number;
@@ -40,7 +40,7 @@ const ONEDAY = ONEHOUR * 24
 
 export const View: FC<LBPDetailViewType> = ({
 	children, id, name, status, openAt, closeAt, onZero, totalVolume, liquidity, tokenSold,
-	extension
+	extension, onBack
 }) => {
 	const STATUS: Record<POOL_STATUS, ReactNode> = {
 		[POOL_STATUS.COMING]: (
@@ -85,7 +85,7 @@ export const View: FC<LBPDetailViewType> = ({
 						<Button
 							variant="text"
 							color="primary-black"
-							onClick={() => { }}
+							onClick={onBack}
 							iconBefore={
 								<RightArrow style={{ width: 8, marginRight: 12, transform: "rotate(180deg)" }} />
 							}

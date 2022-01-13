@@ -1,4 +1,4 @@
-import { getJson } from "@app/api/network/json";
+import { getJson, postJson } from "@app/api/network/json";
 import { getAPIByNetwork } from "@app/api/utils";
 import { WEB3_NETWORKS } from "@app/web3/networks/const";
 
@@ -11,10 +11,20 @@ type APIResponse<T> = {
 	total: number;
 };
 
+const postInformation = async <T = any>(
+	chainId: WEB3_NETWORKS,
+	url: string,
+	options
+): Promise<APIResponse<T>> => {
+	const apiPrefix = getAPIByNetwork(chainId);
+
+	return postJson(undefined, `${apiPrefix}/${url}`, options);
+};
+
 const fetchInformation = async <T = any>(
 	chainId: WEB3_NETWORKS,
 	url: string,
-	params
+	params: any
 ): Promise<APIResponse<T>> => {
 	const apiPrefix = getAPIByNetwork(chainId);
 
@@ -68,8 +78,7 @@ export const fetchLbpHistory = async (
 		total: number;
 	};
 }> => {
-	const res = await fetchInformation<ILBPHistory[]>(chainId, "lbp/history", {
-		address,
+	const res = await fetchInformation<ILBPHistory[]>(chainId, `lbps/${address}/history`, {
 		offset: pagination.page * pagination.perPage,
 		limit: pagination.perPage,
 	});
@@ -95,6 +104,29 @@ export const fetchLbpDetail = async (
 	data: ILBPDetail;
 }> => {
 	const res = await fetchInformation<ILBPDetail>(chainId, `lbps/${pool_address}`, {});
+
+	if (!res.data) {
+		console.error(res);
+		throw new Error("failed to load data:" + res.error_msg);
+	}
+
+	return {
+		data: res.data,
+	};
+};
+
+export const postLbpCreate = async (
+	chainId: WEB3_NETWORKS,
+	options: {
+		address: string;
+		descriptioin: string;
+		learnMoreLink: string;
+		tokenLogoUrl: string;
+	}
+): Promise<{
+	data;
+}> => {
+	const res = await postInformation<{}>(chainId, "lbps/details", options);
 
 	if (!res.data) {
 		console.error(res);

@@ -18,6 +18,9 @@ import { ProcessingPopUp } from '@app/modules/processing-pop-up'
 import { CONTENT, TITLE } from '../farm/stakingModal'
 import { fetchLbpDetail } from '@app/api/lbp/api'
 import { ILBPDetail } from '@app/api/lbp/types'
+import BigNumber from 'bignumber.js'
+import { divide } from '@app/utils/bn'
+import { ToLBPAuctionStatus } from '../lbp/components/AuctionList/AuctionList'
 
 export enum OPERATION {
     default = "default",
@@ -43,7 +46,6 @@ export const LBPDetail = (props: {
     const [detailData, setDetailData] = useState<ILBPDetail | null>(null)
 
 
-    const progress = 90
 
     useEffect(() => {
         (async() => {
@@ -57,13 +59,16 @@ export const LBPDetail = (props: {
 
 
     const TokenSold = useMemo(() => {
+        const sold = new BigNumber(detailData?.startAmountToken0)?.minus(new BigNumber(detailData?.currentAmountToken0)).toString();
+        const progress = Number(divide(sold, detailData?.startAmountToken0)) * 100
+
         return <div className={styles.tokenSold}>
             <CircularProgress thickness={6} style={{
                 width: 29, height: 29, color: '#4B70FF', marginRight: 6
             }} variant="determinate" value={progress} />
             <span>{progress}%</span>
         </div>
-    }, [])
+    }, [detailData])
 
     const token0 = findToken('0x0000000000000000000000000000000000000000')
     const token1 = findToken('0x4dbcdf9b62e891a7cec5a2568c3f4faf9e8abe2b')
@@ -105,22 +110,23 @@ export const LBPDetail = (props: {
     return (
         <div>
             <View
-                status={POOL_STATUS.LIVE}
-                id={+detailData?.poolID}
-                name={'MONICA Token Launch Auction'}
-                openAt={new Date().getTime()}
-                closeAt={new Date().getTime() + 1000 * 60 * 60 * 56}
+                status={ToLBPAuctionStatus[detailData?.status]}
+                id={detailData?.address?.slice(-6)}
+                name={`${detailData?.token0Symbol} Token Launch Auction`}
+                openAt={Number(detailData?.startTs) * 1000}
+                closeAt={Number(detailData?.endTs) * 1000}
                 onZero={() => {
                     // TODO update status
                 }}
                 onBack={() => goBack()}
-                totalVolume={'$ 1,000,000.5'}
-                liquidity={'$ 500,000.5'}
+                totalVolume={`$ ${detailData?.totalSwapVolume}`}
+                liquidity={`$ ${detailData?.totalLiquidity || 0}`}
                 tokenSold={TokenSold}
                 extension={<ExtensionInfo
                     poolId={+detailData?.poolID}
                     tokenFrom={token0}
                     setOperation={setOperation}
+                    poolAddress={detailData?.address}
                 />}
             >
                 {token0 && token1 && <Swap

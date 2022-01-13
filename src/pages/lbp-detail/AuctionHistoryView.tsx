@@ -12,7 +12,11 @@ import { getActivity } from '../account/utils'
 import styles from './ExtensionInfo.module.scss'
 
 const WINDOW_SIZE = 10;
-export const AuctionHistoryView = () => {
+export interface IAuctionHistoryViewProps {
+    poolAddress: string;
+}
+
+export const AuctionHistoryView = ({poolAddress} : IAuctionHistoryViewProps) => {
     const [page, setPage] = useState(0);
     const [numberOfPages, setNumberOfPages] = useState<number>(0)
     const chainId = useChainId();
@@ -23,7 +27,7 @@ export const AuctionHistoryView = () => {
             const {
                 data: historyData,
                 meta: {total}
-            } = await fetchLbpHistory(chainId, "sdf", {page: page, perPage: WINDOW_SIZE})
+            } = await fetchLbpHistory(chainId, poolAddress, {page: page, perPage: WINDOW_SIZE})
             setHistoryList(historyData);
             setNumberOfPages(Math.ceil(total / WINDOW_SIZE))
         })();
