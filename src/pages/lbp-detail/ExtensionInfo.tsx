@@ -7,7 +7,7 @@ import { AuctuinDetailView } from './AuctuinDetailView'
 import styles from './ExtensionInfo.module.scss'
 import { OPERATION } from './LBPDetail'
 
-const TabList = ['Auction Details', 'Auction History (120)', 'Auction Settings（仅卖家可见）']
+const TabList = ['Auction Details', 'Auction History', 'Auction Settings']
 
 interface ExtensionInfoParams {
     poolId: number

@@ -32,8 +32,7 @@ export const AuctionHistoryView = ({poolAddress} : IAuctionHistoryViewProps) => 
             setNumberOfPages(Math.ceil(total / WINDOW_SIZE))
         })();
         
-    }, [chainId, page])
-
+    }, [chainId, page, poolAddress])
 
 
     return (
@@ -64,7 +63,7 @@ export const AuctionHistoryView = ({poolAddress} : IAuctionHistoryViewProps) => 
                                     className={styles.cell}
                                     Component="span"
                                 >
-                                    {moment(activity.blockTs).format('MMM DD,YYYY HH:mm')}
+                                    {moment(Number(activity.blockTs) * 1000).format('MMM DD,YYYY HH:mm')}
                                 </Body1>
                                 <Body1
                                     className={styles.cell}
