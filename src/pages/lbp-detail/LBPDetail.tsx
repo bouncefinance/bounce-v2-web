@@ -18,9 +18,9 @@ import { ProcessingPopUp } from '@app/modules/processing-pop-up'
 import { CONTENT, TITLE } from '../farm/stakingModal'
 import { fetchLbpDetail } from '@app/api/lbp/api'
 import { ILBPDetail } from '@app/api/lbp/types'
-import BigNumber from 'bignumber.js'
-import { divide } from '@app/utils/bn'
-import { ToLBPAuctionStatus } from '../lbp/components/AuctionList/AuctionList'
+import { getLiquidityBootstrappingPoolContract, getVaultContract } from '@app/web3/api/bounce/lbp'
+import { LBPPairData } from './LBPPairData'
+import { TokenInfo } from '@uniswap/token-lists'
 
 export enum OPERATION {
     default = "default",
@@ -44,42 +44,52 @@ export const LBPDetail = (props: {
     const [operation, setOperation] = useState(OPERATION.default);
     const chainId = useChainId();
     const [detailData, setDetailData] = useState<ILBPDetail | null>(null)
+    const [token0, setToken0] = useState<TokenInfo>()
+    const [token1, setToken1] = useState<TokenInfo>()
+    console.log('detailData', detailData)
+    // const route = useRouter()
+    // console.log(route)
 
+    // useEffect(() => {
+    //     (async () => {
+    //         const vaultContract = useMemo(() => getVaultContract(provider, chainId), [chainId, provider]);
+    //         const lbpPairContract = useMemo(() => getLiquidityBootstrappingPoolContract(provider, props.poolAddress), [provider, props.poolAddress]);
+    //         const pairDate = new LBPPairData(lbpPairContract, vaultContract, props.poolAddress)
+    //         const tokens = await pairDate.getTokensPair()
 
+    //     })()
+    // }, [])
+
+    const progress = 90
 
     useEffect(() => {
-        (async() => {
+        (async () => {
             const { data } = await fetchLbpDetail(chainId, props.poolAddress);
             setDetailData(data)
+
+            setToken0(findToken(data.token0))
+            setToken1(findToken(data.token1))
         })();
     }, [chainId, props.poolAddress])
 
-
-
-
-
     const TokenSold = useMemo(() => {
-        const sold = new BigNumber(detailData?.startAmountToken0)?.minus(new BigNumber(detailData?.currentAmountToken0)).toString();
-        const progress = Number(divide(sold, detailData?.startAmountToken0)) * 100
-
         return <div className={styles.tokenSold}>
             <CircularProgress thickness={6} style={{
                 width: 29, height: 29, color: '#4B70FF', marginRight: 6
             }} variant="determinate" value={progress} />
             <span>{progress}%</span>
         </div>
-    }, [detailData])
+    }, [])
 
-    const token0 = findToken('0x0000000000000000000000000000000000000000')
-    const token1 = findToken('0x4dbcdf9b62e891a7cec5a2568c3f4faf9e8abe2b')
+
     const [token0Amount, setToken0Amount] = useState(0)
     const [token1Amount, setToken1Amount] = useState(0)
 
     useEffect(() => {
-		if (operation !== OPERATION.default) {
-			open();
-		}
-	}, [open, operation]);
+        if (operation !== OPERATION.default) {
+            open();
+        }
+    }, [open, operation]);
 
     useEffect(() => {
         if (!token0 || !token1) {
@@ -110,24 +120,25 @@ export const LBPDetail = (props: {
     return (
         <div>
             <View
-                status={ToLBPAuctionStatus[detailData?.status]}
-                id={detailData?.address?.slice(-6)}
-                name={`${detailData?.token0Symbol} Token Launch Auction`}
-                openAt={Number(detailData?.startTs) * 1000}
-                closeAt={Number(detailData?.endTs) * 1000}
+                status={POOL_STATUS.LIVE}
+                id={+detailData?.poolID}
+                name={'MONICA Token Launch Auction'}
+                openAt={new Date().getTime()}
+                closeAt={new Date().getTime() + 1000 * 60 * 60 * 56}
                 onZero={() => {
                     // TODO update status
                 }}
                 onBack={() => goBack()}
-                totalVolume={`$ ${detailData?.totalSwapVolume}`}
-                liquidity={`$ ${detailData?.totalLiquidity || 0}`}
+                totalVolume={'$ 1,000,000.5'}
+                liquidity={'$ 500,000.5'}
                 tokenSold={TokenSold}
                 extension={<ExtensionInfo
                     poolId={+detailData?.poolID}
                     tokenFrom={token0}
                     setOperation={setOperation}
-                    poolAddress={detailData?.address}
+                    poolAddress={props.poolAddress}
                 />}
+                detailData = {detailData}
             >
                 {token0 && token1 && <Swap
                     token0={token0}

@@ -58,8 +58,13 @@ export const Swap = ({
         setIsResver(!isResver)
         setLoading(true)
 
+        // updateQueryApprove(isResver ? tokenFrom : tokenTo, toWei(9999999999, isResver ? tokenFrom.decimals : tokenTo.decimals).toString())
+        updateQueryApprove(isResver ? tokenTo : tokenFrom, toWei(9999999999, isResver ? tokenTo.decimals : tokenFrom.decimals).toString())
+
         if (tragger === 'from') {
             const amountFrom = values.amountFrom
+            if(amountFrom) return setLoading(false)
+            
             form.change('amountTo', amountFrom)
             setTragger('to')
             const amountOut = await pairDate._tokenInForExactTokenOut(
@@ -72,12 +77,12 @@ export const Swap = ({
             setLoading(false)
             // console.log(weiToNum(amountOut, 6, 4))
         } else {
-            // const tempAmount = values.amountFrom
-            // form.change('amountFrom', values.amountTo)
-            // form.change('amountTo', tempAmount)
             const amountTo = values.amountTo
+            if(amountTo) return setLoading(false)
+
             form.change('amountFrom', amountTo)
             setTragger('from')
+            // updateQueryApprove(isResver ? tokenFrom : tokenTo, amountTo)
 
             const amountOut = await pairDate._tokenInForExactTokenOut(
                 isResver ? tokenFrom.address : tokenTo.address,
@@ -86,32 +91,34 @@ export const Swap = ({
                 ).toString())
 
             form.change('amountTo', weiToNum(amountOut, isResver ? tokenTo.decimals : tokenFrom.decimals))
+
             setLoading(false)
         }
     }, [tokenFrom, tokenTo, tragger, isResver, loading])
 
-    useEffect(() => {
-        (async () => {
-            try {
-                if (isEqualZero(tokenFrom.address)) return setTokenIsApprove(true)
-                const tokenContract = getTokenContract(provider, tokenFrom.address);
-                const allowance = await getLbpVaultAllowance(
-                    tokenContract,
-                    chainId,
-                    account
-                );
+    const updateQueryApprove = async (token: TokenInfo, amount: string) => {
+        try {
+            setLoading(true)
+            if (isEqualZero(token.address)) return setTokenIsApprove(true)
+            const tokenContract = getTokenContract(provider, token.address);
+            const allowance = await getLbpVaultAllowance(
+                tokenContract,
+                chainId,
+                account
+            );
 
 
-                if (!isLessThan(allowance, isResver ? token1Amount : token0Amount)) {
-                    setTokenIsApprove(true)
-                } else {
-                    setTokenIsApprove(false)
-                }
-            } catch (error) {
-
+            if (!isLessThan(allowance, isResver ? token1Amount : token0Amount)) {
+                setTokenIsApprove(true)
+            } else {
+                setTokenIsApprove(false)
             }
-        })()
-    }, [tokenFrom])
+        } catch (error) {
+
+        } finally {
+            setLoading(false)
+        }
+    }
 
     const handleApprove = useCallback(async () => {
         if (isEqualZero(tokenFrom.address)) return
@@ -162,7 +169,7 @@ export const Swap = ({
             deadline: new Bignumber(99999999999999).multipliedBy(new Bignumber(10).pow(5)).toString()
         })
             .on("transactionHash", (h) => {
-                // console.log("hash", h);7
+                // console.log("hash", h);
                 setOperation(OPERATION.pending);
             })
             .on("receipt", (r) => {
@@ -267,7 +274,7 @@ export const Swap = ({
                                         onChange={async (e) => {
                                             setTragger('to')
                                             setLoading(true)
-                                            // console.log(e.target.value)
+
                                             const amountOut = await pairDate._tokenInForExactTokenOut(
                                                 isResver ? tokenFrom.address : tokenTo.address,
                                                 toWei(parseFloat(e.target.value), isResver ? tokenFrom.decimals : tokenTo.decimals
@@ -298,7 +305,7 @@ export const Swap = ({
                                                     )}
                                                 </FormSpy>
                                                 {
-                                                    <Currency coin={isResver ? tokenFrom : tokenTo} small />
+                                                    tokenFrom && tokenTo && <Currency coin={isResver ? tokenFrom : tokenTo} small />
                                                 }
                                             </div>
                                         }
@@ -363,7 +370,7 @@ export const Swap = ({
                                                     )}
                                                 </FormSpy>
                                                 {
-                                                    <Currency coin={isResver ? tokenTo : tokenFrom} small />
+                                                    tokenFrom && tokenTo && <Currency coin={isResver ? tokenTo : tokenFrom} small />
                                                 }
                                             </div>
                                         }

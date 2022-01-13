@@ -24,7 +24,7 @@ export const ExtensionInfo = ({
     const renderExtensionContent = useMemo(() => {
         switch (currentIndex) {
             case 0:
-                return <AuctuinDetailView
+                return tokenFrom && <AuctuinDetailView
                     tokenFrom={tokenFrom}
                 />
             case 1:
@@ -36,7 +36,7 @@ export const ExtensionInfo = ({
             default:
                 return <></>
         }
-    }, [currentIndex])
+    }, [currentIndex, tokenFrom])
 
     return (
         <div className={styles.extensionWrapper}>

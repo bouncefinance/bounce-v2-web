@@ -115,7 +115,7 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 						amounts: amounts,
 						weights: weights,
 						endWeights: endWeights,
-						isCorrectOrder: isReversal,
+						isCorrectOrder: !isReversal,
 						swapFeePercentage: numToWei(Number(tradingFee), 16, 0),
 						userData: await getUserDate(amounts),
 						startTime: startDate.getTime() / 1000,

@@ -48,6 +48,12 @@ export class LBPPairData {
 		}
 	}
 
+	async getTokensPair() {
+		if (!this.tokens) await this.getPoolTokens();
+
+		return this.tokens;
+	}
+
 	async _tokenInForExactTokenOut(tokenIn: string, amountIn: string) {
 		await this.getPoolTokens();
 

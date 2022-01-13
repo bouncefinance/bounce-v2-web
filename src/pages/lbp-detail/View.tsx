@@ -19,6 +19,7 @@ import { POOL_STATUS } from "@app/utils/pool";
 
 import styles from "./View.module.scss";
 import { Charts } from "./Charts";
+import { ILBPDetail } from "@app/api/lbp/types";
 
 type LBPDetailViewType = {
 	children: ReactChild
@@ -33,6 +34,7 @@ type LBPDetailViewType = {
 	liquidity: string,
 	tokenSold: ReactNode
 	extension: ReactChild
+	detailData: ILBPDetail
 };
 
 const ONEHOUR = 1000 * 60 * 60
@@ -40,7 +42,7 @@ const ONEDAY = ONEHOUR * 24
 
 export const View: FC<LBPDetailViewType> = ({
 	children, id, name, status, openAt, closeAt, onZero, totalVolume, liquidity, tokenSold,
-	extension, onBack
+	extension, onBack, detailData
 }) => {
 	const STATUS: Record<POOL_STATUS, ReactNode> = {
 		[POOL_STATUS.COMING]: (
@@ -125,14 +127,16 @@ export const View: FC<LBPDetailViewType> = ({
 							</div>
 
 							<div className={styles.leftChart}>
-								<Charts
-									amountTokenFrom={100}
-									amountTokenTo={5}
-									startWeight={60}
-									endWeight={40}
-									startDate={new Date()}
-									endDate={new Date(Date.now() + 3600000 * 72)}
-								/>
+								{
+									detailData && <Charts
+										amountTokenFrom={100}
+										amountTokenTo={5}
+										startWeight={detailData.startWeightToken0 * 100}
+										endWeight={detailData.endWeightToken0 * 100}
+										startDate={new Date(detailData.startTs * 1000)}
+										endDate={new Date(detailData.endTs * 1000)}
+									/>
+								}
 							</div>
 						</div>
 
