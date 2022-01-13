@@ -94,7 +94,6 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 	const [lastOperation, setLastOperation] = useState<(() => void) | null>(null);
 
 
-
 	const onComplete = async (data: ConfirmationInType) => {
 		const operation = async () => {
 			const { tokenFrom, tokenTo, amountFrom, amountTo, startWeight, endWeight, tradingFee, startDate, endDate } = data

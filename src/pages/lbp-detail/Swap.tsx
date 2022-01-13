@@ -22,8 +22,6 @@ import { getTokenContract } from '@app/web3/api/bounce/erc';
 import { isLessThan } from '@app/utils/bn';
 import { LBPPairData } from './LBPPairData';
 
-const RATIO = 0.005
-
 const slipConfig = [0.5, 1, 2]
 export interface ISwapparams {
     token0: TokenInfo,
@@ -31,14 +29,13 @@ export interface ISwapparams {
     token0Amount: number
     token1Amount: number
     setOperation: React.Dispatch<React.SetStateAction<OPERATION>>
+    poolAddress: string
 }
 
 export const Swap = ({
-    token0: tokenFrom, token1: tokenTo, token0Amount, token1Amount, setOperation
+    token0: tokenFrom, token1: tokenTo, token0Amount, token1Amount, setOperation, poolAddress
 }: ISwapparams) => {
-    const POOL_ADDRESS = '0x05cdd556040c1b1a2d1c45d02d3889a318a3ce0b'
-    const POOL_ID = '0x05cdd556040c1b1a2d1c45d02d3889a318a3ce0b000200000000000000000099'
-
+    const POOL_ADDRESS = poolAddress
     const [isResver, setIsResver] = useState(false)
     const [tokenIsApprove, setTokenIsApprove] = useState(false)
     const [tragger, setTragger] = useState<'from' | 'to'>('from')
@@ -48,23 +45,21 @@ export const Swap = ({
     const account = useAccount();
     const vaultContract = useMemo(() => getVaultContract(provider, chainId), [chainId, provider]);
     const lbpPairContract = useMemo(() => getLiquidityBootstrappingPoolContract(provider, POOL_ADDRESS), [provider, POOL_ADDRESS]);
+    const [rate, setRate] = useState<string | number>(0)
+    const pairDate = new LBPPairData(lbpPairContract, vaultContract, POOL_ADDRESS)
 
     // Submit loading
     const [loading, setLoading] = useState(false)
-
 
     const handleTranslate = useCallback(async ({ values, form }) => {
         if (loading) return
         setIsResver(!isResver)
         setLoading(true)
 
-        // updateQueryApprove(isResver ? tokenFrom : tokenTo, toWei(9999999999, isResver ? tokenFrom.decimals : tokenTo.decimals).toString())
-        updateQueryApprove(isResver ? tokenTo : tokenFrom, toWei(9999999999, isResver ? tokenTo.decimals : tokenFrom.decimals).toString())
-
         if (tragger === 'from') {
             const amountFrom = values.amountFrom
-            if(amountFrom) return setLoading(false)
-            
+            if (!amountFrom) return setLoading(false)
+
             form.change('amountTo', amountFrom)
             setTragger('to')
             const amountOut = await pairDate._tokenInForExactTokenOut(
@@ -78,7 +73,7 @@ export const Swap = ({
             // console.log(weiToNum(amountOut, 6, 4))
         } else {
             const amountTo = values.amountTo
-            if(amountTo) return setLoading(false)
+            if (!amountTo) return setLoading(false)
 
             form.change('amountFrom', amountTo)
             setTragger('from')
@@ -108,7 +103,7 @@ export const Swap = ({
             );
 
 
-            if (!isLessThan(allowance, isResver ? token1Amount : token0Amount)) {
+            if (!isLessThan(allowance, amount)) {
                 setTokenIsApprove(true)
             } else {
                 setTokenIsApprove(false)
@@ -120,9 +115,23 @@ export const Swap = ({
         }
     }
 
+    useEffect(() => {
+        (async () => {
+            const swapRate = await pairDate._tokenInForExactTokenOut(tokenFrom.address, numToWei(1, tokenFrom.decimals))
+
+            setRate(weiToNum(swapRate, tokenTo.decimals))
+        })()
+    }, [])
+
+    useEffect(() => {
+        updateQueryApprove(isResver ? tokenTo : tokenFrom, toWei(9999999999, isResver ? tokenTo.decimals : tokenFrom.decimals).toString())
+    }, [isResver])
+
     const handleApprove = useCallback(async () => {
-        if (isEqualZero(tokenFrom.address)) return
-        const tokenContract = getTokenContract(provider, tokenFrom.address);
+        const tarToken = isResver ? tokenFrom : tokenTo
+
+        if (isEqualZero(tarToken.address)) return
+        const tokenContract = getTokenContract(provider, tarToken.address);
         approveLbpVault(tokenContract, chainId, account, unlimitedAuthorization)
             .on("transactionHash", (h) => {
                 setOperation(OPERATION.approval);
@@ -134,13 +143,14 @@ export const Swap = ({
             .on("error", (e) => {
                 setOperation(OPERATION.error);
             });
-    }, [tokenFrom])
+    }, [isResver, tokenTo, tokenFrom])
 
-    const pairDate = new LBPPairData(lbpPairContract, vaultContract, POOL_ADDRESS)
+    // const Rate = await pairDate.getTokenInForExactTokenOutRate()
 
     const handleSubmit = async (values: { amountFrom: number; amountTo: number; }) => {
         if (!tokenIsApprove) return handleApprove()
         setLoading(true)
+        const POOL_ID = await pairDate.getPoolIdByte32()
 
         const singleSwap: SingleSwap = {
             poolId: POOL_ID,
@@ -247,9 +257,9 @@ export const Swap = ({
 
                 <div className={styles.showPrice}>
                     <strong>Current Price</strong>
-                    <p>1 {tokenTo.symbol} = ~{
-                        isResver ? new Bignumber(RATIO).dp(6).toString() : new Bignumber(1).div(RATIO).dp(6).toString()
-                    } {tokenFrom.symbol} </p>
+                    <p>1 {isResver ? tokenFrom.symbol : tokenTo.symbol} = ~{
+                        (isResver ? new Bignumber(rate) : new Bignumber(1).div(rate))
+                            .dp(6).toString()} {isResver ? tokenTo.symbol : tokenFrom.symbol} </p>
                 </div>
 
                 <div className={styles.container}>
@@ -391,7 +401,7 @@ export const Swap = ({
                                 submit
                             >
                                 {
-                                    tokenIsApprove ? 'Exchange' : `Approve ${tokenFrom.symbol}`
+                                    tokenIsApprove ? 'Exchange' : `Approve ${isResver ? tokenFrom.symbol : tokenTo.symbol}`
                                 }
                             </PrimaryButton>
                         )}

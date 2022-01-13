@@ -55,6 +55,12 @@ export class LBPPairData {
 	}
 
 	async _tokenInForExactTokenOut(tokenIn: string, amountIn: string) {
+		const rate = await this.getTokenInForExactTokenOutRate(tokenIn, amountIn);
+
+		return rate.multipliedBy(amountIn).toString();
+	}
+
+	async getTokenInForExactTokenOutRate(tokenIn: string, amountIn: string) {
 		await this.getPoolTokens();
 
 		const tokensWeight = await this.getTokensWeight();
@@ -74,13 +80,7 @@ export class LBPPairData {
 		const amount_1 = this.tokensAmount[toIndex];
 
 		const rate = new BigNumber(weight_0).div(weight_1).div(new BigNumber(amount_0).div(amount_1));
-		const amountOut = rate.multipliedBy(amountIn).toString();
 
-		// .div(10000).multipliedBy(9800)
-		return amountOut;
-	}
-
-	async getTokenInForExactTokenOutRate() {
-		return 0;
+		return rate;
 	}
 }

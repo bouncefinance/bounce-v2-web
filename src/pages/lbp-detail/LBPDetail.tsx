@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { View } from './View'
 import styles from './LBPDetail.module.scss'
 import { Swap } from './Swap'
-import { useTokenSearch } from '@app/web3/api/tokens'
+import { useTokenQuery, useTokenSearch } from '@app/web3/api/tokens'
 import { isEth } from '@app/web3/api/eth/use-eth'
 import { getBalance, getEthBalance, getTokenContract } from '@app/web3/api/bounce/erc'
 import { useChainId, useWeb3, useWeb3Provider } from '@app/web3/hooks/use-web3'
@@ -38,6 +38,7 @@ export const LBPDetail = (props: {
     const provider = useWeb3Provider();
     const web3 = useWeb3()
     const findToken = useTokenSearch();
+    const queryToken = useTokenQuery()
     const { account } = useWeb3React()
     const { back: goBack } = useRouter();
     const { popUp, close, open } = useControlPopUp();
@@ -67,8 +68,8 @@ export const LBPDetail = (props: {
             const { data } = await fetchLbpDetail(chainId, props.poolAddress);
             setDetailData(data)
 
-            setToken0(findToken(data.token0))
-            setToken1(findToken(data.token1))
+            setToken0(findToken(data.token0) || await queryToken(data.token0))
+            setToken1(findToken(data.token1) || await queryToken(data.token1))
         })();
     }, [chainId, props.poolAddress])
 
@@ -138,7 +139,7 @@ export const LBPDetail = (props: {
                     setOperation={setOperation}
                     poolAddress={props.poolAddress}
                 />}
-                detailData = {detailData}
+                detailData={detailData}
             >
                 {token0 && token1 && <Swap
                     token0={token0}
@@ -146,6 +147,7 @@ export const LBPDetail = (props: {
                     token0Amount={token0Amount}
                     token1Amount={token1Amount}
                     setOperation={setOperation}
+                    poolAddress={props.poolAddress}
                 />}
             </View>
             {popUp.defined ? (
