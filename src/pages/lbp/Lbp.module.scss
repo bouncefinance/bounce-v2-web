@@ -63,6 +63,14 @@
     }
 }
 
+.closedHover {
+
+    &:hover,
+    &:focus {
+        color: #FF0000;
+    }
+}
+
 .active {
     opacity: 1;
 }
@@ -101,6 +109,18 @@
 
     &:hover {
         color: #4B70FF;
+    }
+}
+
+.closedActive {
+    color: #FF0000;
+
+    &::before {
+        background-color: #FF0000;
+    }
+
+    &:hover {
+        color: #FF0000;
     }
 }
 

@@ -1,4 +1,4 @@
-export const getActivity = (type: number) => {
+export const getActivity = (type: number, token?: string) => {
 	switch (type) {
 		case 1:
 			return "Fixed Swap Auction";
@@ -9,9 +9,9 @@ export const getActivity = (type: number) => {
 		case 4:
 			return "Token Launch Auctions";
 		case 5:
-			return "Buy LBPs";
+			return token ? `Buy ${token}` : "Buy LBPs";
 		case 6:
-			return "Sell LBPs";
+			return token ? `Sell ${token}` :  "Sell LBPs";
 		default:
 			return "Unknown";
 

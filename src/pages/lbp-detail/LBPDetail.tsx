@@ -9,13 +9,15 @@ import { Swap } from './Swap'
 import { useTokenSearch } from '@app/web3/api/tokens'
 import { isEth } from '@app/web3/api/eth/use-eth'
 import { getBalance, getEthBalance, getTokenContract } from '@app/web3/api/bounce/erc'
-import { useWeb3, useWeb3Provider } from '@app/web3/hooks/use-web3'
+import { useChainId, useWeb3, useWeb3Provider } from '@app/web3/hooks/use-web3'
 import { fromWei } from '@app/utils/bn/wei'
 import { useWeb3React } from '@web3-react/core'
 import { ExtensionInfo } from './ExtensionInfo'
 import { useControlPopUp } from '@app/hooks/use-control-popup'
 import { ProcessingPopUp } from '@app/modules/processing-pop-up'
 import { CONTENT, TITLE } from '../farm/stakingModal'
+import { fetchLbpDetail } from '@app/api/lbp/api'
+import { ILBPDetail } from '@app/api/lbp/types'
 
 export enum OPERATION {
     default = "default",
@@ -28,7 +30,7 @@ export enum OPERATION {
 }
 
 export const LBPDetail = (props: {
-    poolID: number
+    poolAddress: string
 }) => {
     const provider = useWeb3Provider();
     const web3 = useWeb3()
@@ -37,8 +39,23 @@ export const LBPDetail = (props: {
     const { back: goBack } = useRouter();
     const { popUp, close, open } = useControlPopUp();
     const [operation, setOperation] = useState(OPERATION.default);
+    const chainId = useChainId();
+    const [detailData, setDetailData] = useState<ILBPDetail | null>(null)
+
 
     const progress = 90
+
+    useEffect(() => {
+        (async() => {
+            const { data } = await fetchLbpDetail(chainId, props.poolAddress);
+            setDetailData(data)
+        })();
+    }, [chainId, props.poolAddress])
+
+
+
+
+
     const TokenSold = useMemo(() => {
         return <div className={styles.tokenSold}>
             <CircularProgress thickness={6} style={{
@@ -48,7 +65,7 @@ export const LBPDetail = (props: {
         </div>
     }, [])
 
-    const token0 = findToken('0x5e26fa0fe067d28aae8aff2fb85ac2e693bd9efa')
+    const token0 = findToken('0x0000000000000000000000000000000000000000')
     const token1 = findToken('0x4dbcdf9b62e891a7cec5a2568c3f4faf9e8abe2b')
     const [token0Amount, setToken0Amount] = useState(0)
     const [token1Amount, setToken1Amount] = useState(0)
@@ -89,7 +106,7 @@ export const LBPDetail = (props: {
         <div>
             <View
                 status={POOL_STATUS.LIVE}
-                id={props.poolID}
+                id={+detailData?.poolID}
                 name={'MONICA Token Launch Auction'}
                 openAt={new Date().getTime()}
                 closeAt={new Date().getTime() + 1000 * 60 * 60 * 56}
@@ -101,7 +118,7 @@ export const LBPDetail = (props: {
                 liquidity={'$ 500,000.5'}
                 tokenSold={TokenSold}
                 extension={<ExtensionInfo
-                    poolId={props.poolID}
+                    poolId={+detailData?.poolID}
                     tokenFrom={token0}
                     setOperation={setOperation}
                 />}

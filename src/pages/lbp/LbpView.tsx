@@ -6,7 +6,8 @@ import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import React, { FC } from 'react'
 import { uid } from 'react-uid'
-import { AuctionList } from './components/AuctionList/AuctionList'
+import { ClosedLBP } from './Closed'
+import { LBPAuctionList } from './components/AuctionList/AuctionList'
 import { Banner } from './components/Banner/Banner'
 import styles from './Lbp.module.scss'
 import { LiveLBP } from './Live'
@@ -14,7 +15,7 @@ import { UpcomingLBP } from './Upcoming'
 
 
 
-type TabType = "all" | "live" | "upcoming";
+type TabType = "all" | "live" | "upcoming" | "closed";
 
 const tabsConfig: {
     tab: TabType
@@ -40,6 +41,12 @@ const tabsConfig: {
     href: `${LBP_PATH}/upcoming`,
     hoverClassName: styles.upcomingHover,
     activeClassName: styles.upcomingActive
+}, {
+    tab: 'closed',
+    name: 'Closed',
+    href: `${LBP_PATH}/closed`,
+    hoverClassName: styles.closedHover,
+    activeClassName: styles.closedActive
 }]
 
 interface LbpType {
@@ -82,9 +89,10 @@ export const LbpView: FC<LbpType & MaybeWithClassName> = ({type, className}) => 
 
                     </div>
                     <div>
-                        {type === "all" && <AuctionList />}
+                        {type === "all" && <LBPAuctionList />}
                         {type === 'live' && <LiveLBP />}
                         {type === "upcoming" && <UpcomingLBP />}
+                        {type === "closed" && <ClosedLBP />}
                     </div>
                 </div>
             </GutterBox>

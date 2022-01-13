@@ -1,5 +1,5 @@
-import { AuctionList } from "./components/AuctionList/AuctionList"
+import { LBPAuctionList } from "./components/AuctionList/AuctionList"
 
 export const UpcomingLBP = () => {
-    return <AuctionList />
+    return <LBPAuctionList />
 }

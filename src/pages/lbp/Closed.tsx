@@ -1,6 +1,6 @@
 import { LBPAuctionList } from "./components/AuctionList/AuctionList"
 
 
-export const LiveLBP = () => {
+export const ClosedLBP = () => {
     return <LBPAuctionList />
 }
