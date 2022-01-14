@@ -35,6 +35,12 @@ export class LBPPairData {
 		return weights;
 	}
 
+	async getTokensAmount() {
+		const result = await this.getPoolTokens();
+
+		return result.balances;
+	}
+
 	async getPoolTokens() {
 		try {
 			const poolId_byte32 = await this.getPoolIdByte32();

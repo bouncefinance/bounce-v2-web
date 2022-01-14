@@ -137,7 +137,9 @@ export const View: FC<LBPDetailViewType> = ({
 										endWeight={detailData.endWeightToken0 * 100}
 										startDate={new Date(detailData.startTs * 1000)}
 										endDate={new Date(detailData.endTs * 1000)}
+										// 这里要取外部预言机的价格
 										tokenToPrice={1}
+										detailData = {detailData}
 									/>
 								}
 							</div>

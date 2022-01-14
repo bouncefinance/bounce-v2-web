@@ -2,7 +2,9 @@ import moment from "moment";
 
 export const getOption = (props: {
 	dateSlice: any[];
-	priceSlice: any[];
+	// priceSlice: any[];
+	beforeSlice: any[];
+	afterSlice: any[];
 	model: "day" | "hour";
 }) => {
 	return {
@@ -21,26 +23,27 @@ export const getOption = (props: {
 		tooltip: {
 			trigger: "axis",
 			// axisPointer: {
-			//     type: 'cross'
+			// 	type: 'cross'
 			// },
 			// backgroundColor: 'rgba(255, 255, 255, 0.8)',
 			// formatter: (data: any) => {
-			//     // console.log(data)
-			//     const value = data[0].value === '-' ? data[1].value : data[0].value
-			//     return `$${value}`
+			// 	console.log('getOption', data)
+			// 	const value = data[0].value === '_' ? data[1].value : data[0].value
+			// 	return `$ ${value}`
 			// }
 		},
 		yAxis: {
 			axisLabel: {
 				formatter: (value: number) => {
-					return `$${value}`;
+					return `$ ${value}`;
 				},
 			},
 		},
 		series: [
 			{
+				symbol: "none",
 				name: "Price",
-				data: props.priceSlice,
+				data: props.beforeSlice,
 				itemStyle: {
 					normal: {
 						label: {
@@ -52,6 +55,23 @@ export const getOption = (props: {
 				},
 				type: "line",
 
+				smooth: true,
+				color: "rgba(75, 112, 255, 1)",
+			},
+			{
+				symbol: "none",
+				name: "Price",
+				data: props.afterSlice,
+				itemStyle: {
+					normal: {
+						label: {
+							formatter: (value: number) => {
+								return `$ ${value}`;
+							},
+						},
+					},
+				},
+				type: "line",
 				smooth: true,
 				color: "rgba(75, 112, 255, .5)",
 			},
@@ -69,7 +89,7 @@ export const getDateSlice = (startDate?: Date, endDate?: Date, slice = 5) => {
 
 	for (let i = 0; i < slice; i++) {
 		const time = startTime + intervalTime * i;
-		ResTimeArray.push(time);
+		ResTimeArray.push(parseInt(time + ""));
 	}
 
 	return ResTimeArray;

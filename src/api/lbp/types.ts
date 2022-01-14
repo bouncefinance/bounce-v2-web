@@ -39,6 +39,11 @@ export interface ILBPHistory {
 	type: number;
 }
 
+export enum CORRECTORDER {
+	unknow,
+	true,
+	false,
+}
 export interface ILBPDetail {
 	address: string;
 	creator: string;
@@ -75,6 +80,7 @@ export interface ILBPDetail {
 	token1ThumbURL: string;
 	totalLiquidity: string;
 	totalSwapVolume: number;
+	isCorrectOrder: CORRECTORDER;
 }
 
 export interface ILBPSetting {
