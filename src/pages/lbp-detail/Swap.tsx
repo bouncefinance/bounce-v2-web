@@ -101,8 +101,9 @@ export const Swap = ({
                 chainId,
                 account
             );
-
-
+                console.log(token)
+                console.log(allowance)
+            
             if (!isLessThan(allowance, amount)) {
                 setTokenIsApprove(true)
             } else {
@@ -124,7 +125,7 @@ export const Swap = ({
     }, [])
 
     useEffect(() => {
-        updateQueryApprove(isResver ? tokenTo : tokenFrom, toWei(9999999999, isResver ? tokenTo.decimals : tokenFrom.decimals).toString())
+        updateQueryApprove(isResver ?  tokenFrom: tokenTo, toWei(99999999, isResver ? tokenFrom.decimals : tokenTo.decimals).toString())
     }, [isResver])
 
     const handleApprove = useCallback(async () => {
