@@ -1,3 +1,4 @@
+import { ILBPDetail } from '@app/api/lbp/types'
 import { TokenInfo } from '@uniswap/token-lists'
 import React, { useMemo, useState } from 'react'
 import { uid } from 'react-uid'
@@ -14,11 +15,12 @@ interface ExtensionInfoParams {
     tokenFrom: TokenInfo
     tokenTo: TokenInfo
     poolAddress: string
+    detailData: ILBPDetail
     setOperation: React.Dispatch<React.SetStateAction<OPERATION>>,
 }
 
 export const ExtensionInfo = ({
-    poolId, tokenFrom, tokenTo, poolAddress, setOperation
+    poolId, tokenFrom, tokenTo, poolAddress, detailData, setOperation
 }: ExtensionInfoParams) => {
     const [currentIndex, setCurrentIndex] = useState(0)
 
@@ -27,6 +29,7 @@ export const ExtensionInfo = ({
             case 0:
                 return tokenFrom && <AuctuinDetailView
                     tokenFrom={tokenFrom}
+                    detailData={detailData}
                 />
             case 1:
                 return <AuctionHistoryView poolAddress={poolAddress} />

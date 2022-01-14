@@ -4,85 +4,95 @@ import { TokenInfo } from '@uniswap/token-lists'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import copyIcon from './assets/copy.svg'
 import React from 'react'
+import { ILBPDetail } from '@app/api/lbp/types';
+import { CopyAddress } from '@app/modules/copy-to-clipboard';
+import { NavLink } from '@app/ui/button';
+import moment from 'moment';
+import { fromWei } from '@app/utils/bn/wei';
+import BigNumber from 'bignumber.js';
 
 interface AuctuinDetailViewParams {
     tokenFrom: TokenInfo
+    detailData: ILBPDetail
 }
 
-export const AuctuinDetailView = ({ tokenFrom }: AuctuinDetailViewParams) => {
+export const AuctuinDetailView = ({ tokenFrom, detailData }: AuctuinDetailViewParams) => {
+    const formatDecimaiToPercent = (val: number | string) => {
+        const percentNum = Number(val) * 100;
+        return `${percentNum}%`
+    }
+    const soldAmount = new BigNumber(detailData?.startAmountToken0)?.minus(new BigNumber(detailData?.currentAmountToken0)).toString();
+    const raiseAmount = new BigNumber(detailData?.currentAmountToken1)?.minus(new BigNumber(detailData?.startAmountToken1)).toString();
+
     return (
         <div>
             <div className={styles.tokenInfo}>
                 <div className={styles.tokenInfoTop}>
                     <Icon src={tokenFrom.logoURI} />
-                    <h4>{tokenFrom.name}</h4>
+                    <h4>{tokenFrom.symbol}</h4>
                     <div>{tokenFrom.symbol}</div>
                 </div>
                 <div className={styles.tokenInfoBottom}>
-                    <span>{tokenFrom.address}</span>
-                    <CopyToClipboard text={tokenFrom.address}
-                        onCopy={() => { }}>
-                        <img src={copyIcon} alt="" />
-                    </CopyToClipboard>
+                    <CopyAddress className={styles.copyAddress} address={tokenFrom.address} />
                 </div>
             </div>
             <div className={styles.infoContent}>
                 <div className={styles.infoContentLeft}>
                     <h4>Launch Description</h4>
-                    <p>Task Description:
-                        Create notifications for users when other people Like or Comment on your discussion post.
-
-                        Task Requirement:
-                        For every post and comment a user creates, the user should receive notifications for receiving likes and comments. Clicking on the notification should direct the user to the post for viewing.
-
-                        Task Description:
-                        Create notifications for users when other people Like or Comment on your discussion post.
-
-                        Task Requirement:
-                        For every post and comment a user creates, the user should receive notifications for receiving likes and comments.
+                    <p>
+                        {
+                            detailData?.descriptioin || 'No launch description'
+                        }
                     </p>
                     <h5>Learn More Links</h5>
                     <p>
-                        Https://www.fangible.com
-                        <br />
-                        Https://www.fangible.com/Create/PoolName/No125
+                        {
+                            detailData?.learnMoreLink ? <NavLink className={styles["text-navLink"]} href={detailData?.learnMoreLink}>
+                                {detailData?.learnMoreLink}
+                            </NavLink> : 'No link'
+                        }
+
                     </p>
                 </div>
 
                 <div className={styles.infoContentRight}>
                     <h4>Auction Details</h4>
                     <h5>Auction Period</h5>
-                    <p>Dec 9, 2021 10:00 - Dec 12, 2021 20:00 </p>
+                    <p>
+                        {
+                            `${moment(Number(detailData.startTs) * 1000).format('MMM DD,YYYY HH:mm')} - ${moment(Number(detailData.endTs) * 1000).format('MMM DD,YYYY HH:mm')}`
+                        }
+                    </p>
 
                     <h5>Weights Settings</h5>
                     <p>
-                        Start:  80% MONICA + 20% ETH
+                        Start:  {`${formatDecimaiToPercent(detailData?.startWeightToken0)} ${detailData?.token0Symbol} + ${formatDecimaiToPercent(detailData?.startWeightToken1)} ${detailData?.token1Symbol}`}
                         <br />
-                        End:  50% MONICA + 50% ETH
+                        End:  {`${formatDecimaiToPercent(detailData?.endWeightToken0)} ${detailData?.token0Symbol} + ${formatDecimaiToPercent(detailData?.endWeightToken1)} ${detailData?.token1Symbol}`}
                     </p>
 
                     <h5>Start Balances</h5>
                     <p>
-                        100000.00 ETH
+                        {`${fromWei(detailData?.startAmountToken0, detailData?.token0Decimals).toFixed(2)} ${detailData?.token0Symbol}`}
                         <br />
-                        10000000.00 MONICA
+                        {`${fromWei(detailData?.startAmountToken1, detailData?.token1Decimals).toFixed(2)} ${detailData?.token1Symbol}`}
                     </p>
 
                     <h5>Current Balances</h5>
                     <p>
-                        120000.00 ETH
+                        {`${fromWei(detailData?.currentAmountToken0, detailData?.token0Decimals).toFixed(2)} ${detailData?.token0Symbol}`}
                         <br />
-                        9000000.00 MONICA
+                        {`${fromWei(detailData?.currentAmountToken1, detailData?.token1Decimals).toFixed(2)} ${detailData?.token1Symbol}`}
                     </p>
 
                     <h5>Total Sold</h5>
                     <p>
-                        100000.00 MONICA
+                        {`${fromWei(soldAmount, detailData.token0Decimals).toFixed(2)} ${detailData?.token0Symbol}`}
                     </p>
 
                     <h5>Total Raised</h5>
                     <p>
-                        10000.00 ETH
+                        {`${fromWei(raiseAmount, detailData.token1Decimals).toFixed(2)} ${detailData?.token1Symbol}`}
                     </p>
                 </div>
             </div>
