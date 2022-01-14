@@ -157,3 +157,19 @@ export const fetchLbpSetting = async (
 		data: res.data,
 	};
 };
+
+export interface ILBPChart {}
+
+export const fetchLbpChartData = async (
+	chainId: WEB3_NETWORKS,
+	pool_address: string
+): Promise<ILBPChart[]> => {
+	const res = await fetchInformation(chainId, `lbps/${pool_address}/token_prices`, {});
+
+	if (!res.data) {
+		console.error(res);
+		throw new Error("failed to load data:" + res.error_msg);
+	}
+
+	return res.data || [];
+};

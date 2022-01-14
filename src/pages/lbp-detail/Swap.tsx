@@ -101,9 +101,7 @@ export const Swap = ({
                 chainId,
                 account
             );
-                console.log(token)
-                console.log(allowance)
-            
+
             if (!isLessThan(allowance, amount)) {
                 setTokenIsApprove(true)
             } else {
@@ -125,7 +123,7 @@ export const Swap = ({
     }, [])
 
     useEffect(() => {
-        updateQueryApprove(isResver ?  tokenFrom: tokenTo, toWei(99999999, isResver ? tokenFrom.decimals : tokenTo.decimals).toString())
+        updateQueryApprove(isResver ? tokenFrom : tokenTo, toWei(99999999, isResver ? tokenFrom.decimals : tokenTo.decimals).toString())
     }, [isResver])
 
     const handleApprove = useCallback(async () => {
@@ -153,15 +151,27 @@ export const Swap = ({
         setLoading(true)
         const POOL_ID = await pairDate.getPoolIdByte32()
 
+        console.log({
+            poolId: POOL_ID,
+            kind: 0,    // 0 转入   1  转出
+            assetIn: isResver ? tokenFrom.address : tokenTo.address, // USDC
+            assetOut: isResver ? tokenTo.address : tokenFrom.address,  // AUCTION 
+            amount: toWei(values.amountTo, isResver ? tokenFrom.decimals : tokenTo.decimals).toString(),
+            userData: await getUserDate([
+                toWei(values.amountTo, isResver ? tokenFrom.decimals : tokenTo.decimals).toString(),
+                toWei(values.amountFrom, isResver ? tokenTo.decimals : tokenFrom.decimals).toString()
+            ])
+        })
+
         const singleSwap: SingleSwap = {
             poolId: POOL_ID,
             kind: 0,    // 0 转入   1  转出
-            assetIn: isResver ? tokenTo.address : tokenFrom.address,  // AUCTION 
-            assetOut: isResver ? tokenFrom.address : tokenTo.address, // USDC
-            amount: toWei(values.amountFrom, isResver ? tokenTo.decimals : tokenFrom.decimals).toString(),
+            assetIn: isResver ? tokenFrom.address : tokenTo.address, // USDC
+            assetOut: isResver ? tokenTo.address : tokenFrom.address,  // AUCTION 
+            amount: toWei(values.amountTo, isResver ? tokenFrom.decimals : tokenTo.decimals).toString(),
             userData: await getUserDate([
-                toWei(values.amountFrom, isResver ? tokenTo.decimals : tokenFrom.decimals).toString(),
-                toWei(values.amountTo, isResver ? tokenFrom.decimals : tokenTo.decimals).toString()
+                toWei(values.amountTo, isResver ? tokenFrom.decimals : tokenTo.decimals).toString(),
+                toWei(values.amountFrom, isResver ? tokenTo.decimals : tokenFrom.decimals).toString()
             ])
         }
 

@@ -20,6 +20,8 @@ import { POOL_STATUS } from "@app/utils/pool";
 import styles from "./View.module.scss";
 import { Charts } from "./Charts";
 import { ILBPDetail } from "@app/api/lbp/types";
+import { weiToNum } from "@app/utils/bn/wei";
+import BigNumber from "bignumber.js";
 
 type LBPDetailViewType = {
 	children: ReactChild
@@ -129,12 +131,13 @@ export const View: FC<LBPDetailViewType> = ({
 							<div className={styles.leftChart}>
 								{
 									detailData && <Charts
-										amountTokenFrom={100}
-										amountTokenTo={5}
+										amountTokenFrom={new BigNumber(weiToNum(detailData.startAmountToken0, detailData.token0Decimals, 2)).toNumber()}
+										amountTokenTo={new BigNumber(weiToNum(detailData.startAmountToken1, detailData.token1Decimals, 2)).toNumber()}
 										startWeight={detailData.startWeightToken0 * 100}
 										endWeight={detailData.endWeightToken0 * 100}
 										startDate={new Date(detailData.startTs * 1000)}
 										endDate={new Date(detailData.endTs * 1000)}
+										tokenToPrice={1}
 									/>
 								}
 							</div>

@@ -80,10 +80,10 @@ export const getPriceSlice = async (
 	amountTokenFrom: number,
 	amountTokenTo: number,
 	startWeight: number,
-	endWeight: number
+	endWeight: number,
+	tokenToPrice: number
 ) => {
 	const priceSlice = [];
-	const tokenToPrice = 3800;
 
 	if (amountTokenFrom && amountTokenTo) {
 		console.log({
@@ -92,6 +92,7 @@ export const getPriceSlice = async (
 			amountTokenTo,
 			startWeight,
 			endWeight,
+			tokenToPrice,
 		});
 
 		const tokenToUSD = amountTokenTo * tokenToPrice;

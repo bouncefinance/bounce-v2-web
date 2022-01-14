@@ -13,6 +13,7 @@ interface IChartsParams {
     endWeight: number
     startDate: Date
     endDate: Date
+    tokenToPrice: number
 }
 
 export const Charts: FC<IChartsParams> = ({
@@ -21,7 +22,8 @@ export const Charts: FC<IChartsParams> = ({
     startWeight,
     endWeight,
     startDate,
-    endDate
+    endDate,
+    tokenToPrice
 }) => {
     const ref = useRef<HTMLDivElement | null>(null)
     const [dateSlice, setDateSlice] = useState(getDateSlice())
@@ -34,7 +36,7 @@ export const Charts: FC<IChartsParams> = ({
 
     useEffect(() => {
         (async () => {
-            const priceSlice = await getPriceSlice(dateSlice, amountTokenFrom, amountTokenTo, startWeight, endWeight)
+            const priceSlice = await getPriceSlice(dateSlice, amountTokenFrom, amountTokenTo, startWeight, endWeight, tokenToPrice)
             // console.log('priceSlice', priceSlice)
             setPriceSlice(priceSlice)
         })()
