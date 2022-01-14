@@ -32,6 +32,7 @@ export const ExtensionInfo = ({
             case 2:
                 return <AuctionSettingView
                     setOperation={setOperation}
+                    poolAddress={poolAddress}
                 />
             default:
                 return <></>

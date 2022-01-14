@@ -18,13 +18,15 @@ const useStyles = makeStyles({
 
 interface IAuctionSettingViewParams {
     setOperation: React.Dispatch<React.SetStateAction<OPERATION>>
+    poolAddress: string
 }
 
-const POOLID = '0x05cdd556040c1b1a2d1c45d02d3889a318a3ce0b'
 
 export const AuctionSettingView = ({
-    setOperation
+    setOperation, poolAddress
 }: IAuctionSettingViewParams) => {
+
+    const POOLID = poolAddress
     const [isEnabled, setIsEnabled] = useState(false)
     const [isEnabledLoading, setIsEnabledALoading] = useState(false)
     const classes = useStyles();
