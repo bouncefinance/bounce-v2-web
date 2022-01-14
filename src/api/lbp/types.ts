@@ -76,3 +76,12 @@ export interface ILBPDetail {
 	totalLiquidity: string;
 	totalSwapVolume: number;
 }
+
+export interface ILBPSetting {
+	CurrentAmountToken0: string;
+	currentAmountToken1: string;
+	swapEnable: number;
+	swapFee: number;
+	totalSwapFee: number;
+	txHash: string;
+}

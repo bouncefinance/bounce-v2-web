@@ -2,7 +2,7 @@ import { getJson, postJson } from "@app/api/network/json";
 import { getAPIByNetwork } from "@app/api/utils";
 import { WEB3_NETWORKS } from "@app/web3/networks/const";
 
-import { ILBPDetail, ILBPHistory, ILBPList } from "./types";
+import { ILBPDetail, ILBPHistory, ILBPList, ILBPSetting } from "./types";
 
 type APIResponse<T> = {
 	code: 200 | 500;
@@ -115,6 +115,7 @@ export const fetchLbpDetail = async (
 	};
 };
 
+// create存额外的信息
 export const postLbpCreate = async (
 	chainId: WEB3_NETWORKS,
 	options: {
@@ -127,6 +128,25 @@ export const postLbpCreate = async (
 	data;
 }> => {
 	const res = await postInformation<{}>(chainId, "lbps/details", options);
+
+	if (!res.data) {
+		console.error(res);
+		throw new Error("failed to load data:" + res.error_msg);
+	}
+
+	return {
+		data: res.data,
+	};
+};
+
+// LBP detail setting
+export const fetchLbpSetting = async (
+	chainId: WEB3_NETWORKS,
+	pool_address: string
+): Promise<{
+	data: ILBPSetting;
+}> => {
+	const res = await fetchInformation<ILBPSetting>(chainId, `lbps/${pool_address}/setting`, {});
 
 	if (!res.data) {
 		console.error(res);
