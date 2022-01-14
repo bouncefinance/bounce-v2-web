@@ -18,7 +18,7 @@ interface AuctuinDetailViewParams {
 
 export const AuctuinDetailView = ({ tokenFrom, detailData }: AuctuinDetailViewParams) => {
     const formatDecimaiToPercent = (val: number | string) => {
-        const percentNum = Number(val) * 100;
+        const percentNum = new BigNumber(val).multipliedBy(100).toString();
         return `${percentNum}%`
     }
     const soldAmount = new BigNumber(detailData?.startAmountToken0)?.minus(new BigNumber(detailData?.currentAmountToken0)).toString();

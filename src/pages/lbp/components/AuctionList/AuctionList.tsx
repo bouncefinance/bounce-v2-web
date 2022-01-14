@@ -7,21 +7,23 @@ import { AUCTION_PATH } from '@app/const/const';
 import { Card, DisplayPoolInfoType } from '@app/modules/auction-card';
 import { Pagination } from '@app/modules/pagination';
 import { ToAuctionStatus, ToAuctionType } from '@app/pages/auction/Auction';
+import { LBPPairData } from '@app/pages/lbp-detail/LBPPairData';
 import { DescriptionList } from '@app/ui/description-list';
-import { fromWei } from '@app/utils/bn/wei';
+import { fromWei, toWei, weiToNum } from '@app/utils/bn/wei';
 import { getProgress, getSwapRatio, POOL_STATUS } from '@app/utils/pool';
 import { getIsOpen } from '@app/utils/time';
-import { useChainId } from '@app/web3/hooks/use-web3';
+import { getLiquidityBootstrappingPoolContract, getVaultContract } from '@app/web3/api/bounce/lbp';
+import { useAccount, useChainId, useWeb3Provider } from '@app/web3/hooks/use-web3';
 import BigNumber from 'bignumber.js';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { uid } from 'react-uid';
 import styles from './auctionList.module.scss';
 
 export const ToLBPAuctionStatus = {
-	1: POOL_STATUS.COMING,
-	2: POOL_STATUS.LIVE,
-	3: POOL_STATUS.CLOSED,
+    1: POOL_STATUS.COMING,
+    2: POOL_STATUS.LIVE,
+    3: POOL_STATUS.CLOSED,
 };
 
 
@@ -75,10 +77,27 @@ export const LBPAuctionList = ({ }) => {
         })()
     }, [chainId, page, poolStatus])
 
+    const provider = useWeb3Provider();
+    const account = useAccount();
+    const vaultContract = useMemo(() => getVaultContract(provider, chainId), [chainId, provider]);  // 取amount
+
+    const getCurrentPrice = async (pool: ILBPList) => {
+        const lbpPairContract = getLiquidityBootstrappingPoolContract(provider, pool?.address)
+        const pairDate = new LBPPairData(lbpPairContract, vaultContract, pool?.address)             // 得到实例，当前时刻的pair-data的信息
+
+        const amountOut = await pairDate._tokenInForExactTokenOut(
+            pool?.token0,
+            pool?.currentAmountToken0
+        )
+        const price = new BigNumber(weiToNum(amountOut, pool.token1Decimals)).multipliedBy(1).dp(4).toString();     // amountOut乘以token1的价格
+        return price;
+    }
+
     useEffect(() => {
         if (auctionListData.length > 0) {
             Promise.all(
                 auctionListData.map(async (pool) => {
+                    const currentPrice = await getCurrentPrice(pool);
                     const isOpen = getIsOpen(pool?.startTs * 1000);
                     const token0 = {
                         address: pool.token0,
@@ -112,7 +131,7 @@ export const LBPAuctionList = ({ }) => {
                         from: token0,
                         to: token1,
                         total: parseFloat(fromWei(pool?.startAmountToken0, token0.decimals).toFixed()),
-                        price: pool?.currentPrice,
+                        price: Number(currentPrice),
                         sold: parseFloat(fromWei(swapAmount, token0.decimals).toFixed()),
                         startTs: pool?.startTs,
                         endTs: pool?.endTs,

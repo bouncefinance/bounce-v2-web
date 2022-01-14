@@ -163,6 +163,7 @@ export const LBPDetail = (props: {
                     setOperation={setOperation}
                     poolAddress={props.poolAddress}
                     isEnabled={settingData?.swapEnable === ENABLED.open}
+                    swapFee={settingData?.swapFee}
                 />}
             </View>
             {popUp.defined ? (
