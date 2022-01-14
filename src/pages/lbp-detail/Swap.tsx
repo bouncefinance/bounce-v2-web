@@ -30,11 +30,12 @@ export interface ISwapparams {
     token1Amount: number
     setOperation: React.Dispatch<React.SetStateAction<OPERATION>>
     poolAddress: string,
-    isEnabled: boolean
+    isEnabled: boolean,
+    swapFee: number,
 }
 
 export const Swap = ({
-    token0: tokenFrom, token1: tokenTo, token0Amount, token1Amount, setOperation, poolAddress, isEnabled
+    token0: tokenFrom, token1: tokenTo, token0Amount, token1Amount, setOperation, poolAddress, isEnabled, swapFee
 }: ISwapparams) => {
     const POOL_ADDRESS = poolAddress
     const [isResver, setIsResver] = useState(false)
@@ -399,7 +400,7 @@ export const Swap = ({
                                     />
                                 </Label>
                                 <div className={styles.tradingFee}>
-                                    <span>Trading Fee is 1%</span>
+                                    <span>Trading Fee is {new Bignumber(swapFee).multipliedBy(100).toString()}%</span>
                                 </div>
                             </>
                         )}
