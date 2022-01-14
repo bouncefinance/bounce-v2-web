@@ -48,18 +48,6 @@ export const LBPDetail = (props: {
     const [token0, setToken0] = useState<TokenInfo>()
     const [token1, setToken1] = useState<TokenInfo>()
     console.log('detailData', detailData)
-    // const route = useRouter()
-    // console.log(route)
-
-    // useEffect(() => {
-    //     (async () => {
-    //         const vaultContract = useMemo(() => getVaultContract(provider, chainId), [chainId, provider]);
-    //         const lbpPairContract = useMemo(() => getLiquidityBootstrappingPoolContract(provider, props.poolAddress), [provider, props.poolAddress]);
-    //         const pairDate = new LBPPairData(lbpPairContract, vaultContract, props.poolAddress)
-    //         const tokens = await pairDate.getTokensPair()
-
-    //     })()
-    // }, [])
 
     const progress = 90
 
