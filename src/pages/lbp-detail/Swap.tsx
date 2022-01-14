@@ -29,11 +29,12 @@ export interface ISwapparams {
     token0Amount: number
     token1Amount: number
     setOperation: React.Dispatch<React.SetStateAction<OPERATION>>
-    poolAddress: string
+    poolAddress: string,
+    isEnabled: boolean
 }
 
 export const Swap = ({
-    token0: tokenFrom, token1: tokenTo, token0Amount, token1Amount, setOperation, poolAddress
+    token0: tokenFrom, token1: tokenTo, token0Amount, token1Amount, setOperation, poolAddress, isEnabled
 }: ISwapparams) => {
     const POOL_ADDRESS = poolAddress
     const [isResver, setIsResver] = useState(false)
@@ -408,11 +409,13 @@ export const Swap = ({
                             <PrimaryButton
                                 className={styles.submit}
                                 size="large"
-                                disabled={loading}
+                                disabled={loading || !isEnabled}
                                 submit
                             >
                                 {
-                                    tokenIsApprove ? 'Exchange' : `Approve ${isResver ? tokenFrom.symbol : tokenTo.symbol}`
+                                    isEnabled?
+                                    (tokenIsApprove ? 'Exchange' : `Approve ${isResver ? tokenFrom.symbol : tokenTo.symbol}`)
+                                    : 'Not Enable Now'
                                 }
                             </PrimaryButton>
                         )}

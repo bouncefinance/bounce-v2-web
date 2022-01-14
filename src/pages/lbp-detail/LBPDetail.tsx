@@ -16,14 +16,15 @@ import { ExtensionInfo } from './ExtensionInfo'
 import { useControlPopUp } from '@app/hooks/use-control-popup'
 import { ProcessingPopUp } from '@app/modules/processing-pop-up'
 import { CONTENT, TITLE } from '../farm/stakingModal'
-import { fetchLbpDetail } from '@app/api/lbp/api'
-import { ILBPDetail } from '@app/api/lbp/types'
+import { fetchLbpDetail, fetchLbpSetting } from '@app/api/lbp/api'
+import { ILBPDetail, ILBPSetting } from '@app/api/lbp/types'
 import { getLiquidityBootstrappingPoolContract, getVaultContract } from '@app/web3/api/bounce/lbp'
 import { LBPPairData } from './LBPPairData'
 import { TokenInfo } from '@uniswap/token-lists'
 import BigNumber from 'bignumber.js'
 import { divide } from '@app/utils/bn'
 import { ToLBPAuctionStatus } from '../lbp/components/AuctionList/AuctionList'
+import { ENABLED } from './AuctionSettingView'
 
 export enum OPERATION {
     default = "default",
@@ -50,8 +51,7 @@ export const LBPDetail = (props: {
     const [detailData, setDetailData] = useState<ILBPDetail | null>(null)
     const [token0, setToken0] = useState<TokenInfo>()
     const [token1, setToken1] = useState<TokenInfo>()
-
-    const progress = 90
+    const [settingData, setSettingData] = useState<ILBPSetting>()
 
     useEffect(() => {
         (async () => {
@@ -60,6 +60,9 @@ export const LBPDetail = (props: {
 
             setToken0(findToken(data.token0) || await queryToken(data.token0))
             setToken1(findToken(data.token1) || await queryToken(data.token1))
+
+            const { data: settingData } = await fetchLbpSetting(chainId, data.address);
+            setSettingData(settingData);
         })();
     }, [chainId, props.poolAddress])
 
@@ -143,6 +146,7 @@ export const LBPDetail = (props: {
                     token1Amount={token1Amount}
                     setOperation={setOperation}
                     poolAddress={props.poolAddress}
+                    isEnabled={settingData?.swapEnable === ENABLED.open}
                 />}
             </View>
             {popUp.defined ? (
