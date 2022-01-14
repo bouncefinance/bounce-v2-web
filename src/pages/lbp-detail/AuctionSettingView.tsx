@@ -1,9 +1,14 @@
+import { fetchLbpSetting } from '@app/api/lbp/api'
+import { ILBPSetting } from '@app/api/lbp/types'
 import { Button } from '@app/ui/button'
+import { roundedDivide } from '@app/utils/bn'
+import { fromWei } from '@app/utils/bn/wei'
 import { getBounceProxyContract, setPoolEnabled, withDrawAllLbpPool } from '@app/web3/api/bounce/lbp'
 import { useAccount, useChainId, useWeb3Provider } from '@app/web3/hooks/use-web3'
 import { ListItem, ListItemSecondaryAction, Switch } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
-import React, { useMemo, useState } from 'react'
+import { TokenInfo } from '@uniswap/token-lists'
+import React, { useEffect, useMemo, useState } from 'react'
 import styles from './ExtensionInfo.module.scss'
 import { OPERATION } from './LBPDetail'
 
@@ -16,14 +21,25 @@ const useStyles = makeStyles({
     }
 })
 
+export enum ENABLED {
+    unknown = 0,
+    open,
+    closed
+}
+
 interface IAuctionSettingViewParams {
-    setOperation: React.Dispatch<React.SetStateAction<OPERATION>>
     poolAddress: string
+    token0: TokenInfo
+    token1: TokenInfo
+    setOperation: React.Dispatch<React.SetStateAction<OPERATION>>
 }
 
 
 export const AuctionSettingView = ({
-    setOperation, poolAddress
+    poolAddress,
+    token0,
+    token1,
+    setOperation,
 }: IAuctionSettingViewParams) => {
 
     const POOLID = poolAddress
@@ -34,6 +50,20 @@ export const AuctionSettingView = ({
     const chainId = useChainId();
     const account = useAccount();
     const contract = useMemo(() => getBounceProxyContract(provider, chainId), [chainId, provider]);
+    const [settingData, setSettingData] = useState<ILBPSetting>(null);
+
+    useEffect(() => {
+        (async() => {
+            const { data } = await fetchLbpSetting(chainId, poolAddress);
+            setSettingData(data);
+        })();
+    }, [poolAddress])
+
+    useEffect(() => {
+        setIsEnabled(settingData?.swapEnable === ENABLED.open)
+    }, [settingData])
+
+
 
     const handleWithdraw = async () => {
         try {
@@ -99,7 +129,7 @@ export const AuctionSettingView = ({
     return (
         <div>
             <div className={styles.centerWrapper}>
-                <h4>Trading Status</h4>
+                <h4 style={{fontSize: 20}}>Trading Status</h4>
                 <div className={styles.enabled}>
                     <ListItem>
                         <p>Buy/Sell function is enabled</p>
@@ -116,14 +146,18 @@ export const AuctionSettingView = ({
                     </ListItem>
                 </div>
 
-                <h4>Pool Balances</h4>
+                <h4 style={{fontSize: 20}}>Pool Balances</h4>
                 <div className={styles.poolCard}>
                     <div>
                         <h5>Current Balances</h5>
                         <p>
-                            120000.00 ETH
+                            {
+                                `${fromWei(settingData?.CurrentAmountToken0, token0?.decimals).toFixed(2)} ${token0?.symbol}`
+                            }
                             <br />
-                            9000000.00 MONICA
+                            {
+                                 `${fromWei(settingData?.currentAmountToken1, token1?.decimals).toFixed(2)} ${token1?.symbol}`
+                            }
                         </p>
 
                         <h5>Swap Fees Collected By Project</h5>

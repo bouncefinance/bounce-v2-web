@@ -136,6 +136,7 @@ export const LBPDetail = (props: {
                 extension={<ExtensionInfo
                     poolId={+detailData?.poolID}
                     tokenFrom={token0}
+                    tokenTo={token1}
                     setOperation={setOperation}
                     poolAddress={props.poolAddress}
                 />}
