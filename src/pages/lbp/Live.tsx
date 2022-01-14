@@ -2,5 +2,5 @@ import { LBPAuctionList } from "./components/AuctionList/AuctionList"
 
 
 export const LiveLBP = () => {
-    return <LBPAuctionList />
+    return <LBPAuctionList type="live" />
 }

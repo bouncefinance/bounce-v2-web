@@ -2,5 +2,5 @@ import { LBPAuctionList } from "./components/AuctionList/AuctionList"
 
 
 export const ClosedLBP = () => {
-    return <LBPAuctionList />
+    return <LBPAuctionList type="closed" />
 }

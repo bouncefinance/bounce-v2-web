@@ -38,7 +38,7 @@ export enum lbpPoolStatus {
 }
 
 
-export const LBPAuctionList = ({ }) => {
+export const LBPAuctionList = ({ type }: { type: string }) => {
     const [convertedPoolInformation, setConvertedPoolInformation] = useState<DisplayPoolInfoType[]>([]);
     const [page, setPage] = useState(0);
     const [auctionListData, setAuctionListData] = useState<ILBPList[]>([])
@@ -46,23 +46,24 @@ export const LBPAuctionList = ({ }) => {
     const chainId = useChainId();
     const router = useRouter();
     const { pathname } = router;
-    const [poolStatus, setPoolStatus] = useState<lbpPoolStatus | undefined>(undefined)
+    const [poolStatus, setPoolStatus] = useState<lbpPoolStatus>()
 
     useEffect(() => {
         if (pathname === '/lbp/upcoming') {
-            setPoolStatus(1);
+            setPoolStatus(lbpPoolStatus.upcoming);
         } else if (pathname === '/lbp/live') {
-            setPoolStatus(2);
+            setPoolStatus(lbpPoolStatus.live);
         } else if (pathname === '/lbp/closed') {
-            setPoolStatus(3)
+            setPoolStatus(lbpPoolStatus.closed)
         } else {
-            setPoolStatus(undefined)
+            setPoolStatus(lbpPoolStatus.all)
         }
-    }, [pathname])
+    }, [pathname, type])
 
     const numberOfPages = Math.ceil(totalCount / WINDOW_SIZE);
 
     useEffect(() => {
+        if (poolStatus === undefined) return
         (async () => {
             const { data: lbpList, meta: { total } } = await fetchLbpList(
                 chainId,
@@ -143,7 +144,7 @@ export const LBPAuctionList = ({ }) => {
         } else {
             setConvertedPoolInformation(EMPTY_ARRAY);
         }
-    }, [auctionListData]);
+    }, [auctionListData, pathname, type]);
 
     return <div className={styles.listBox}>
         <>

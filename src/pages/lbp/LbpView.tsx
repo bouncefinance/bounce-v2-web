@@ -31,13 +31,13 @@ const tabsConfig: {
     activeClassName: ''
 }, {
     tab: 'live',
-    name: 'Live (5)',
+    name: 'Live',
     href: `${LBP_PATH}/live`,
     hoverClassName: styles.liveHover,
     activeClassName: styles.liveActive
 }, {
     tab: 'upcoming',
-    name: 'Upcoming 5',
+    name: 'Upcoming',
     href: `${LBP_PATH}/upcoming`,
     hoverClassName: styles.upcomingHover,
     activeClassName: styles.upcomingActive
@@ -89,7 +89,7 @@ export const LbpView: FC<LbpType & MaybeWithClassName> = ({type, className}) => 
 
                     </div>
                     <div>
-                        {type === "all" && <LBPAuctionList />}
+                        {type === "all" && <LBPAuctionList type={type}/>}
                         {type === 'live' && <LiveLBP />}
                         {type === "upcoming" && <UpcomingLBP />}
                         {type === "closed" && <ClosedLBP />}

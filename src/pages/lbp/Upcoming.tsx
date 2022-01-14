@@ -1,5 +1,5 @@
 import { LBPAuctionList } from "./components/AuctionList/AuctionList"
 
 export const UpcomingLBP = () => {
-    return <LBPAuctionList />
+    return <LBPAuctionList type="upcoming" />
 }
