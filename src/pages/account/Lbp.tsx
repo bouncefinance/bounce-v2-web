@@ -1,25 +1,23 @@
 import { useWeb3React } from "@web3-react/core";
 import classNames from "classnames";
 import React, { useEffect, useMemo, useState } from "react";
-
-import { fetchOtcSearch } from "@app/api/my-otc/api";
-import { OTC_SHORT_NAME_MAPPING, OTC_TYPE } from "@app/api/otc/const";
-import { OtcSearchEntity } from "@app/api/otc/types";
-import { OTC_PATH } from "@app/const/const";
-import { DisplayOTCInfoType } from "@app/modules/otc-card";
-import { Card } from "@app/modules/otc-card";
 import { Pagination } from "@app/modules/pagination";
 
 import { Button } from "@app/ui/button";
 import { Select } from "@app/ui/select";
 import { fromWei } from "@app/utils/bn/wei";
-import { getProgress, getSwapRatio, POOL_STATUS } from "@app/utils/otc";
+import { getProgress, POOL_STATUS } from "@app/utils/otc";
 import { getIsOpen } from "@app/utils/time";
 import { getBounceOtcContract } from "@app/web3/api/bounce/otc";
 import { useTokenSearchWithFallbackService } from "@app/web3/api/tokens/use-fallback-tokens";
 import { useChainId, useWeb3Provider } from "@app/web3/hooks/use-web3";
 
 import styles from "./Account.module.scss";
+import { fetchMyLBPSearch } from "@app/api/my-lbp/api";
+import { ILBPList } from "@app/api/lbp/types";
+import BigNumber from "bignumber.js";
+import { ToLBPAuctionStatus } from "../lbp/components/AuctionList/AuctionList";
+import { Card, DisplayPoolInfoType } from "@app/modules/auction-card";
 
 const WINDOW_SIZE = 9;
 const EMPTY_ARRAY = [];
@@ -41,20 +39,7 @@ const STATUS_OPTIONS = [
 		label: "Closed",
 		key: "closed",
 	},
-	{
-		label: "Filled",
-		key: "filled",
-	},
 ];
-const ToAuctionType = {
-	0: OTC_TYPE.sell,
-	1: OTC_TYPE.buy,
-};
-const ToAuctionStatus = {
-	0: POOL_STATUS.LIVE,
-	1: POOL_STATUS.CLOSED,
-	2: POOL_STATUS.FILLED,
-};
 
 export const Lbp = () => {
 	const chainId = useChainId();
@@ -66,9 +51,9 @@ export const Lbp = () => {
 
 	const numberOfPages = Math.ceil(totalCount / WINDOW_SIZE);
 
-	const [poolList, setPoolList] = useState<OtcSearchEntity[]>([]);
+	const [poolList, setPoolList] = useState<ILBPList[]>([]);
 
-	const [convertedPoolInformation, setConvertedPoolInformation] = useState<DisplayOTCInfoType[]>(
+	const [convertedPoolInformation, setConvertedPoolInformation] = useState<DisplayPoolInfoType[]>(
 		[]
 	);
 
@@ -86,7 +71,7 @@ export const Lbp = () => {
 			const {
 				data: foundPools,
 				meta: { total },
-			} = await fetchOtcSearch(
+			} = await fetchMyLBPSearch(
 				chainId,
 				account,
 				type,
@@ -113,28 +98,46 @@ export const Lbp = () => {
 		if (poolList.length > 0) {
 			Promise.all(
 				poolList.map(async (pool) => {
-					const { token0, token1, amountTotal0, amountTotal1, swappedAmount0, openAt } = pool;
-					const isOpen = getIsOpen(openAt * 1000);
-					const otcType = ToAuctionType[pool.otcType];
-					const tempStatus = isOpen ? ToAuctionStatus[pool.status] : POOL_STATUS.COMING;
+					const isOpen = getIsOpen(pool?.startTs * 1000);
+                    const token0 = {
+                        address: pool.token0,
+                        coinGeckoID: "",
+                        decimals: pool?.token0Decimals,
+                        largeURL: pool?.token0LargeURL,
+                        name: pool?.token0Symbol,
+                        smallURL: pool?.token0SmallURL,
+                        symbol: pool?.token0Symbol,
+                        thumbURL: pool?.token0ThumbURL,
+						chainId: chainId
+                    }
+                    const token1 = {
+                        address: pool.token1,
+                        coinGeckoID: "",
+                        decimals: pool?.token1Decimals,
+                        largeURL: pool?.token1LargeURL,
+                        name: pool?.token1Symbol,
+                        smallURL: pool?.token1SmallURL,
+                        symbol: pool?.token1Symbol,
+                        thumbURL: pool?.token1ThumbURL,
+						chainId: chainId
+                    }
+                    const swapAmount = new BigNumber(pool?.startAmountToken0)?.minus(new BigNumber(pool?.currentAmountToken0)).toString()
 
-					return {
-						status: pool.status === 1 ? ToAuctionStatus[pool.status] : tempStatus,
-						id: +pool.poolID,
-						name: `${pool.name} ${OTC_SHORT_NAME_MAPPING[otcType]}`,
-						address: token0.address,
-						type: OTC_SHORT_NAME_MAPPING[otcType],
-						token: token0.address,
-						from: token0,
-						to: token1,
-						total: parseFloat(fromWei(amountTotal1, token1.decimals).toFixed()),
-						currency: token1.address,
-						price: parseFloat(
-							getSwapRatio(amountTotal1, amountTotal0, token1.decimals, token0.decimals)
-						),
-						fill: getProgress(swappedAmount0, amountTotal0, token0.decimals),
-						href: `${OTC_PATH}/${otcType}/${pool.poolID}`,
-					};
+                    return {
+                        status: isOpen ? ToLBPAuctionStatus[pool.status] : POOL_STATUS.COMING,
+                        id: pool?.address?.slice(-6),
+                        name: `${pool.token0Symbol} Launch Pool`,
+                        address: pool.token0,
+                        from: token0,
+                        to: token1,
+                        total: parseFloat(fromWei(pool?.startAmountToken0, token0.decimals).toFixed()),
+                        price: pool?.currentPrice,
+                        sold: parseFloat(fromWei(swapAmount, token0.decimals).toFixed()),
+                        startTs: pool?.startTs,
+                        endTs: pool?.endTs,
+                        fill: getProgress(swapAmount, pool?.startAmountToken0, token0.decimals),
+                        href: `/lbp/${pool?.address}`
+                    };
 				})
 			).then((info) => setConvertedPoolInformation(info));
 		} else {
@@ -152,7 +155,7 @@ export const Lbp = () => {
 						onClick={() => setCheckbox(true)}
 						className={classNames(styles.toggle, checkbox && styles.checked)}
 					>
-						Created11
+						Created
 					</Button>
 					<Button
 						onClick={() => setCheckbox(false)}
@@ -175,7 +178,7 @@ export const Lbp = () => {
 					<ul className={styles.cardList}>
 						{convertedPoolInformation.map((auction) => (
 							<li key={auction.id} className="animate__animated animate__flipInY">
-								<Card {...auction} bordered />
+								<Card {...auction} bordered isLbpCard />
 							</li>
 						))}
 					</ul>

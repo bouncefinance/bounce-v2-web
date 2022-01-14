@@ -21,6 +21,9 @@ import { ILBPDetail } from '@app/api/lbp/types'
 import { getLiquidityBootstrappingPoolContract, getVaultContract } from '@app/web3/api/bounce/lbp'
 import { LBPPairData } from './LBPPairData'
 import { TokenInfo } from '@uniswap/token-lists'
+import BigNumber from 'bignumber.js'
+import { divide } from '@app/utils/bn'
+import { ToLBPAuctionStatus } from '../lbp/components/AuctionList/AuctionList'
 
 export enum OPERATION {
     default = "default",
@@ -47,7 +50,6 @@ export const LBPDetail = (props: {
     const [detailData, setDetailData] = useState<ILBPDetail | null>(null)
     const [token0, setToken0] = useState<TokenInfo>()
     const [token1, setToken1] = useState<TokenInfo>()
-    console.log('detailData', detailData)
 
     const progress = 90
 
@@ -62,13 +64,16 @@ export const LBPDetail = (props: {
     }, [chainId, props.poolAddress])
 
     const TokenSold = useMemo(() => {
+        const sold = new BigNumber(detailData?.startAmountToken0)?.minus(new BigNumber(detailData?.currentAmountToken0)).toString();
+        const progress = Number(divide(sold, detailData?.startAmountToken0)) * 100
+
         return <div className={styles.tokenSold}>
             <CircularProgress thickness={6} style={{
                 width: 29, height: 29, color: '#4B70FF', marginRight: 6
             }} variant="determinate" value={progress} />
             <span>{progress}%</span>
         </div>
-    }, [])
+    }, [detailData])
 
 
     const [token0Amount, setToken0Amount] = useState(0)
@@ -109,26 +114,27 @@ export const LBPDetail = (props: {
     return (
         <div>
             <View
-                status={POOL_STATUS.LIVE}
-                id={+detailData?.poolID}
-                name={'MONICA Token Launch Auction'}
-                openAt={new Date().getTime()}
-                closeAt={new Date().getTime() + 1000 * 60 * 60 * 56}
+                status={ToLBPAuctionStatus[detailData?.status]}
+                id={detailData?.address?.slice(-6)}
+                name={`${detailData?.token0Symbol} Token Launch Auction`}
+                openAt={Number(detailData?.startTs) * 1000}
+                closeAt={Number(detailData?.endTs) * 1000}
                 onZero={() => {
                     // TODO update status
                 }}
                 onBack={() => goBack()}
-                totalVolume={'$ 1,000,000.5'}
-                liquidity={'$ 500,000.5'}
+                totalVolume={`$ ${detailData?.totalSwapVolume}`}
+                liquidity={`$ ${detailData?.totalLiquidity || 0}`}
                 tokenSold={TokenSold}
+                detailData={detailData}
                 extension={<ExtensionInfo
                     poolId={+detailData?.poolID}
                     tokenFrom={token0}
                     tokenTo={token1}
                     setOperation={setOperation}
-                    poolAddress={props.poolAddress}
+                    poolAddress={detailData?.address}
+                    detailData={detailData}
                 />}
-                detailData={detailData}
             >
                 {token0 && token1 && <Swap
                     token0={token0}

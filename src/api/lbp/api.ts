@@ -119,7 +119,7 @@ export const fetchLbpDetail = async (
 export const postLbpCreate = async (
 	chainId: WEB3_NETWORKS,
 	options: {
-		address: string;
+		txHash: string;
 		descriptioin: string;
 		learnMoreLink: string;
 		tokenLogoUrl: string;

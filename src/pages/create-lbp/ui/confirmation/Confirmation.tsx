@@ -141,25 +141,15 @@ export const ConfirmationImp: FC<CommonType> = ({ type }) => {
 			tokenTo.decimals,
 			0
 		))
-			.on("transactionHash", async (h) => {
+			.on("transactionHash", (h) => {
 				console.log("hash", h);
 				setOperation(OPERATION.pending);
-				// TODO  存额外信息字段 发post请求
-				const res = await postLbpCreate(chainId, {
-					address: '',
-					descriptioin: '',
-					learnMoreLink: '',
-					tokenLogoUrl: '',
-				})
-				console.log('提交', res)
-
 			})
 			.on("receipt", (r) => {
 				console.log("receipt", r);
 				setApproveTokenTo(true)
 				setOperation(OPERATION.success);
 				// setPoolId(r.events.Created.returnValues[0]);
-				// TODO   上链成功，拿到pool address 跳转池子详情
 			})
 			.on("error", (e) => {
 				console.error("error", e);

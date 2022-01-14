@@ -21,6 +21,9 @@ import lbpParameters from "./ui/lbpParameters";
 import React from "react";
 import { createLbpPool, getBounceProxyContract } from "@app/web3/api/bounce/lbp";
 import { isEqualZero, isThanGreateAddrss } from "@app/utils/validation";
+import { postLbpCreate } from "@app/api/lbp/api";
+import { useRouter } from "next/router";
+import { LBP_PATH } from "@app/const/const";
 
 const BUYING_STEPS = defineFlow(Token, lbpParameters, Settings, Confirmation);
 
@@ -85,13 +88,14 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 	const contract = useMemo(() => getBounceProxyContract(provider, chainId), [chainId, provider]);
 
 	const findToken = useTokenSearch();
-	// const { push: routerPush } = useRouter();
+	const { push: routerPush } = useRouter();
 
 	const [poolId, setPoolId] = useState(undefined);
 
 	const [operation, setOperation] = useState(OPERATION.default);
 
 	const [lastOperation, setLastOperation] = useState<(() => void) | null>(null);
+	const [poolAddress, setPoolAddress] = useState<string>('')
 
 
 	const onComplete = async (data: ConfirmationInType) => {
@@ -123,15 +127,23 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 					isEqualZero(tokenTo.address) ? numToWei(amountTo, tokenTo.decimals, 0) : ''
 				)
 
-					.on("transactionHash", (h) => {
+					.on("transactionHash", async (h) => {
 						console.log("hash", h);
 						setOperation(OPERATION.pending);
+						// TODO  存额外信息字段 发post请求
+						const res = await postLbpCreate(chainId, {
+							txHash: h,
+							descriptioin: data?.description,
+							learnMoreLink: data?.socialLink,
+							tokenLogoUrl: data?.tokenFromImg,
+						})
+						console.log('extra', res)
 					})
 					.on("receipt", (r) => {
-						console.log("receipt", r);
 						setOperation(OPERATION.success);
 						setLastOperation(null);
 						setPoolId(r.events.Created.returnValues[0]);
+						setPoolAddress(r?.events?.[11]?.address)
 					})
 					.on("error", (e) => {
 						console.error("error", e);
