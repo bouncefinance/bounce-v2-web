@@ -39,6 +39,7 @@ export const ExtensionInfo = ({
                     poolAddress={poolAddress}
                     token0={tokenFrom}
                     token1={tokenTo}
+                    detailData={detailData}
                 />
             default:
                 return <></>

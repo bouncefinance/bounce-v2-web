@@ -1,5 +1,5 @@
 import { fetchLbpSetting } from '@app/api/lbp/api'
-import { ILBPSetting } from '@app/api/lbp/types'
+import { ILBPDetail, ILBPSetting } from '@app/api/lbp/types'
 import { Button } from '@app/ui/button'
 import { roundedDivide } from '@app/utils/bn'
 import { fromWei } from '@app/utils/bn/wei'
@@ -8,6 +8,7 @@ import { useAccount, useChainId, useWeb3Provider } from '@app/web3/hooks/use-web
 import { ListItem, ListItemSecondaryAction, Switch } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
 import { TokenInfo } from '@uniswap/token-lists'
+import BigNumber from 'bignumber.js'
 import React, { useEffect, useMemo, useState } from 'react'
 import styles from './ExtensionInfo.module.scss'
 import { OPERATION } from './LBPDetail'
@@ -31,6 +32,7 @@ interface IAuctionSettingViewParams {
     poolAddress: string
     token0: TokenInfo
     token1: TokenInfo
+    detailData: ILBPDetail
     setOperation: React.Dispatch<React.SetStateAction<OPERATION>>
 }
 
@@ -39,6 +41,7 @@ export const AuctionSettingView = ({
     poolAddress,
     token0,
     token1,
+    detailData,
     setOperation,
 }: IAuctionSettingViewParams) => {
 
@@ -162,7 +165,9 @@ export const AuctionSettingView = ({
 
                         <h5>Swap Fees Collected By Project</h5>
                         <p>
-                            50.00 ETH
+                            {
+                                `$ ${new BigNumber(detailData?.totalSwapVolume).multipliedBy(settingData?.swapFee).dp(2).toString()}`
+                            }
                         </p>
                     </div>
                     <div className={styles.poolCardRight}>

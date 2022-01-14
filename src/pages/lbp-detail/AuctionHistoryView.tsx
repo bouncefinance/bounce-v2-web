@@ -2,6 +2,7 @@ import { fetchLbpHistory } from '@app/api/lbp/api'
 import { ILBPHistory } from '@app/api/lbp/types'
 import { Pagination } from '@app/modules/pagination'
 import { Body1, Caption } from '@app/ui/typography'
+import { fromWei } from '@app/utils/bn/wei'
 import { useChainId } from '@app/web3/hooks/use-web3'
 import classNames from 'classnames'
 import moment from 'moment'
@@ -73,12 +74,12 @@ export const AuctionHistoryView = ({poolAddress} : IAuctionHistoryViewProps) => 
                                 </Body1>
                                 <Body1 Component="div" className={styles.amount}>
 									<Body1 Component="span">
-										<span>{activity.tokenInAmount} {activity.tokenInSymbol}</span>
+										<span>{`${fromWei(activity.tokenInAmount, activity?.tokenInDecimals)} ${activity.tokenInSymbol}`}</span>
 									</Body1>
 									<Body1 Component="span">
 										<Body1 className={styles.cellAmount} Component="span">
-											<span>{`${activity.tokenOutAmount} ${activity.tokenOutSymbol}`}</span>&nbsp;
-											<span className={styles.cellAmount}>(${activity.tokenOutVolume})</span>
+                                        <span>{`${fromWei(activity.tokenOutAmount, activity?.tokenOutDecimals)} ${activity.tokenOutSymbol}`}</span>&nbsp;
+											<span className={styles.cellAmount}>(${Number(activity.tokenOutVolume)?.toFixed(2)})</span>
 										</Body1>
 									</Body1>
 								</Body1>

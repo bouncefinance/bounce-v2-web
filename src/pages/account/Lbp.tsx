@@ -5,7 +5,7 @@ import { Pagination } from "@app/modules/pagination";
 
 import { Button } from "@app/ui/button";
 import { Select } from "@app/ui/select";
-import { fromWei } from "@app/utils/bn/wei";
+import { fromWei, weiToNum } from "@app/utils/bn/wei";
 import { getProgress, POOL_STATUS } from "@app/utils/otc";
 import { getIsOpen } from "@app/utils/time";
 import { getBounceOtcContract } from "@app/web3/api/bounce/otc";
@@ -18,6 +18,8 @@ import { ILBPList } from "@app/api/lbp/types";
 import BigNumber from "bignumber.js";
 import { ToLBPAuctionStatus } from "../lbp/components/AuctionList/AuctionList";
 import { Card, DisplayPoolInfoType } from "@app/modules/auction-card";
+import { getLiquidityBootstrappingPoolContract, getVaultContract } from "@app/web3/api/bounce/lbp";
+import { LBPPairData } from "../lbp-detail/LBPPairData";
 
 const WINDOW_SIZE = 9;
 const EMPTY_ARRAY = [];
@@ -90,6 +92,20 @@ export const Lbp = () => {
 
 	const contract = useMemo(() => getBounceOtcContract(provider, chainId), [chainId, provider]);
 
+    const vaultContract = useMemo(() => getVaultContract(provider, chainId), [chainId, provider]);  // 取amount
+
+    const getCurrentPrice = async (pool: ILBPList) => {
+        const lbpPairContract = getLiquidityBootstrappingPoolContract(provider, pool?.address)
+        const pairDate = new LBPPairData(lbpPairContract, vaultContract, pool?.address)             // 得到实例，当前时刻的pair-data的信息
+
+        const amountOut = await pairDate._tokenInForExactTokenOut(
+            pool?.token0,
+            pool?.currentAmountToken0
+        )
+        const price = new BigNumber(weiToNum(amountOut, pool.token1Decimals)).multipliedBy(1).dp(4).toString();     // amountOut乘以token1的价格
+        return price;
+    }
+
 	useEffect(() => {
 		if (!contract) {
 			return;
@@ -98,6 +114,7 @@ export const Lbp = () => {
 		if (poolList.length > 0) {
 			Promise.all(
 				poolList.map(async (pool) => {
+					const price = await getCurrentPrice(pool)
 					const isOpen = getIsOpen(pool?.startTs * 1000);
                     const token0 = {
                         address: pool.token0,
@@ -131,7 +148,7 @@ export const Lbp = () => {
                         from: token0,
                         to: token1,
                         total: parseFloat(fromWei(pool?.startAmountToken0, token0.decimals).toFixed()),
-                        price: pool?.currentPrice,
+                        price: Number(price),
                         sold: parseFloat(fromWei(swapAmount, token0.decimals).toFixed()),
                         startTs: pool?.startTs,
                         endTs: pool?.endTs,

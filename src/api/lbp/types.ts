@@ -31,10 +31,12 @@ export interface ILBPHistory {
 	tokenInAddress: string;
 	tokenInAmount: string;
 	tokenInSymbol: string;
+	tokenInDecimals: number;
 	tokenInVolume: number;
 	tokenOutAddress: string;
 	tokenOutAmount: string;
 	tokenOutSymbol: string;
+	tokenOutDecimals: number;
 	tokenOutVolume: number;
 	type: number;
 }
