@@ -1,5 +1,3 @@
-import { Alert, ALERT_TYPE } from '@app/ui/alert'
-import { POOL_STATUS } from '@app/utils/pool'
 import { CircularProgress } from '@material-ui/core'
 import { useRouter } from 'next/router'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -15,16 +13,15 @@ import { useWeb3React } from '@web3-react/core'
 import { ExtensionInfo } from './ExtensionInfo'
 import { useControlPopUp } from '@app/hooks/use-control-popup'
 import { ProcessingPopUp } from '@app/modules/processing-pop-up'
-import { CONTENT, TITLE } from '../farm/stakingModal'
+// import { CONTENT, TITLE } from '../farm/stakingModal'
 import { fetchLbpDetail, fetchLbpSetting } from '@app/api/lbp/api'
 import { ILBPDetail, ILBPSetting } from '@app/api/lbp/types'
-import { getLiquidityBootstrappingPoolContract, getVaultContract } from '@app/web3/api/bounce/lbp'
-import { LBPPairData } from './LBPPairData'
 import { TokenInfo } from '@uniswap/token-lists'
 import BigNumber from 'bignumber.js'
 import { divide } from '@app/utils/bn'
 import { ToLBPAuctionStatus } from '../lbp/components/AuctionList/AuctionList'
 import { ENABLED } from './AuctionSettingView'
+
 
 export enum OPERATION {
     default = "default",
@@ -33,8 +30,27 @@ export enum OPERATION {
     pending = "pending",
     success = "success",
     error = "error",
-    cancel = "cancel",
+    cancel = "cancel", 
 }
+
+export const TITLE = {
+	[OPERATION.approval]: "Bounce Requests Approval",
+	[OPERATION.confirm]: "Waiting for confirmation",
+	[OPERATION.pending]: " Bounce Finance Pending",
+	[OPERATION.error]: "Transaction Failed", 
+	[OPERATION.cancel]: "Transaction Canceled",
+	[OPERATION.success]: "Success!",
+};
+
+export const CONTENT = {
+	[OPERATION.approval]: "Please enable Bounce to access your tokens",
+	[OPERATION.confirm]: "Confirm this transaction in your wallet",
+	[OPERATION.pending]: "Please wait a moment.",
+	[OPERATION.error]: "Your transaction was cancelled and wasn’t submitted",
+	[OPERATION.cancel]: "Your transaction was cancelled and wasn’t submitted",
+	[OPERATION.success]: "Transaction Successed",
+};
+
 
 export const LBPDetail = (props: {
     poolAddress: string
