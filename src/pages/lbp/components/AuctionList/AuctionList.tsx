@@ -113,7 +113,7 @@ export const LBPAuctionList = ({ }) => {
                         to: token1,
                         total: parseFloat(fromWei(pool?.startAmountToken0, token0.decimals).toFixed()),
                         price: pool?.currentPrice,
-                        sold: swapAmount,
+                        sold: parseFloat(fromWei(swapAmount, token0.decimals).toFixed()),
                         startTs: pool?.startTs,
                         endTs: pool?.endTs,
                         fill: getProgress(swapAmount, pool?.startAmountToken0, token0.decimals),
@@ -139,7 +139,7 @@ export const LBPAuctionList = ({ }) => {
                 ))}
 
             </ul>
-            {convertedPoolInformation?.length > 1 && (
+            {numberOfPages > 1 && (
                 <Pagination
                     className={styles.pagination}
                     numberOfPages={numberOfPages}
