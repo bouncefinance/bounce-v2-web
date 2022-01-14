@@ -88,7 +88,8 @@ export const LBPAuctionList = ({ }) => {
                         name: pool?.token0Symbol,
                         smallURL: pool?.token0SmallURL,
                         symbol: pool?.token0Symbol,
-                        thumbURL: pool?.token0ThumbURL
+                        thumbURL: pool?.token0ThumbURL,
+                        chainId: chainId
                     }
                     const token1 = {
                         address: pool.token1,
@@ -98,7 +99,8 @@ export const LBPAuctionList = ({ }) => {
                         name: pool?.token1Symbol,
                         smallURL: pool?.token1SmallURL,
                         symbol: pool?.token1Symbol,
-                        thumbURL: pool?.token1ThumbURL
+                        thumbURL: pool?.token1ThumbURL,
+                        chainId: chainId
                     }
                     const swapAmount = new BigNumber(pool?.startAmountToken0)?.minus(new BigNumber(pool?.currentAmountToken0)).toString()
 
