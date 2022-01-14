@@ -31,6 +31,7 @@ export enum OPERATION {
     success = "success",
     error = "error",
     cancel = "cancel", 
+    swapSuccess = "swapSuccess",
 }
 
 export const TITLE = {
@@ -40,6 +41,7 @@ export const TITLE = {
 	[OPERATION.error]: "Transaction Failed", 
 	[OPERATION.cancel]: "Transaction Canceled",
 	[OPERATION.success]: "Success!",
+	[OPERATION.swapSuccess]: "Success!",
 };
 
 export const CONTENT = {
@@ -48,7 +50,8 @@ export const CONTENT = {
 	[OPERATION.pending]: "Please wait a moment.",
 	[OPERATION.error]: "Your transaction was cancelled and wasn’t submitted",
 	[OPERATION.cancel]: "Your transaction was cancelled and wasn’t submitted",
-	[OPERATION.success]: "Transaction Successed",
+	[OPERATION.success]: "The transaction has been successful",
+	[OPERATION.swapSuccess]: "Transaction Swap",
 };
 
 
@@ -169,7 +172,7 @@ export const LBPDetail = (props: {
             {popUp.defined ? (
                 <ProcessingPopUp
                     title={TITLE[operation]}
-                    text={CONTENT[operation]}
+                    text={CONTENT[operation]} 
                     onSuccess={() => {
                         // routerPush(`${LBP_PATH}/${poolId}`);
                         setOperation(OPERATION.default);
