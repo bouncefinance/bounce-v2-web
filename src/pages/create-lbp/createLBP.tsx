@@ -136,6 +136,7 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 							descriptioin: data?.description,
 							learnMoreLink: data?.socialLink,
 							tokenLogoUrl: data?.tokenFromImg,
+							contract: data?.tokenFrom?.address,
 						})
 						console.log('extra', res)
 					})
