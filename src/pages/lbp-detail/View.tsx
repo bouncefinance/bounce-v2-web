@@ -20,9 +20,29 @@ import { POOL_STATUS } from "@app/utils/pool";
 import styles from "./View.module.scss";
 import { Charts } from "./Charts";
 import { ILBPDetail } from "@app/api/lbp/types";
-import { weiToNum } from "@app/utils/bn/wei";
+import { fromWei, weiToNum } from "@app/utils/bn/wei";
 import BigNumber from "bignumber.js";
 import { getCloseDuration } from "@app/modules/auction-card/Card";
+import { Tooltip } from "@material-ui/core";
+import moment from "moment";
+import { numberFormat } from "@app/utils/toThousands";
+
+export const DurationTooltip = ({ startTs, endTs }: { startTs: number, endTs: number }) => {
+	return <div className={styles.durationTime}>
+		<div>Auction period:</div>
+		<div>{moment(startTs).format('MMMM DD,YYYY HH:mm')} -</div>
+		<div>{moment(endTs).format('MMMM DD,YYYY HH:mm')}</div>
+	</div>
+}
+
+export const SoldTooltip = ({ detailData }: { detailData: ILBPDetail }) => {
+	const swapAmount = new BigNumber(detailData?.startAmountToken0)?.minus(new BigNumber(detailData?.currentAmountToken0)).toString()
+	const raiseAmount = new BigNumber(detailData?.currentAmountToken1)?.minus(new BigNumber(detailData?.startAmountToken1)).toString();
+	return <div className={styles.soldTooltip}>
+		<div>{`${numberFormat(parseFloat(fromWei(swapAmount, detailData?.token0Decimals).toFixed(1)))} of ${numberFormat(parseFloat(fromWei(detailData?.startAmountToken0).toFixed(1)))} ${detailData?.token0Symbol} Sold`}</div>
+		<div>{`${numberFormat(parseFloat(fromWei(raiseAmount, detailData?.token1Decimals).toFixed(2)))} ${detailData?.token1Symbol}`}</div>
+	</div>
+}
 
 type LBPDetailViewType = {
 	children: ReactChild
@@ -101,7 +121,9 @@ export const View: FC<LBPDetailViewType> = ({
 							<div className={styles.leftTopInfo}>
 								<div>
 									<h5>Duration</h5>
-									<span>{getDuration()}</span>
+									<Tooltip classes={{ tooltip: styles.tooltip, arrow: styles.arrow }} arrow title={<DurationTooltip startTs={openAt} endTs={closeAt} />} >
+										<span>{getDuration()}</span>
+									</Tooltip>
 								</div>
 
 								<div>
@@ -116,7 +138,9 @@ export const View: FC<LBPDetailViewType> = ({
 
 								<div>
 									<h5>Token Sold</h5>
-									<span>{tokenSold}</span>
+									<Tooltip classes={{ tooltip: styles.tooltip, arrow: styles.arrow }} arrow title={<SoldTooltip detailData={detailData} />} >
+										<div>{tokenSold}</div>
+									</Tooltip>
 								</div>
 							</div>
 
@@ -131,7 +155,7 @@ export const View: FC<LBPDetailViewType> = ({
 										endDate={new Date(detailData.endTs * 1000)}
 										// 这里要取外部预言机的价格
 										tokenToPrice={1}
-										detailData = {detailData}
+										detailData={detailData}
 									/>
 								}
 							</div>

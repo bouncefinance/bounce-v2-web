@@ -237,3 +237,16 @@
     background-color: #4B70FF;
   }
 }
+.durationTime {
+  line-height: 20px;
+}
+
+.tooltip {
+  background: #3c3c3c !important;
+  color:rgba(var(--primary-white), 1) !important;
+}
+.arrow {
+  &::before {
+    background: #3c3c3c !important;
+  }
+}
