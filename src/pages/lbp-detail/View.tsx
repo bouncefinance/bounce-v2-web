@@ -46,25 +46,17 @@ export const View: FC<LBPDetailViewType> = ({
 	children, id, name, status, openAt, closeAt, onZero, totalVolume, liquidity, tokenSold,
 	extension, onBack, detailData
 }) => {
-	const STATUS: Record<POOL_STATUS, ReactNode> = {
+
+	const LBPSTATUS: Record<POOL_STATUS, ReactNode> = {
 		[POOL_STATUS.COMING]: (
-			<>
-				<span>Start in&nbsp;</span>
-				<Timer timer={openAt} onZero={onZero} />
-			</>
+			<span className={styles.lbpComing}>Start in <Timer timer={openAt} onZero={() => console.log('time start')} /> </span>
 		),
 		[POOL_STATUS.LIVE]: (
-			<>
-				<span>Live&nbsp;</span>
-				<Timer timer={openAt} onZero={onZero} model='Keep' />
-			</>
+			<span>Live <Timer timer={closeAt} onZero={() => console.log('time start')} /></span>
 		),
 		[POOL_STATUS.FILLED]: "Filled",
 		[POOL_STATUS.CLOSED]: (
-			<>
-				<span>Close&nbsp;</span>
-				<Timer timer={closeAt} onZero={onZero} model='Keep' />
-			</>
+			<span>Closed</span>
 		),
 		[POOL_STATUS.ERROR]: "Error",
 	};
@@ -102,7 +94,7 @@ export const View: FC<LBPDetailViewType> = ({
 					</div>
 					<div className={styles.title}>
 						<Heading1 className={styles.title}>{name}</Heading1>
-						<Status status={status} captions={STATUS} />
+						<Status status={status} captions={LBPSTATUS} />
 					</div>
 					<div className={styles.content}>
 						<div className={styles.contentLeft}>

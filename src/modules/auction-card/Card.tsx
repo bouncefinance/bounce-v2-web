@@ -19,6 +19,7 @@ import { POOL_STATUS } from "@app/utils/pool";
 import styles from "./Card.module.scss";
 import { Timer } from "../timer";
 import { numberFormat } from "@app/utils/toThousands";
+import moment from "moment";
 
 export type DisplayPoolInfoType = {
 	href?: string;
@@ -74,7 +75,7 @@ export const Card: FC<DisplayPoolInfoType & MaybeWithClassName & { bordered?: bo
 		),
 		[POOL_STATUS.FILLED]: "Filled",
 		[POOL_STATUS.CLOSED]: (
-			<span>Closed <Timer timer={Number(endTs) * 1000} onZero={() => console.log('close')} /></span>
+			<span>Closed</span>
 		),
 		[POOL_STATUS.ERROR]: "Error",
 	};

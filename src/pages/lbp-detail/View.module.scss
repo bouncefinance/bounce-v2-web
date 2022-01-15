@@ -217,3 +217,23 @@
     }
   }
 }
+.lbpComing {
+  color: #4B70FF;
+  display: grid;
+  grid-auto-flow: column;
+  justify-content: flex-start;
+  align-items: center;
+  grid-column-gap: var(--spacing-unit);
+
+  &::before {
+    position: relative;
+    content: "";
+
+    display: block;
+    width: 9px;
+    height: 9px;
+    margin-top: -2px;
+    border-radius: 50%;
+    background-color: #4B70FF;
+  }
+}
