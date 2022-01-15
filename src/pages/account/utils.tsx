@@ -18,7 +18,7 @@ export const getActivity = (type: number, token?: string) => {
 	}
 };
 
-export type EventType = "Claimed" | "UserClaimed" | "Created" | "Swapped";
+export type EventType = "Claimed" | "UserClaimed" | "Created" | "Swapped" | "PoolCreated";
 
 enum EVENT {
 	CREATED = "Created",
@@ -33,7 +33,7 @@ export const getEvent = (event: EventType, business, auction) => {
 		return EVENT.CLAIMED;
 	}
 
-	if (event === "Created") {
+	if (event === "Created" || event === 'PoolCreated') {
 		return EVENT.CREATED;
 	}
 

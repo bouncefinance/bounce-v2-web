@@ -59,12 +59,12 @@ export const Activity = () => {
 					return {
 						event: getEvent(pool.event as EventType, pool.event, pool.otc_type),
 						category: getActivity(pool.type),
-						id: +pool.poolID,
+						id: Number(pool?.type) > 3 ? pool?.poolAddress?.slice(-6) :  +pool.poolID,
 						tokenIn: pool.tokenIn,
 						tokenOut: pool.tokenOut,
-						tokenInAmount: fromWei(pool.tokenInAmount, pool?.tokenIn?.decimals).toString(),
+						tokenInAmount: fromWei(pool.tokenInAmount, pool?.tokenIn?.decimals)?.toFixed(2).toString(),
 						tokenInVolume: pool.tokenInVolume,
-						tokenOutAmount: fromWei(pool.tokenOutAmount, pool?.tokenOut?.decimals).toString(),
+						tokenOutAmount: fromWei(pool.tokenOutAmount, pool?.tokenOut?.decimals).toFixed(2).toString(),
 						tokenOutVolume: pool.tokenOutVolume,
 						date: moment(pool.blockTs * 1000).fromNow(),
 					};
@@ -131,13 +131,13 @@ export const Activity = () => {
 								</Body1>
 								<Body1 Component="div" className={styles.cellAmount}>
 									<Body1 className={styles.cell} Component="span">
-										<span>{activity.tokenInAmount}</span>&nbsp;
-										<span className={styles.cellAmount}>(${activity.tokenInVolume})</span>
+										<span>{`${activity.tokenInAmount} ${activity?.tokenIn?.symbol}`}</span>&nbsp;
+										<span className={styles.cellAmount}>(${Number(activity.tokenInVolume)?.toFixed(2)})</span>
 									</Body1>
 									<Body1 className={styles.cell} Component="span">
 										<Body1 className={styles.cell} Component="span">
-											<span>{activity.tokenOutAmount}</span>&nbsp;
-											<span className={styles.cellAmount}>(${activity.tokenOutVolume})</span>
+											<span>{`${activity.tokenOutAmount} ${activity?.tokenOut?.symbol}`}</span>&nbsp;
+											<span className={styles.cellAmount}>(${Number(activity.tokenOutVolume)?.toFixed(2)})</span>
 										</Body1>
 									</Body1>
 								</Body1>

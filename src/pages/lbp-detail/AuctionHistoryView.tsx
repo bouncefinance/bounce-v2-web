@@ -1,9 +1,11 @@
 import { fetchLbpHistory } from '@app/api/lbp/api'
-import { ILBPHistory } from '@app/api/lbp/types'
+import { ILBPDetail, ILBPHistory } from '@app/api/lbp/types'
 import { Pagination } from '@app/modules/pagination'
 import { Body1, Caption } from '@app/ui/typography'
+import { roundedDivide } from '@app/utils/bn'
 import { fromWei } from '@app/utils/bn/wei'
 import { useChainId } from '@app/web3/hooks/use-web3'
+import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import moment from 'moment'
 import path from 'path'
@@ -15,9 +17,10 @@ import styles from './ExtensionInfo.module.scss'
 const WINDOW_SIZE = 10;
 export interface IAuctionHistoryViewProps {
     poolAddress: string;
+    detailData: ILBPDetail;
 }
 
-export const AuctionHistoryView = ({poolAddress} : IAuctionHistoryViewProps) => {
+export const AuctionHistoryView = ({poolAddress, detailData} : IAuctionHistoryViewProps) => {
     const [page, setPage] = useState(0);
     const [numberOfPages, setNumberOfPages] = useState<number>(0)
     const chainId = useChainId();
@@ -51,7 +54,7 @@ export const AuctionHistoryView = ({poolAddress} : IAuctionHistoryViewProps) => 
                             Amount
                         </Caption>
                         <Caption className={styles.cell} Component="span" weight="bold" lighten={50}>
-                            MONICA Price
+                            {`${detailData?.token0Symbol} Price`}
                         </Caption>
                         <Caption className={styles.cell} Component="span" weight="bold" lighten={50}>
                             Wallet
@@ -87,7 +90,7 @@ export const AuctionHistoryView = ({poolAddress} : IAuctionHistoryViewProps) => 
                                     className={styles.cell}
                                     Component="span"
                                 >
-                                    ${activity?.price}
+                                    ${roundedDivide(activity?.tokenInVolume, fromWei(activity?.tokenInAmount, activity?.tokenInDecimals).toString(), 2)}
                                 </Body1>
                                 <Body1
                                     className={styles.cell}

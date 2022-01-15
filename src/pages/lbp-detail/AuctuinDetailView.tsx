@@ -23,12 +23,13 @@ export const AuctuinDetailView = ({ tokenFrom, detailData }: AuctuinDetailViewPa
     }
     const soldAmount = new BigNumber(detailData?.startAmountToken0)?.minus(new BigNumber(detailData?.currentAmountToken0)).toString();
     const raiseAmount = new BigNumber(detailData?.currentAmountToken1)?.minus(new BigNumber(detailData?.startAmountToken1)).toString();
+    const token0Img = tokenFrom.logoURI || detailData?.token0SmallURL || detailData?.token0ThumbURL || detailData?.token0LargeURL;
 
     return (
         <div>
             <div className={styles.tokenInfo}>
                 <div className={styles.tokenInfoTop}>
-                    <Icon src={tokenFrom.logoURI} />
+                    <Icon src={token0Img} />
                     <h4>{tokenFrom.symbol}</h4>
                     <div>{tokenFrom.symbol}</div>
                 </div>

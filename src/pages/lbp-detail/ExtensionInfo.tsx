@@ -32,7 +32,7 @@ export const ExtensionInfo = ({
                     detailData={detailData}
                 />
             case 1:
-                return <AuctionHistoryView poolAddress={poolAddress} />
+                return <AuctionHistoryView poolAddress={poolAddress} detailData={detailData} />
             case 2:
                 return <AuctionSettingView
                     setOperation={setOperation}
