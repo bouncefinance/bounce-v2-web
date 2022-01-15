@@ -21,6 +21,7 @@ import BigNumber from 'bignumber.js'
 import { divide } from '@app/utils/bn'
 import { ToLBPAuctionStatus } from '../lbp/components/AuctionList/AuctionList'
 import { ENABLED } from './AuctionSettingView'
+import { getProgress } from '@app/utils/pool'
 
 
 export enum OPERATION {
@@ -87,7 +88,7 @@ export const LBPDetail = (props: {
 
     const TokenSold = useMemo(() => {
         const sold = new BigNumber(detailData?.startAmountToken0)?.minus(new BigNumber(detailData?.currentAmountToken0)).toString();
-        const progress = Number(divide(sold, detailData?.startAmountToken0)) * 100
+        const progress = getProgress(sold, detailData?.startAmountToken0, detailData?.token0Decimals)
 
         return <div className={styles.tokenSold}>
             <CircularProgress thickness={6} style={{
@@ -145,8 +146,8 @@ export const LBPDetail = (props: {
                     // TODO update status
                 }}
                 onBack={() => goBack()}
-                totalVolume={`$ ${detailData?.totalSwapVolume}`}
-                liquidity={`$ ${detailData?.totalLiquidity || 0}`}
+                totalVolume={`$ ${Number(detailData?.totalSwapVolume)?.toFixed(2)}`}
+                liquidity={`$ ${Number(detailData?.totalLiquidity)?.toFixed(2) || 0}`}
                 tokenSold={TokenSold}
                 detailData={detailData}
                 extension={<ExtensionInfo

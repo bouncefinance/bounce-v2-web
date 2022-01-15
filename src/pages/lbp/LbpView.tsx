@@ -41,12 +41,6 @@ const tabsConfig: {
     href: `${LBP_PATH}/upcoming`,
     hoverClassName: styles.upcomingHover,
     activeClassName: styles.upcomingActive
-}, {
-    tab: 'closed',
-    name: 'Closed',
-    href: `${LBP_PATH}/closed`,
-    hoverClassName: styles.closedHover,
-    activeClassName: styles.closedActive
 }]
 
 interface LbpType {
@@ -92,7 +86,6 @@ export const LbpView: FC<LbpType & MaybeWithClassName> = ({type, className}) => 
                         {type === "all" && <LBPAuctionList type={type}/>}
                         {type === 'live' && <LiveLBP />}
                         {type === "upcoming" && <UpcomingLBP />}
-                        {type === "closed" && <ClosedLBP />}
                     </div>
                 </div>
             </GutterBox>

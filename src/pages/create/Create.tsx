@@ -62,7 +62,7 @@ export const Create: FC<MaybeWithClassName> = ({ className }) => {
 								name="createType"
 								label="LBPs"
 								value="lbp"
-								tooltip="Liquidity Providers Auction"
+								tooltip="LBP Token Launch Auction"
 							/>
 						</RadioGroup>
 					</Label>

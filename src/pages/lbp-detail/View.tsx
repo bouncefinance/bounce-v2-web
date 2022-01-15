@@ -22,6 +22,7 @@ import { Charts } from "./Charts";
 import { ILBPDetail } from "@app/api/lbp/types";
 import { weiToNum } from "@app/utils/bn/wei";
 import BigNumber from "bignumber.js";
+import { getCloseDuration } from "@app/modules/auction-card/Card";
 
 type LBPDetailViewType = {
 	children: ReactChild
@@ -56,20 +57,19 @@ export const View: FC<LBPDetailViewType> = ({
 		),
 		[POOL_STATUS.FILLED]: "Filled",
 		[POOL_STATUS.CLOSED]: (
-			<span>Closed</span>
+			<span>Closed {getCloseDuration(closeAt, Date.now())}</span>
 		),
 		[POOL_STATUS.ERROR]: "Error",
 	};
 
 	const getDuration = useCallback(() => {
 		const diffTime = closeAt - openAt
-
 		if (diffTime < ONEHOUR) {
-			return `1 Hours`
+			return `1 Hour`
 		} else if (diffTime < ONEDAY) {
 			return `${Math.floor(diffTime / ONEHOUR)} Hours`
 		} else {
-			return `${Math.floor(diffTime / ONEDAY)} Days`
+			return `${Math.floor(diffTime / ONEDAY)} ${Math.floor(diffTime / ONEDAY) > 1 ? 'Days' : 'Day'}`
 		}
 	}, [openAt, closeAt])
 

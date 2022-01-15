@@ -272,7 +272,7 @@ export const Swap = ({
                     <strong>Current Price</strong>
                     <p>1 {isResver ? tokenFrom.symbol : tokenTo.symbol} = ~{
                         (isResver ? new Bignumber(rate) : new Bignumber(1).div(rate))
-                            .dp(6).toString()} {isResver ? tokenTo.symbol : tokenFrom.symbol} </p>
+                            .dp(4).toString()} {isResver ? tokenTo.symbol : tokenFrom.symbol} </p>
                 </div>
 
                 <div className={styles.container}>

@@ -21,6 +21,20 @@ import { Timer } from "../timer";
 import { numberFormat } from "@app/utils/toThousands";
 import moment from "moment";
 
+const ONEHOUR = 1000 * 60 * 60
+const ONEDAY = ONEHOUR * 24
+export const getCloseDuration = (openAt: number, closeAt: number) => {
+	debugger
+	const diffTime = closeAt - openAt
+	if (diffTime < ONEHOUR) {
+		return `1 Hour`
+	} else if (diffTime < ONEDAY) {
+		return `${Math.floor(diffTime / ONEHOUR)} Hours`
+	} else {
+		return `${Math.floor(diffTime / ONEDAY)} ${Math.floor(diffTime / ONEDAY) > 1 ? 'Days' : 'Day'}`
+	}
+}
+
 export type DisplayPoolInfoType = {
 	href?: string;
 	status: POOL_STATUS;
@@ -75,7 +89,7 @@ export const Card: FC<DisplayPoolInfoType & MaybeWithClassName & { bordered?: bo
 		),
 		[POOL_STATUS.FILLED]: "Filled",
 		[POOL_STATUS.CLOSED]: (
-			<span>Closed</span>
+			<span>Closed { getCloseDuration(Number(endTs) * 1000, Date.now())}</span>
 		),
 		[POOL_STATUS.ERROR]: "Error",
 	};

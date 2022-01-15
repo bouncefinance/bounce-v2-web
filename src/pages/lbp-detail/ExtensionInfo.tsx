@@ -1,14 +1,13 @@
 import { ILBPDetail } from '@app/api/lbp/types'
 import { TokenInfo } from '@uniswap/token-lists'
-import React, { useMemo, useState } from 'react'
+import { useWeb3React } from '@web3-react/core'
+import React, { useEffect, useMemo, useState } from 'react'
 import { uid } from 'react-uid'
 import { AuctionHistoryView } from './AuctionHistoryView'
 import { AuctionSettingView } from './AuctionSettingView'
 import { AuctuinDetailView } from './AuctuinDetailView'
 import styles from './ExtensionInfo.module.scss'
 import { OPERATION } from './LBPDetail'
-
-const TabList = ['Auction Details', 'Auction History', 'Auction Settings']
 
 interface ExtensionInfoParams {
     poolId: number
@@ -23,6 +22,16 @@ export const ExtensionInfo = ({
     poolId, tokenFrom, tokenTo, poolAddress, detailData, setOperation
 }: ExtensionInfoParams) => {
     const [currentIndex, setCurrentIndex] = useState(0)
+    const {account} = useWeb3React();
+    const [tabList, setTabList] = useState<string[]>([])
+
+    useEffect(() => {
+        if(detailData?.creator?.toLocaleLowerCase() === account?.toLocaleLowerCase()) {
+            setTabList(['Auction Details', 'Auction History', 'Auction Settings'])
+        } else {
+            setTabList(['Auction Details', 'Auction History'])
+        }
+    }, [detailData])
 
     const renderExtensionContent = useMemo(() => {
         switch (currentIndex) {
@@ -49,7 +58,7 @@ export const ExtensionInfo = ({
     return (
         <div className={styles.extensionWrapper}>
             <ul className={styles.tabList}>
-                {TabList.map((tabName, index) => (
+                {tabList.map((tabName, index) => (
                     <li
                         key={uid(tabName)}
                         className={currentIndex === index ? styles.active : ''}
