@@ -123,6 +123,7 @@ export const postLbpCreate = async (
 		descriptioin: string;
 		learnMoreLink: string;
 		tokenLogoUrl: string;
+		contract: string;
 	}
 ): Promise<{
 	data;
