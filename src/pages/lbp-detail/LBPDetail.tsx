@@ -132,6 +132,7 @@ export const LBPDetail = (props: {
             );
         }
     }, [web3, getTokenContract, account, token1, token0]);
+    console.log('sdf', settingData?.swapEnable, detailData?.status, settingData?.swapEnable === ENABLED.open && detailData?.status === 2)
 
 
     return (
@@ -166,7 +167,7 @@ export const LBPDetail = (props: {
                     token1Amount={token1Amount}
                     setOperation={setOperation}
                     poolAddress={props.poolAddress}
-                    isEnabled={settingData?.swapEnable === ENABLED.open}
+                    isEnabled={settingData?.swapEnable === ENABLED.open && detailData?.status === 2}
                     swapFee={settingData?.swapFee}
                 />}
             </View>
