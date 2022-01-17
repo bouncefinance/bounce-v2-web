@@ -73,17 +73,19 @@ export const LBPDetail = (props: {
     const [token1, setToken1] = useState<TokenInfo>()
     const [settingData, setSettingData] = useState<ILBPSetting>()
 
+    const getData = async () => {
+        const { data } = await fetchLbpDetail(chainId, props.poolAddress);
+        setDetailData(data)
+
+        setToken0(findToken(data.token0) || await queryToken(data.token0))
+        setToken1(findToken(data.token1) || await queryToken(data.token1))
+
+        const { data: settingData } = await fetchLbpSetting(chainId, data.address);
+        setSettingData(settingData);
+    }
+
     useEffect(() => {
-        (async () => {
-            const { data } = await fetchLbpDetail(chainId, props.poolAddress);
-            setDetailData(data)
-
-            setToken0(findToken(data.token0) || await queryToken(data.token0))
-            setToken1(findToken(data.token1) || await queryToken(data.token1))
-
-            const { data: settingData } = await fetchLbpSetting(chainId, data.address);
-            setSettingData(settingData);
-        })();
+        getData();
     }, [chainId, props.poolAddress])
 
     const TokenSold = useMemo(() => {
@@ -132,7 +134,6 @@ export const LBPDetail = (props: {
             );
         }
     }, [web3, getTokenContract, account, token1, token0]);
-    console.log('sdf', settingData?.swapEnable, detailData?.status, settingData?.swapEnable === ENABLED.open && detailData?.status === 2)
 
 
     return (
@@ -143,9 +144,7 @@ export const LBPDetail = (props: {
                 name={`${detailData?.token0Symbol} Token Launch Auction`}
                 openAt={Number(detailData?.startTs) * 1000}
                 closeAt={Number(detailData?.endTs) * 1000}
-                onZero={() => {
-                    // TODO update status
-                }}
+                onZero={getData}
                 onBack={() => goBack()}
                 totalVolume={`$ ${Number(detailData?.totalSwapVolume)?.toFixed(2)}`}
                 liquidity={`$ ${Number(detailData?.totalLiquidity)?.toFixed(2) || 0}`}

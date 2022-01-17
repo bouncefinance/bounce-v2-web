@@ -135,13 +135,14 @@ export const AuctionSettingView = ({
                 <h4 style={{fontSize: 20}}>Trading Status</h4>
                 <div className={styles.enabled}>
                     <ListItem>
-                        <p>Buy/Sell function is enabled</p>
+                        <p style={{maxWidth: '314px'}}>For security, you should manually enable the swap function when the auction begins.</p>
                         <ListItemSecondaryAction>
                             <Switch
                                 color='primary'
                                 classes={classes}
                                 size='medium'
                                 edge="end"
+                                disabled={detailData?.status === 1}
                                 onChange={handleChangeEnable}
                                 checked={isEnabled}
                             />

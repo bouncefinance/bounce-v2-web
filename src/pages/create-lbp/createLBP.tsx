@@ -98,7 +98,7 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 	const [poolAddress, setPoolAddress] = useState<string>('')
 
 
-	const onComplete = async (data: ConfirmationInType) => {
+	const onComplete = async (data: ConfirmationInType) => {	
 		const operation = async () => {
 			const { tokenFrom, tokenTo, amountFrom, amountTo, startWeight, endWeight, tradingFee, startDate, endDate } = data
 			const isReversal = isThanGreateAddrss(tokenFrom.address, tokenTo.address)
@@ -130,7 +130,7 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 					.on("transactionHash", async (h) => {
 						console.log("hash", h);
 						setOperation(OPERATION.pending);
-						// TODO  存额外信息字段 发post请求
+						// 存额外信息字段 发post请求
 						const res = await postLbpCreate(chainId, {
 							txHash: h,
 							descriptioin: data?.description,
@@ -141,10 +141,10 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 						console.log('extra', res)
 					})
 					.on("receipt", (r) => {
+						setPoolAddress(r?.events?.[11]?.address)
 						setOperation(OPERATION.success);
 						setLastOperation(null);
 						setPoolId(r.events.Created.returnValues[0]);
-						setPoolAddress(r?.events?.[11]?.address)
 					})
 					.on("error", (e) => {
 						console.error("error", e);
@@ -181,6 +181,19 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 		}
 	}, [open, operation]);
 
+	const onSuccessAction = (poolAddress: string) => {
+		if(poolAddress) {
+			setOperation(OPERATION.default);
+			close();
+			setTimeout(() => {
+				routerPush(`${LBP_PATH}/${poolAddress}`)
+			}, 200)
+		} else {
+			setOperation(OPERATION.default);
+			close();
+		}
+	}
+
 	return (
 		<>
 			<div className={styles.component}>
@@ -193,11 +206,7 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 				<ProcessingPopUp
 					title={TITLE[operation]}
 					text={CONTENT[operation]}
-					onSuccess={() => {
-						// routerPush(`${LBP_PATH}/${poolId}`);
-						setOperation(OPERATION.default);
-						close();
-					}}
+					onSuccess={() => onSuccessAction(poolAddress)}
 					onTry={tryAgainAction}
 					isSuccess={operation === OPERATION.success}
 					isLoading={

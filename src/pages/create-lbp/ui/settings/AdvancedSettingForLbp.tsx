@@ -79,21 +79,21 @@ export const AdvancedSettingForLbp: FC<MaybeWithClassName & SettingViewType> = (
                     <RadioGroup count={3}>
                         <RadioField
                             name="Radio_1"
-                            label="Can pause swapping"
+                            label="Can pause the auction"
                             value={1}
                             tooltip="Create your preferred type of auction."
                         // checked={true}
                         />
                         <RadioField
                             name="Radio_2"
-                            label="Can change swap fee"
+                            label="Manually open the contract, more safer"
                             value={1}
                             tooltip="(Over-the-Counter)  It  means  off-exchange  trading  is  done  directly  between  two  parties, without the supervision of an exchange."
                         />
 
                         <RadioField
                             name="Radio_3"
-                            label="Can change weights"
+                            label="Custom weights and swap fees"
                             value={1}
                             tooltip="Liquidity Providers Auction"
                         />

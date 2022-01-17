@@ -70,10 +70,10 @@ export const View: FC<LBPDetailViewType> = ({
 
 	const LBPSTATUS: Record<POOL_STATUS, ReactNode> = {
 		[POOL_STATUS.COMING]: (
-			<span className={styles.lbpComing}>Start in <Timer timer={openAt} onZero={() => console.log('time start')} /> </span>
+			<span className={styles.lbpComing}>Start in <Timer timer={openAt} onZero={onZero} /> </span>
 		),
 		[POOL_STATUS.LIVE]: (
-			<span>Live <Timer timer={closeAt} onZero={() => console.log('time start')} /></span>
+			<span>Live <Timer timer={closeAt} onZero={onZero} /></span>
 		),
 		[POOL_STATUS.FILLED]: "Filled",
 		[POOL_STATUS.CLOSED]: (

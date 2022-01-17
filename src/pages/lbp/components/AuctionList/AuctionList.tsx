@@ -90,7 +90,7 @@ export const LBPAuctionList = ({ type }: { type: string }) => {
             pool?.token0,
             pool?.currentAmountToken0
         )
-        const price = new BigNumber(weiToNum(amountOut, pool.token1Decimals)).multipliedBy(1).dp(4).toString();     // amountOut乘以token1的价格
+        const price = new BigNumber(weiToNum(amountOut, pool.token1Decimals)).multipliedBy(1).dp(4).toString();     // TODO  amountOut乘以token1的价格
         return price;
     }
 
