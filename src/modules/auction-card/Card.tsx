@@ -24,7 +24,6 @@ import moment from "moment";
 const ONEHOUR = 1000 * 60 * 60
 const ONEDAY = ONEHOUR * 24
 export const getCloseDuration = (openAt: number, closeAt: number) => {
-	debugger
 	const diffTime = closeAt - openAt
 	if (diffTime < ONEHOUR) {
 		return `1 Hour`

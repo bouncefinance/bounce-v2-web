@@ -79,6 +79,12 @@ export const LBPTokenInformation: FC<ProvideTokenInformationType> = ({
 		(token: TokenInfo) => token.address !== "0x0000000000000000000000000000000000000000",
 		[]
 	);
+
+	// lbp select token过滤价值币
+	const filterToken = useCallback(
+		(token: TokenInfo) => token.address === "0x4dbcdf9b62e891a7cec5a2568c3f4faf9e8abe2b" ||  token.address === "0xc7ad46e0b8a400bb3c915120d284aafba8fc4735" || token.address === '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+		[]
+	);
 	const [tokenFromImg, setTokenFromImg] = useState(initialState.tokenFromUrl)
 	const chainId = useChainId();
 
@@ -133,7 +139,7 @@ export const LBPTokenInformation: FC<ProvideTokenInformationType> = ({
 				<SelectTokenField
 					name="tokenTo"
 					placeholder="Select a token"
-					filter={withoutEth ? notEtherium : undefined}
+					filter={withoutEth ? notEtherium : filterToken}
 					required
 				/>
 			</Label>
