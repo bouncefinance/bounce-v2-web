@@ -61,7 +61,6 @@ export const ProvideTokenInformation: FC<ProvideTokenInformationType> = ({
 		(token: TokenInfo) => token.address !== "0x0000000000000000000000000000000000000000",
 		[]
 	);
-
 	const chainId = useChainId();
 
 	return (

@@ -53,17 +53,20 @@ export const Activity = () => {
 	useEffect(() => {
 		if (activityList.length > 0) {
 			Promise.all(
-				activityList.map(async (pool) => {
+				activityList.map(async (pool: ActivitySearchEntity) => {
 					// const token = await queryToken(pool.token);
 
 					return {
-						event: getEvent(pool.event as EventType, pool.businessType, pool.otc_type),
-						category: getActivity(pool.businessType, pool.auctionType, pool.otc_type),
-						id: +pool.poolID,
-						token: pool.token,
-						amount: fromWei(pool.amount, pool.token.decimals).toString(),
-						date: moment(pool.txTime * 1000).fromNow(),
-						transactionAmount: pool.transactionAmount,
+						event: getEvent(pool.event as EventType, pool.event, pool.otc_type),
+						category: getActivity(pool.type),
+						id: Number(pool?.type) > 3 ? pool?.poolAddress?.slice(-6) :  +pool.poolID,
+						tokenIn: pool.tokenIn,
+						tokenOut: pool.tokenOut,
+						tokenInAmount: fromWei(pool.tokenInAmount, pool?.tokenIn?.decimals)?.toFixed(2).toString(),
+						tokenInVolume: pool.tokenInVolume,
+						tokenOutAmount: fromWei(pool.tokenOutAmount, pool?.tokenOut?.decimals).toFixed(2).toString(),
+						tokenOutVolume: pool.tokenOutVolume,
+						date: moment(pool.blockTs * 1000).fromNow(),
 					};
 				})
 			).then((info) => setConvertedActivityInformation(info));
@@ -116,12 +119,29 @@ export const Activity = () => {
 									#{activity.id}
 								</Body1>
 								<Body1 className={styles.cell} Component="span">
-									<Currency coin={activity.token} />
+									{
+										activity.tokenIn?.symbol && <>
+											<Currency coin={activity.tokenIn} />
+											&nbsp;/&nbsp;
+										</>
+									}
+									{
+										activity.tokenOut?.symbol && <Currency coin={activity.tokenOut} />
+									}
 								</Body1>
-								<Body1 className={styles.cell} Component="span">
-									<span>{activity.amount}</span>&nbsp;
-									<span className={styles.cellAmount}>(${activity.transactionAmount})</span>
+								<Body1 Component="div" className={styles.cellAmount}>
+									<Body1 className={styles.cell} Component="span">
+										<span>{`${activity.tokenInAmount} ${activity?.tokenIn?.symbol}`}</span>&nbsp;
+										<span className={styles.cellAmount}>(${Number(activity.tokenInVolume)?.toFixed(2)})</span>
+									</Body1>
+									<Body1 className={styles.cell} Component="span">
+										<Body1 className={styles.cell} Component="span">
+											<span>{`${activity.tokenOutAmount} ${activity?.tokenOut?.symbol}`}</span>&nbsp;
+											<span className={styles.cellAmount}>(${Number(activity.tokenOutVolume)?.toFixed(2)})</span>
+										</Body1>
+									</Body1>
 								</Body1>
+
 								<Body1 className={styles.cell} Component="span">
 									{activity.date}
 								</Body1>

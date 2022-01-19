@@ -16,6 +16,7 @@ import {
 	getCreatorClaimed,
 	getMyClaimed,
 } from "@app/web3/api/bounce/pool";
+import BigNumber from "bignumber.js";
 
 export enum POOL_STATUS {
 	COMING = "coming",
@@ -56,7 +57,7 @@ export const getProgress = (amount: string, total: string, decimals: number): nu
 	const convertedAmount = +fromWei(amount, decimals);
 	const convertedTotal = +fromWei(total, decimals);
 
-	return +roundedDivide(convertedAmount, convertedTotal, 2) * 100;
+	return new BigNumber(roundedDivide(convertedAmount, convertedTotal, 2)).multipliedBy(new BigNumber(100)).toNumber();
 };
 
 export const getSwapRatio = (

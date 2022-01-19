@@ -1,3 +1,5 @@
+import BN from "bn.js";
+
 export const composeValidators = (...validators: any[]) => (value: string) =>
 	validators.reduce((error, validator) => error || (validator && validator(value)), undefined);
 
@@ -50,3 +52,10 @@ export function isDateRequired(date: Date): string | undefined {
 export function isFromToTokensDifferent<T>(fromToken: T, toToken: T): string | undefined {
 	return fromToken !== toToken ? undefined : "Please select different tokens.";
 }
+
+export const isThanGreateAddrss = (address1: string, address2: string) => {
+	const num1 = new BN(parseInt(address1.substring(0, 8), 16));
+	const num2 = new BN(parseInt(address2.substring(0, 8), 16));
+
+	return num1.sub(num2).gt(new BN(0));
+};

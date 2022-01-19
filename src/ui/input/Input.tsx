@@ -22,6 +22,7 @@ type InputType = {
 	onBlur?(e: React.FocusEvent): void;
 	onFocus?(e: React.FocusEvent): void;
 	inputProps?: Partial<InputHTMLAttributes<HTMLInputElement>>;
+	hasTip?: boolean;
 };
 
 export const Input: FC<InputType & MaybeWithClassName> = ({
@@ -40,6 +41,7 @@ export const Input: FC<InputType & MaybeWithClassName> = ({
 	onBlur,
 	onFocus,
 	inputProps,
+	hasTip
 }) => {
 	const [inputFocused, setInputFocused] = useState(false);
 
@@ -90,7 +92,7 @@ export const Input: FC<InputType & MaybeWithClassName> = ({
 				/>
 				{after}
 			</div>
-			<div className={styles.error}>{error && <Caption Component="span">{error}</Caption>}</div>
+			<div className={classNames(styles.error, hasTip && styles.hasTip)}>{error && <Caption Component="span">{error}</Caption>}</div>
 		</div>
 	);
 };

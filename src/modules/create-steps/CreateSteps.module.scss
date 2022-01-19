@@ -3,19 +3,18 @@
 
 .content {
   position: relative;
-
   display: grid;
-
   width: 100%;
   max-width: 41.25rem;
   margin: 0 auto;
   padding: calc(var(--spacing-unit) * 3) calc(var(--spacing-unit) * 7.5) calc(var(--spacing-unit) * 6);
-
   box-sizing: border-box;
-
   border-radius: 0.5rem;
-
   background-color: rgba(var(--primary-white), 1);
+
+  &.bigScreen{
+    max-width: none;
+  }
 }
 
 .close {

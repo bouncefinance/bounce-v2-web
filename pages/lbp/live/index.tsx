@@ -1,15 +1,15 @@
 import { Layout } from "@app/layout";
 import NoSsr from "@app/modules/no-ssr/NoSsr";
 import { RequireConnectedWallet } from "@app/modules/require-connected-wallet";
-import { Account } from "@app/pages/account";
+import { LbpView } from "@app/pages/lbp/LbpView";
 import { pageWithLayout } from "@app/utils/pageInLayout";
 
-const AuctionPage = pageWithLayout(
+const LiveLBPPage = pageWithLayout(
 	() => {
 		return (
 			<NoSsr>
 				<RequireConnectedWallet>
-					<Account type="auction" />
+					<LbpView type="live" />
 				</RequireConnectedWallet>
 			</NoSsr>
 		);
@@ -21,4 +21,4 @@ const AuctionPage = pageWithLayout(
 	)
 );
 
-export default AuctionPage;
+export default LiveLBPPage;

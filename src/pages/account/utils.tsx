@@ -1,20 +1,24 @@
-export const getActivity = (business: number, auction: number, otc: number) => {
-	if (business === 2) {
-		if (auction === 1) {
+export const getActivity = (type: number, token?: string) => {
+	switch (type) {
+		case 1:
 			return "Fixed Swap Auction";
-		}
-	} else if (business === 1) {
-		if (otc === 0) {
+		case 2:
 			return "Sell OTC";
-		}
-
-		if (otc === 1) {
+		case 3:
 			return "Buy OTC";
-		}
+		case 4:
+			return "Token Launch Auctions";
+		case 5:
+			return token ? `Buy ${token}` : "Buy LBPs";
+		case 6:
+			return token ? `Sell ${token}` :  "Sell LBPs";
+		default:
+			return "Unknown";
+
 	}
 };
 
-export type EventType = "Claimed" | "UserClaimed" | "Created" | "Swapped";
+export type EventType = "Claimed" | "UserClaimed" | "Created" | "Swapped" | "PoolCreated";
 
 enum EVENT {
 	CREATED = "Created",
@@ -29,11 +33,11 @@ export const getEvent = (event: EventType, business, auction) => {
 		return EVENT.CLAIMED;
 	}
 
-	if (event === "Created") {
+	if (event === "Created" || event === 'PoolCreated') {
 		return EVENT.CREATED;
 	}
 
-	if (event === "Swapped") {
+	if (event === "Swapped" || event === 'Swap') {
 		if (business === 2) {
 			return EVENT.BID;
 		} else {

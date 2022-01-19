@@ -114,7 +114,8 @@ export const Layout: FC<LayoutType> = ({
 				</main>
 				<Footer />
 			</div>
-			<BlockPopUp visible={!isIpLegal} />
+			{/* 测试需要，临时放开权限控制 */}
+			{/* <BlockPopUp visible={!isIpLegal} /> */}
 		</Providers>
 	);
 };
