@@ -17,6 +17,7 @@ import styles from "./ProvideTokenInformation.module.scss";
 import { Currency } from "../currency";
 import { TokenLogo } from "./TokenLogo";
 import { isFromToTokensDifferent } from "@app/utils/validation";
+import { filterPopularToken } from "@app/web3/const/filterToken";
 
 type EffectorType = {
 	address?: string;
@@ -82,9 +83,7 @@ export const LBPTokenInformation: FC<ProvideTokenInformationType> = ({
 
 	// lbp select token过滤价值币(DAI, USDC, WETH)
 	const filterToken = useCallback(
-		(token: TokenInfo) => token.address === "0x4dbcdf9b62e891a7cec5a2568c3f4faf9e8abe2b" ||
-			token.address === "0xc7ad46e0b8a400bb3c915120d284aafba8fc4735" ||
-			token.address === '0xc778417E063141139Fce010982780140Aa0cD5Ab',
+		(token: TokenInfo) =>  filterPopularToken?.includes(token.address),
 		[]
 	);
 	const [tokenFromImg, setTokenFromImg] = useState(initialState.tokenFromUrl)
