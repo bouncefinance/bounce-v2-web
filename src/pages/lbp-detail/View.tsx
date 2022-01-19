@@ -122,7 +122,7 @@ export const View: FC<LBPDetailViewType> = ({
 								<div>
 									<h5>Duration</h5>
 									<Tooltip classes={{ tooltip: styles.tooltip, arrow: styles.arrow }} arrow title={<DurationTooltip startTs={openAt} endTs={closeAt} />} >
-										<span>{getDuration()}</span>
+										<span className={styles.underline}>{getDuration()}</span>
 									</Tooltip>
 								</div>
 
@@ -139,7 +139,7 @@ export const View: FC<LBPDetailViewType> = ({
 								<div>
 									<h5>Token Sold</h5>
 									<Tooltip classes={{ tooltip: styles.tooltip, arrow: styles.arrow }} arrow title={<SoldTooltip detailData={detailData} />} >
-										<div>{tokenSold}</div>
+										<div className={styles.underline}>{tokenSold}</div>
 									</Tooltip>
 								</div>
 							</div>

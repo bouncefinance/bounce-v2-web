@@ -8,7 +8,7 @@ import { useTokenQuery, useTokenSearch } from '@app/web3/api/tokens'
 import { isEth } from '@app/web3/api/eth/use-eth'
 import { getBalance, getEthBalance, getTokenContract } from '@app/web3/api/bounce/erc'
 import { useChainId, useWeb3, useWeb3Provider } from '@app/web3/hooks/use-web3'
-import { fromWei } from '@app/utils/bn/wei'
+import { fromWei} from '@app/utils/bn/wei'
 import { useWeb3React } from '@web3-react/core'
 import { ExtensionInfo } from './ExtensionInfo'
 import { useControlPopUp } from '@app/hooks/use-control-popup'
@@ -22,6 +22,7 @@ import { divide } from '@app/utils/bn'
 import { ToLBPAuctionStatus } from '../lbp/components/AuctionList/AuctionList'
 import { ENABLED } from './AuctionSettingView'
 import { getProgress } from '@app/utils/pool'
+import { NavLink } from '@app/ui/button'
 
 
 export enum OPERATION {
@@ -31,28 +32,28 @@ export enum OPERATION {
     pending = "pending",
     success = "success",
     error = "error",
-    cancel = "cancel", 
+    cancel = "cancel",
     swapSuccess = "swapSuccess",
 }
 
 export const TITLE = {
-	[OPERATION.approval]: "Bounce Requests Approval",
-	[OPERATION.confirm]: "Waiting for confirmation",
-	[OPERATION.pending]: " Bounce Finance Pending",
-	[OPERATION.error]: "Transaction Failed", 
-	[OPERATION.cancel]: "Transaction Canceled",
-	[OPERATION.success]: "Success!",
-	[OPERATION.swapSuccess]: "Success!",
+    [OPERATION.approval]: "Bounce Requests Approval",
+    [OPERATION.confirm]: "Waiting for confirmation",
+    [OPERATION.pending]: " Bounce Finance Pending",
+    [OPERATION.error]: "Transaction Failed",
+    [OPERATION.cancel]: "Transaction Canceled",
+    [OPERATION.success]: "Success!",
+    [OPERATION.swapSuccess]: "Success!",
 };
 
 export const CONTENT = {
-	[OPERATION.approval]: "Please enable Bounce to access your tokens",
-	[OPERATION.confirm]: "Confirm this transaction in your wallet",
-	[OPERATION.pending]: "Please wait a moment.",
-	[OPERATION.error]: "Your transaction was cancelled and wasn’t submitted",
-	[OPERATION.cancel]: "Your transaction was cancelled and wasn’t submitted",
-	[OPERATION.success]: "The transaction has been successful",
-	[OPERATION.swapSuccess]: "Transaction Swap",
+    [OPERATION.approval]: "Please enable Bounce to access your tokens",
+    [OPERATION.confirm]: "Confirm this transaction in your wallet",
+    [OPERATION.pending]: "Please wait a moment.",
+    [OPERATION.error]: "Your transaction was cancelled and wasn’t submitted",
+    [OPERATION.cancel]: "Your transaction was cancelled and wasn’t submitted",
+    [OPERATION.success]: "The transaction has been successful",
+    [OPERATION.swapSuccess]: '',
 };
 
 
@@ -71,7 +72,8 @@ export const LBPDetail = (props: {
     const [detailData, setDetailData] = useState<ILBPDetail | null>(null)
     const [token0, setToken0] = useState<TokenInfo>()
     const [token1, setToken1] = useState<TokenInfo>()
-    const [settingData, setSettingData] = useState<ILBPSetting>()
+    const [settingData, setSettingData] = useState<ILBPSetting>();
+    const [swapInfo, setSwapInfo] = useState<any>(null)
 
     const getData = async () => {
         const { data } = await fetchLbpDetail(chainId, props.poolAddress);
@@ -135,6 +137,22 @@ export const LBPDetail = (props: {
         }
     }, [web3, getTokenContract, account, token1, token0]);
 
+    const setData = (swapData: any) => {
+        setSwapInfo(swapData)
+    }
+
+    const swapSuccess = () => {
+        const inAmount = fromWei(swapInfo?.amount, swapInfo?.assetIn?.decimals).toFixed(2).toString();
+        const outAmount = fromWei(swapInfo?.amountSec, swapInfo?.assetOut?.decimals).toFixed(2).toString();
+        const url = `https://rinkeby.etherscan.io/tx/${swapInfo?.tx}`
+        return <div>
+            <span>Swap <span className={styles.blueText}>{`${inAmount} ${swapInfo?.assetIn?.symbol}`}</span> for <span className={styles.blueText}>{`${outAmount} ${swapInfo?.assetOut?.symbol}`}</span></span>
+            <NavLink href={url} className={styles.navlink}>
+                View on Etherscan
+            </NavLink>
+        </div>
+    }
+
 
     return (
         <div>
@@ -168,19 +186,20 @@ export const LBPDetail = (props: {
                     poolAddress={props.poolAddress}
                     isEnabled={settingData?.swapEnable === ENABLED.open && detailData?.status === 2}
                     swapFee={settingData?.swapFee}
+                    setSwapData={setData}
                 />}
             </View>
             {popUp.defined ? (
                 <ProcessingPopUp
                     title={TITLE[operation]}
-                    text={CONTENT[operation]} 
+                    text={operation === OPERATION.swapSuccess ? swapSuccess() : CONTENT[operation]}
                     onSuccess={() => {
                         // routerPush(`${LBP_PATH}/${poolId}`);
                         setOperation(OPERATION.default);
                         close();
                     }}
                     // onTry={tryAgainAction}
-                    isSuccess={operation === OPERATION.success}
+                    isSuccess={operation === OPERATION.success || operation === OPERATION.swapSuccess}
                     isLoading={
                         operation === OPERATION.approval ||
                         operation === OPERATION.pending ||

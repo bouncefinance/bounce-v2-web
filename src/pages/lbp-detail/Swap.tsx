@@ -32,10 +32,11 @@ export interface ISwapparams {
     poolAddress: string,
     isEnabled: boolean,
     swapFee: number,
+    setSwapData?: (swapData: any) => void;
 }
 
 export const Swap = ({
-    token0: tokenFrom, token1: tokenTo, token0Amount, token1Amount, setOperation, poolAddress, isEnabled, swapFee
+    token0: tokenFrom, token1: tokenTo, token0Amount, token1Amount, setOperation, poolAddress, isEnabled, swapFee, setSwapData
 }: ISwapparams) => {
     const POOL_ADDRESS = poolAddress
     const [isResver, setIsResver] = useState(false)
@@ -122,6 +123,7 @@ export const Swap = ({
 
             setRate(weiToNum(swapRate, tokenTo.decimals))
         })()
+        // setOperation(OPERATION.swapSuccess);
     }, [])
 
     useEffect(() => {
@@ -189,15 +191,24 @@ export const Swap = ({
             fund_struct: fundManagement,
             // limit: toWei(0.0002, 6).toString(),
             limit: '0',
-            deadline: new Bignumber(99999999999999).multipliedBy(new Bignumber(10).pow(5)).toString()
+            deadline: new Bignumber(99999999999999).multipliedBy(new Bignumber(10).pow(5)).toString(),
         })
             .on("transactionHash", (h) => {
-                // console.log("hash", h);
+                console.log("hash", h);
                 setOperation(OPERATION.pending);
+                const swapData = {
+                    tx: h,
+                    assetIn: isResver ? tokenFrom : tokenTo, // USDC
+                    assetOut: isResver ? tokenTo : tokenFrom,  // AUCTION 
+                    amount: toWei(values.amountTo, isResver ? tokenFrom.decimals : tokenTo.decimals).toString(),
+                    amountSec: toWei(values.amountFrom, isResver ? tokenTo.decimals : tokenFrom.decimals).toString(),
+                }
+                setSwapData(swapData)
             })
             .on("receipt", (r) => {
                 // console.log("receipt", r);
-                setOperation(OPERATION.success);
+                setOperation(OPERATION.swapSuccess);
+                setSwapData(singleSwap)
                 // setLastOperation(null);
                 // setPoolId(r.events.Created.returnValues[0]);
                 setLoading(false)
