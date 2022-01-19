@@ -82,7 +82,7 @@ export const LBPTokenInformation: FC<ProvideTokenInformationType> = ({
 
 	// lbp select token过滤价值币(DAI, USDC, WETH)
 	const filterToken = useCallback(
-		(token: TokenInfo) => token.address === "0x6B175474E89094C44Da98b954EedeAC495271d0F" ||  
+		(token: TokenInfo) => token.address === "0x4dbcdf9b62e891a7cec5a2568c3f4faf9e8abe2b" ||  
 		token.address === "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" || 
 		token.address === '0xc778417E063141139Fce010982780140Aa0cD5Ab',
 		[]
@@ -141,7 +141,7 @@ export const LBPTokenInformation: FC<ProvideTokenInformationType> = ({
 				<SelectTokenField
 					name="tokenTo"
 					placeholder="Select a token"
-					filter={withoutEth ? notEtherium : filterToken}
+					filter={withoutEth ? notEtherium : undefined}
 					required
 				/>
 			</Label>
