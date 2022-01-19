@@ -50,7 +50,7 @@ export const LbpView: FC<LbpType & MaybeWithClassName> = ({type, className}) => 
 
     const history = useRouter()
     const handleCreat = () => {
-        history.push('/create')
+        history.push('/create/lbp')
     }
 
 

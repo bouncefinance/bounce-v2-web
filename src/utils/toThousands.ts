@@ -28,16 +28,16 @@ export const toDecimal2NoZero = (x: number, fixNum: number) => {
 // 大数据转换字母缩写
 export const numberFormat = (val: number): string => {
 	if (val >= 1e12) {
-		return `${toDecimal2NoZero(val / 1e12, 1)}T`;
+		return `${toDecimal2NoZero(val / 1e12, 4)}T`;
 	} else if (val >= 1e9) {
-		return `${toDecimal2NoZero(val / 1e9, 1)}B`;
+		return `${toDecimal2NoZero(val / 1e9, 4)}B`;
 	} else if (val >= 1e6) {
-		return `${toDecimal2NoZero(val / 1e6, 1)}M`;
+		return `${toDecimal2NoZero(val / 1e6, 4)}M`;
 	} else if (val >= 1e3) {
-		return `${toDecimal2NoZero(val / 1e3, 1)}K`;
+		return `${toDecimal2NoZero(val / 1e3, 4)}K`;
 	} else if (val === 0) {
 		return "0";
 	} else {
-		return toDecimal2NoZero(val, 1);
+		return toDecimal2NoZero(val, 4);
 	}
 };
