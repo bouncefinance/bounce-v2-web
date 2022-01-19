@@ -83,7 +83,7 @@ export const LBPTokenInformation: FC<ProvideTokenInformationType> = ({
 
 	// lbp select token过滤价值币(DAI, USDC, WETH)
 	const filterToken = useCallback(
-		(token: TokenInfo) =>  filterPopularToken?.includes(token.address),
+		(token: TokenInfo) =>  filterPopularToken?.some((v) => v.address?.toLocaleLowerCase() === token?.address?.toLocaleLowerCase()),
 		[]
 	);
 	const [tokenFromImg, setTokenFromImg] = useState(initialState.tokenFromUrl)
