@@ -80,9 +80,11 @@ export const LBPTokenInformation: FC<ProvideTokenInformationType> = ({
 		[]
 	);
 
-	// lbp select token过滤价值币
+	// lbp select token过滤价值币(DAI, USDC, WETH)
 	const filterToken = useCallback(
-		(token: TokenInfo) => token.address === "0x4dbcdf9b62e891a7cec5a2568c3f4faf9e8abe2b" ||  token.address === "0xc7ad46e0b8a400bb3c915120d284aafba8fc4735" || token.address === '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+		(token: TokenInfo) => token.address === "0x6B175474E89094C44Da98b954EedeAC495271d0F" ||  
+		token.address === "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" || 
+		token.address === '0xc778417E063141139Fce010982780140Aa0cD5Ab',
 		[]
 	);
 	const [tokenFromImg, setTokenFromImg] = useState(initialState.tokenFromUrl)
