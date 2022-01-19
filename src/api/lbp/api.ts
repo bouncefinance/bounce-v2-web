@@ -2,7 +2,7 @@ import { getJson, postJson } from "@app/api/network/json";
 import { getAPIByNetwork } from "@app/api/utils";
 import { WEB3_NETWORKS } from "@app/web3/networks/const";
 
-import { ILBPDetail, ILBPHistory, ILBPList, ILBPSetting } from "./types";
+import { ILBPDetail, ILBPHistory, ILBPList, ILBPSetting, ITokenPrice } from "./types";
 
 type APIResponse<T> = {
 	code: 200 | 500;
@@ -61,6 +61,25 @@ export const fetchLbpList = async (
 		meta: {
 			total: res.total,
 		},
+	};
+};
+
+// lbp token current price
+export const fetchTokenPrice = async (
+	chainId: WEB3_NETWORKS,
+	token_contract: string
+): Promise<{
+	data: ITokenPrice;
+}> => {
+	const res = await fetchInformation<ITokenPrice>(chainId, `tokens/${token_contract}`, {});
+
+	if (!res.data) {
+		console.error(res);
+		throw new Error("failed to load data:" + res.error_msg);
+	}
+
+	return {
+		data: res.data,
 	};
 };
 

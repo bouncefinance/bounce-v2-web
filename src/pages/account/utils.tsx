@@ -37,7 +37,7 @@ export const getEvent = (event: EventType, business, auction) => {
 		return EVENT.CREATED;
 	}
 
-	if (event === "Swapped") {
+	if (event === "Swapped" || event === 'Swap') {
 		if (business === 2) {
 			return EVENT.BID;
 		} else {

@@ -93,3 +93,15 @@ export interface ILBPSetting {
 	totalSwapFee: number;
 	txHash: string;
 }
+
+export interface ITokenPrice {
+	address: string;
+	decimals: number;
+	name: string;
+	symbol: string;
+	thumbURL: string;
+	smallURL: string;
+	largeURL: string;
+	coinGeckoID: string;
+	currentPrice: number;
+}

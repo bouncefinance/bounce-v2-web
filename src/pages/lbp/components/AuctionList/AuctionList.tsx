@@ -1,6 +1,6 @@
 
 
-import { fetchLbpList } from '@app/api/lbp/api';
+import { fetchLbpList, fetchTokenPrice } from '@app/api/lbp/api';
 import { ILBPList } from '@app/api/lbp/types';
 import { POOL_SHORT_NAME_MAPPING, POOL_SPECIFIC_NAME_MAPPING } from '@app/api/pool/const';
 import { AUCTION_PATH } from '@app/const/const';
@@ -83,6 +83,7 @@ export const LBPAuctionList = ({ type }: { type: string }) => {
     const vaultContract = useMemo(() => getVaultContract(provider, chainId), [chainId, provider]);  // 取amount
 
     const getCurrentPrice = async (pool: ILBPList) => {
+        const {data: priceData} = await fetchTokenPrice(chainId, pool?.token1);
         const lbpPairContract = getLiquidityBootstrappingPoolContract(provider, pool?.address)
         const pairDate = new LBPPairData(lbpPairContract, vaultContract, pool?.address)             // 得到实例，当前时刻的pair-data的信息
 
@@ -90,7 +91,7 @@ export const LBPAuctionList = ({ type }: { type: string }) => {
             pool?.token0,
             pool?.currentAmountToken0
         )
-        const price = new BigNumber(weiToNum(amountOut, pool.token1Decimals)).multipliedBy(1).dp(4).toString();     // TODO  amountOut乘以token1的价格
+        const price = new BigNumber(weiToNum(amountOut, pool.token1Decimals)).multipliedBy(priceData?.currentPrice || 1).dp(4).toString();     // TODO  amountOut乘以token1的价格
         return price;
     }
 
