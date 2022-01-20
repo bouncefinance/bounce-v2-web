@@ -39,7 +39,6 @@ type CommonType = {
 export type ConfirmationInType = TokenOutType & ParameterOutType & SettingsOutType;
 
 export const ConfirmationImp: FC<CommonType> = ({ type }) => {
-	console.log('content', useContext(SubmitContext))
 	const { setCanSubmit, setOperation, setLastOperation } = useContext(SubmitContext)
 
 	const provider = useWeb3Provider();
@@ -110,7 +109,6 @@ export const ConfirmationImp: FC<CommonType> = ({ type }) => {
 
 	const handleApproveTokenFrom = async () => {
 		const operation = async () => {
-			console.log('授权1')
 			if (isEqualZero(tokenFrom.address)) return
 			const tokenContract = getTokenContract(provider, tokenFrom.address);
 			try {
@@ -151,7 +149,6 @@ export const ConfirmationImp: FC<CommonType> = ({ type }) => {
 
 	const handleApproveTokenTo = async () => {
 		const operation = async () => {
-			console.log('授权2')
 			if (isEqualZero(tokenTo.address)) return
 			const tokenContract = getTokenContract(provider, tokenTo.address);
 			try {

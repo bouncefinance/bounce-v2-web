@@ -69,13 +69,11 @@ export const SubmitContext = React.createContext<{
 	setCanSubmit: Dispatch<SetStateAction<boolean>>
 	setOperation: Dispatch<SetStateAction<OPERATION>>
 	setLastOperation: Dispatch<ReducerAction<any>>
-	// setTest: Dispatch<SetStateAction<string>>
 }>({
 	canSubmit: false,
 	setCanSubmit: () => { },
 	setOperation: () => { },
 	setLastOperation: () => { },
-	// setTest: () => { }
 });
 
 export const getUserDate = async (initBalances: string[]) => {
@@ -149,7 +147,7 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 						console.log('extra', res)
 					})
 					.on("receipt", (r) => {
-						console.log('创建成功', r?.events?.[11]?.address)
+						console.log('create success', r?.events?.[11]?.address)
 						setPoolAddress(r?.events?.[11]?.address)
 						setOperation(OPERATION.createSuccess);
 						setLastOperation(null);
@@ -191,7 +189,6 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 	}, [open, operation]);
 
 	const onSuccessAction = (poolAddress: string) => {
-		console.log('关闭弹窗', operation, poolAddress)
 		if (operation === OPERATION.createSuccess && poolAddress) {
 			setOperation(OPERATION.default);
 			close();
