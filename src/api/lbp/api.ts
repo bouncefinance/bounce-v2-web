@@ -178,7 +178,10 @@ export const fetchLbpSetting = async (
 	};
 };
 
-export interface ILBPChart {}
+export interface ILBPChart {
+	price: number;
+	timestamp: number;
+}
 
 export const fetchLbpChartData = async (
 	chainId: WEB3_NETWORKS,
