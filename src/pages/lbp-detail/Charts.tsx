@@ -105,10 +105,11 @@ export const Charts: FC<IChartsParams> = ({
             <div className={styles.chartInfo}>
                 <div className={styles.blue}>
                     <div className={styles.dot}></div>
-                    MONICA Price</div>
+                    {`${detailData?.token0Symbol} Price`}
+                </div>
                 <div>
                     <div className={styles.dot}></div>
-                    MONICA Predicted Price
+                    {`${detailData?.token0Symbol} Predicted Price`}
                 </div>
             </div>
         </div>
