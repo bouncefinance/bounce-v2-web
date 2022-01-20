@@ -20,23 +20,32 @@ export interface IAuctionHistoryViewProps {
     detailData: ILBPDetail;
 }
 
-export const AuctionHistoryView = ({poolAddress, detailData} : IAuctionHistoryViewProps) => {
+export const AuctionHistoryView = ({ poolAddress, detailData }: IAuctionHistoryViewProps) => {
     const [page, setPage] = useState(0);
     const [numberOfPages, setNumberOfPages] = useState<number>(0)
     const chainId = useChainId();
     const [historyList, setHistoryList] = useState<ILBPHistory[]>([])
+    const token0Address = detailData?.token0;
 
     useEffect(() => {
         (async () => {
             const {
                 data: historyData,
-                meta: {total}
-            } = await fetchLbpHistory(chainId, poolAddress, {page: page, perPage: WINDOW_SIZE})
+                meta: { total }
+            } = await fetchLbpHistory(chainId, poolAddress, { page: page, perPage: WINDOW_SIZE })
             setHistoryList(historyData);
             setNumberOfPages(Math.ceil(total / WINDOW_SIZE))
         })();
-        
+
     }, [chainId, page, poolAddress])
+
+    const getPrice = (activity: ILBPHistory) => {
+        if (token0Address?.toLocaleLowerCase() === activity?.tokenInAddress?.toLocaleLowerCase()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 
     return (
@@ -61,55 +70,62 @@ export const AuctionHistoryView = ({poolAddress, detailData} : IAuctionHistoryVi
                         </Caption>
                     </div>
                     <ul className={styles.body}>
-                        {historyList.map((activity) => (
-                            <li key={uid(activity)} className={styles.row}>
-                                <Body1
-                                    className={styles.cell}
-                                    Component="span"
-                                >
-                                    {moment(Number(activity.blockTs) * 1000).format('MMM DD,YYYY HH:mm')}
-                                </Body1>
-                                <Body1
-                                    className={styles.cell}
-                                    Component="span"
-                                >
-                                    {getActivity(activity.type, activity.tokenInSymbol)}
-                                </Body1>
-                                <Body1 Component="div" className={styles.amount}>
-									<Body1 Component="span">
-										<span>{`${fromWei(activity.tokenInAmount, activity?.tokenInDecimals)} ${activity.tokenInSymbol}`}</span>
-									</Body1>
-									<Body1 Component="span">
-										<Body1 className={styles.cellAmount} Component="span">
-                                        <span>{`${fromWei(activity.tokenOutAmount, activity?.tokenOutDecimals)} ${activity.tokenOutSymbol}`}</span>&nbsp;
-											<span className={styles.cellAmount}>(${Number(activity.tokenOutVolume)?.toFixed(2)})</span>
-										</Body1>
-									</Body1>
-								</Body1>
-                                <Body1
-                                    className={styles.cell}
-                                    Component="span"
-                                >
-                                    ${roundedDivide(activity?.tokenInVolume, fromWei(activity?.tokenInAmount, activity?.tokenInDecimals).toString(), 2)}
-                                </Body1>
-                                <Body1
-                                    className={styles.cell}
-                                    Component="span"
-                                >
-                                    {activity.requestor?.slice(0, 6)}...{activity.requestor?.slice(-4)}
-                                </Body1>
-                            </li>
-                        ))}
+                        {historyList.map((activity) => {
+                            const isInPrice = getPrice(activity);
+                            return (
+                                <li key={uid(activity)} className={styles.row}>
+                                    <Body1
+                                        className={styles.cell}
+                                        Component="span"
+                                    >
+                                        {moment(Number(activity.blockTs) * 1000).format('MMM DD,YYYY HH:mm')}
+                                    </Body1>
+                                    <Body1
+                                        className={styles.cell}
+                                        Component="span"
+                                    >
+                                        {getActivity(activity.type, activity.tokenOutSymbol)}
+                                    </Body1>
+                                    <Body1 Component="div" className={styles.amount}>
+                                        <Body1 Component="span">
+                                            <span>{`${fromWei(activity.tokenOutAmount, activity?.tokenOutDecimals)?.toFixed(2)} ${activity.tokenOutSymbol}`}</span>
+                                        </Body1>
+                                        <Body1 Component="span">
+                                            <Body1 className={styles.cellAmount} Component="span">
+                                                <span>{`${fromWei(activity.tokenInAmount, activity?.tokenInDecimals)?.toFixed(2)} ${activity.tokenInSymbol}`}</span>&nbsp;
+                                                <span className={styles.cellAmount}>(${Number(activity.tokenInVolume)?.toFixed(2)})</span>
+                                            </Body1>
+                                        </Body1>
+                                    </Body1>
+                                    <Body1
+                                        className={styles.cell}
+                                        Component="span"
+                                    >
+                                        {
+                                            isInPrice ? `$${roundedDivide(activity?.tokenInVolume, fromWei(activity?.tokenInAmount, activity?.tokenInDecimals).toString(), 4)}` :
+                                                `$${roundedDivide(activity?.tokenOutVolume, fromWei(activity?.tokenOutAmount, activity?.tokenOutDecimals).toString(), 4)}`
+                                        }
+
+                                    </Body1>
+                                    <Body1
+                                        className={styles.cell}
+                                        Component="span"
+                                    >
+                                        {activity.requestor?.slice(0, 6)}...{activity.requestor?.slice(-4)}
+                                    </Body1>
+                                </li>
+                            )
+                        })}
                     </ul>
                     {numberOfPages > 1 && (
-						<Pagination
-							className={styles.pagination}
-							numberOfPages={numberOfPages}
-							currentPage={page}
-							onBack={() => setPage(page - 1)}
-							onNext={() => setPage(page + 1)}
-						/>
-					)}
+                        <Pagination
+                            className={styles.pagination}
+                            numberOfPages={numberOfPages}
+                            currentPage={page}
+                            onBack={() => setPage(page - 1)}
+                            onNext={() => setPage(page + 1)}
+                        />
+                    )}
                 </div>
             )}
         </div>

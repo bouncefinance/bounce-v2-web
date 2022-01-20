@@ -40,7 +40,7 @@ export const SoldTooltip = ({ detailData }: { detailData: ILBPDetail }) => {
 	const raiseAmount = new BigNumber(detailData?.currentAmountToken1)?.minus(new BigNumber(detailData?.startAmountToken1)).toString();
 	return <div className={styles.soldTooltip}>
 		<div>{`${numberFormat(parseFloat(fromWei(swapAmount, detailData?.token0Decimals).toFixed(1)))} of ${numberFormat(parseFloat(fromWei(detailData?.startAmountToken0).toFixed(1)))} ${detailData?.token0Symbol} Sold`}</div>
-		<div>{`${numberFormat(parseFloat(fromWei(raiseAmount, detailData?.token1Decimals).toFixed(2)))} ${detailData?.token1Symbol}`}</div>
+		<div>{`${numberFormat(parseFloat(fromWei(raiseAmount, detailData?.token1Decimals).toFixed(2)))} ${detailData?.token1Symbol} Raised`}</div>
 	</div>
 }
 
