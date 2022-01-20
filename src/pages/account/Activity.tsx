@@ -114,52 +114,54 @@ export const Activity = () => {
 									</Caption>
 								</div>
 								<ul className={styles.body}>
-									{convertedActivityInformation.map((activity) => (
-										<li key={uid(activity)} className={styles.row}>
-											<Body1
-												className={classNames(
-													styles.cell,
-													styles.cellEvent,
-													styles[`cell${activity.event}`]
-												)}
-												Component="span"
-											>
-												{activity.event}
-											</Body1>
-											<Body1 className={styles.cell} Component="span">
-												{activity.category}
-											</Body1>
-											<Body1 className={classNames(styles.cell, styles.cellId)} Component="span">
-												#{activity.id}
-											</Body1>
-											<Body1 className={styles.cell} Component="span">
-												{
-													activity.tokenIn?.symbol && <>
-														<Currency coin={activity.tokenIn} />
-														&nbsp;/&nbsp;
-													</>
-												}
-												{
-													activity.tokenOut?.symbol && <Currency coin={activity.tokenOut} />
-												}
-											</Body1>
-											<Body1 Component="div" className={styles.cellAmount}>
-												<Body1 className={styles.cell} Component="span">
-													<span>{`${activity.tokenInAmount} ${activity?.tokenIn?.symbol}`}</span>&nbsp;
-													<span className={styles.cellAmount}>(${Number(activity.tokenInVolume)?.toFixed(2)})</span>
+									{convertedActivityInformation.map((activity) => {
+										return (
+											<li key={uid(activity)} className={styles.row}>
+												<Body1
+													className={classNames(
+														styles.cell,
+														styles.cellEvent,
+														styles[`cell${activity.event}`]
+													)}
+													Component="span"
+												>
+													{activity.event}
 												</Body1>
 												<Body1 className={styles.cell} Component="span">
+													{activity.category}
+												</Body1>
+												<Body1 className={classNames(styles.cell, styles.cellId)} Component="span">
+													#{activity.id}
+												</Body1>
+												<Body1 className={styles.cell} Component="span">
+													{
+														activity.tokenIn?.symbol && <>
+															<Currency coin={activity?.tokenIn} />
+															&nbsp;/&nbsp;
+														</>
+													}
+													{
+														activity.tokenOut?.symbol && <Currency coin={activity?.tokenOut} />
+													}
+												</Body1>
+												<Body1 Component="div" className={styles.cellAmount}>
 													<Body1 className={styles.cell} Component="span">
-														<span>{`${activity.tokenOutAmount} ${activity?.tokenOut?.symbol}`}</span>&nbsp;
-														<span className={styles.cellAmount}>(${Number(activity.tokenOutVolume)?.toFixed(2)})</span>
+														<span>{`${activity.tokenInAmount} ${activity?.tokenIn?.symbol}`}</span>&nbsp;
+														<span className={styles.cellAmount}>(${Number(activity.tokenInVolume)?.toFixed(2)})</span>
+													</Body1>
+													<Body1 className={styles.cell} Component="span">
+														<Body1 className={styles.cell} Component="span">
+															<span>{`${activity.tokenOutAmount} ${activity?.tokenOut?.symbol}`}</span>&nbsp;
+															<span className={styles.cellAmount}>(${Number(activity.tokenOutVolume)?.toFixed(2)})</span>
+														</Body1>
 													</Body1>
 												</Body1>
-											</Body1>
-											<Body1 className={styles.cell} Component="span">
-												{activity.date}
-											</Body1>
-										</li>
-									))}
+												<Body1 className={styles.cell} Component="span">
+													{activity.date}
+												</Body1>
+											</li>
+										)
+									})}
 								</ul>
 								{!loading && numberOfPages > 1 && (
 									<Pagination

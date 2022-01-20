@@ -48,7 +48,7 @@ export const AuctuinDetailView = ({ tokenFrom, detailData }: AuctuinDetailViewPa
                     <h5>Learn More Links</h5>
                     <p>
                         {
-                            detailData?.learnMoreLink ? <NavLink className={styles["text-navLink"]} href={detailData?.learnMoreLink}>
+                            detailData?.learnMoreLink ? <NavLink className={styles.textNavLink} href={detailData?.learnMoreLink}>
                                 {detailData?.learnMoreLink}
                             </NavLink> : 'No link'
                         }
