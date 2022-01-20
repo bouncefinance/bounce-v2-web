@@ -2,15 +2,13 @@
 
 import { fetchLbpList, fetchTokenPrice } from '@app/api/lbp/api';
 import { ILBPList } from '@app/api/lbp/types';
-import { POOL_SHORT_NAME_MAPPING, POOL_SPECIFIC_NAME_MAPPING } from '@app/api/pool/const';
-import { AUCTION_PATH } from '@app/const/const';
 import { Card, DisplayPoolInfoType } from '@app/modules/auction-card';
+import { EmptyData } from '@app/modules/emptyData/EmptyData';
+import { Loading } from '@app/modules/loading/Loading';
 import { Pagination } from '@app/modules/pagination';
-import { ToAuctionStatus, ToAuctionType } from '@app/pages/auction/Auction';
 import { LBPPairData } from '@app/pages/lbp-detail/LBPPairData';
-import { DescriptionList } from '@app/ui/description-list';
-import { fromWei, toWei, weiToNum } from '@app/utils/bn/wei';
-import { getProgress, getSwapRatio, POOL_STATUS } from '@app/utils/pool';
+import { fromWei, weiToNum } from '@app/utils/bn/wei';
+import { getProgress, POOL_STATUS } from '@app/utils/pool';
 import { getIsOpen } from '@app/utils/time';
 import { getLiquidityBootstrappingPoolContract, getVaultContract } from '@app/web3/api/bounce/lbp';
 import { useAccount, useChainId, useWeb3Provider } from '@app/web3/hooks/use-web3';
@@ -46,7 +44,8 @@ export const LBPAuctionList = ({ type }: { type: string }) => {
     const chainId = useChainId();
     const router = useRouter();
     const { pathname } = router;
-    const [poolStatus, setPoolStatus] = useState<lbpPoolStatus>()
+    const [poolStatus, setPoolStatus] = useState<lbpPoolStatus>();
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         if (pathname === '/lbp/upcoming') {
@@ -64,6 +63,7 @@ export const LBPAuctionList = ({ type }: { type: string }) => {
 
     useEffect(() => {
         if (poolStatus === undefined) return
+        setLoading(true);
         (async () => {
             const { data: lbpList, meta: { total } } = await fetchLbpList(
                 chainId,
@@ -74,7 +74,7 @@ export const LBPAuctionList = ({ type }: { type: string }) => {
                 }
             );
             setTotalCount(total);
-            setAuctionListData(lbpList)
+            setAuctionListData(lbpList);
         })()
     }, [chainId, page, poolStatus])
 
@@ -83,7 +83,7 @@ export const LBPAuctionList = ({ type }: { type: string }) => {
     const vaultContract = useMemo(() => getVaultContract(provider, chainId), [chainId, provider]);  // 取amount
 
     const getCurrentPrice = async (pool: ILBPList) => {
-        const {data: priceData} = await fetchTokenPrice(chainId, pool?.token1);
+        const { data: priceData } = await fetchTokenPrice(chainId, pool?.token1);
         const lbpPairContract = getLiquidityBootstrappingPoolContract(provider, pool?.address)
         const pairDate = new LBPPairData(lbpPairContract, vaultContract, pool?.address)             // 得到实例，当前时刻的pair-data的信息
 
@@ -141,26 +141,37 @@ export const LBPAuctionList = ({ type }: { type: string }) => {
                         href: `/lbp/${pool?.address}`
                     };
                 })
-            ).then((info) => setConvertedPoolInformation(info));
+            ).then((info) => {
+                setConvertedPoolInformation(info);
+                setLoading(false);
+            });
         } else {
             setConvertedPoolInformation(EMPTY_ARRAY);
+            setLoading(false)
         }
     }, [auctionListData, pathname, type]);
 
     return <div className={styles.listBox}>
         <>
-            <ul className={styles.list}>
-                {convertedPoolInformation.map((auction) => (
-                    <li key={uid(auction)} className="animate__animated animate__flipInY">
-                        <Card {...auction}
-                            bordered
-                            isLbpCard
-                        />
-                    </li>
-                ))}
-
-            </ul>
-            {numberOfPages > 1 && (
+            {loading ? <Loading /> : <>
+                {
+                    convertedPoolInformation?.length > 0 ? (
+                        <ul className={styles.list}>
+                            {
+                                convertedPoolInformation.map((auction) => (
+                                    <li key={uid(auction)} className="animate__animated animate__flipInY">
+                                        <Card {...auction}
+                                            bordered
+                                            isLbpCard
+                                        />
+                                    </li>
+                                ))
+                            }
+                        </ul>
+                    ) : <EmptyData data="No Pool" />
+                }
+            </>}
+            {!loading && numberOfPages > 1 && (
                 <Pagination
                     className={styles.pagination}
                     numberOfPages={numberOfPages}

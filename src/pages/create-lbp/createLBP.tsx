@@ -1,5 +1,5 @@
 import { useWeb3React } from "@web3-react/core";
-import { Dispatch, FC, SetStateAction, useEffect, useMemo, useState } from "react";
+import { Dispatch, FC, ReducerAction, SetStateAction, useEffect, useMemo, useState } from "react";
 
 import { MaybeWithClassName } from "@app/helper/react/types";
 
@@ -35,13 +35,15 @@ export enum OPERATION {
 	success = "success",
 	error = "error",
 	cancel = "cancel",
+	createSuccess = "createSuccess"
 }
 
 const TITLE = {
 	[OPERATION.approval]: "Bounce requests wallet approval",
 	[OPERATION.confirm]: "Bounce requests wallet interaction",
 	[OPERATION.pending]: "Bounce waiting for transaction settlement",
-	[OPERATION.success]: "Auction successfully published",
+	[OPERATION.success]: "Success!",
+	[OPERATION.createSuccess]: "Auction successfully published",
 	[OPERATION.error]: "Transaction failed on Bounce",
 	[OPERATION.cancel]: "Transaction canceled on Bounce",
 };
@@ -53,6 +55,8 @@ const CONTENT = {
 	[OPERATION.pending]:
 		"Bounce is engaging with blockchain transaction, please wait patiently for on-chain transaction settlement",
 	[OPERATION.success]:
+		"Congratulations! The transaction has been successful",
+	[OPERATION.createSuccess]:
 		"Congratulations! Your auction is live and is now listed in designated area. Please find more information about the next steps in the pool page",
 	[OPERATION.error]:
 		"Oops! Your transaction is failed for on-chain approval and settlement. Please initiate another transaction",
@@ -64,10 +68,12 @@ export const SubmitContext = React.createContext<{
 	canSubmit: boolean,
 	setCanSubmit: Dispatch<SetStateAction<boolean>>
 	setOperation: Dispatch<SetStateAction<OPERATION>>
+	setLastOperation: Dispatch<ReducerAction<any>>
 }>({
 	canSubmit: false,
 	setCanSubmit: () => { },
-	setOperation: () => { }
+	setOperation: () => { },
+	setLastOperation: () => { },
 });
 
 export const getUserDate = async (initBalances: string[]) => {
@@ -98,7 +104,7 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 	const [poolAddress, setPoolAddress] = useState<string>('')
 
 
-	const onComplete = async (data: ConfirmationInType) => {	
+	const onComplete = async (data: ConfirmationInType) => {
 		const operation = async () => {
 			const { tokenFrom, tokenTo, amountFrom, amountTo, startWeight, endWeight, tradingFee, startDate, endDate } = data
 			const isReversal = isThanGreateAddrss(tokenFrom.address, tokenTo.address)
@@ -141,8 +147,9 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 						console.log('extra', res)
 					})
 					.on("receipt", (r) => {
+						console.log('create success', r?.events?.[11]?.address)
 						setPoolAddress(r?.events?.[11]?.address)
-						setOperation(OPERATION.success);
+						setOperation(OPERATION.createSuccess);
 						setLastOperation(null);
 						setPoolId(r.events.Created.returnValues[0]);
 					})
@@ -182,12 +189,10 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 	}, [open, operation]);
 
 	const onSuccessAction = (poolAddress: string) => {
-		if(poolAddress) {
+		if (operation === OPERATION.createSuccess && poolAddress) {
 			setOperation(OPERATION.default);
 			close();
-			setTimeout(() => {
-				routerPush(`${LBP_PATH}/${poolAddress}`)
-			}, 200)
+			routerPush(`${LBP_PATH}/${poolAddress}`)
 		} else {
 			setOperation(OPERATION.default);
 			close();
@@ -197,7 +202,7 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 	return (
 		<>
 			<div className={styles.component}>
-				<SubmitContext.Provider value={{ canSubmit, setCanSubmit, setOperation }}>
+				<SubmitContext.Provider value={{ canSubmit, setCanSubmit, setOperation, setLastOperation }}>
 					<CreateFlowForLbp steps={BUYING_STEPS} onComplete={onComplete} />
 				</SubmitContext.Provider>
 			</div>
@@ -208,7 +213,7 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 					text={CONTENT[operation]}
 					onSuccess={() => onSuccessAction(poolAddress)}
 					onTry={tryAgainAction}
-					isSuccess={operation === OPERATION.success}
+					isSuccess={operation === OPERATION.success || operation === OPERATION.createSuccess}
 					isLoading={
 						operation === OPERATION.approval ||
 						operation === OPERATION.pending ||

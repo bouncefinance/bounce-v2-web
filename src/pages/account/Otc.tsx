@@ -20,6 +20,8 @@ import { useTokenSearchWithFallbackService } from "@app/web3/api/tokens/use-fall
 import { useChainId, useWeb3Provider } from "@app/web3/hooks/use-web3";
 
 import styles from "./Account.module.scss";
+import { Loading } from "@app/modules/loading/Loading";
+import { EmptyData } from "@app/modules/emptyData/EmptyData";
 
 const WINDOW_SIZE = 9;
 const EMPTY_ARRAY = [];
@@ -63,6 +65,7 @@ export const Otc = () => {
 
 	const [page, setPage] = useState(0);
 	const [totalCount, setTotalCount] = useState(0);
+	const [loading, setLoading] = useState<boolean>(false);
 
 	const numberOfPages = Math.ceil(totalCount / WINDOW_SIZE);
 
@@ -81,7 +84,7 @@ export const Otc = () => {
 		if (!type) {
 			return;
 		}
-
+		setLoading(true);
 		(async () => {
 			const {
 				data: foundPools,
@@ -136,9 +139,13 @@ export const Otc = () => {
 						href: `${OTC_PATH}/${otcType}/${pool.poolID}`,
 					};
 				})
-			).then((info) => setConvertedPoolInformation(info));
+			).then((info) => {
+				setConvertedPoolInformation(info);
+				setLoading(false);
+			});
 		} else {
 			setConvertedPoolInformation(EMPTY_ARRAY);
+			setLoading(false)
 		}
 	}, [poolList, provider, queryToken]);
 
@@ -170,25 +177,27 @@ export const Otc = () => {
 					small
 				/>
 			</div>
-			{convertedPoolInformation && convertedPoolInformation.length > 0 && (
-				<div>
-					<ul className={styles.cardList}>
-						{convertedPoolInformation.map((auction) => (
-							<li key={auction.id} className="animate__animated animate__flipInY">
-								<Card {...auction} bordered />
-							</li>
-						))}
-					</ul>
-					{numberOfPages > 1 && (
-						<Pagination
-							className={styles.pagination}
-							numberOfPages={numberOfPages}
-							currentPage={page}
-							onBack={() => setPage(page - 1)}
-							onNext={() => setPage(page + 1)}
-						/>
-					)}
-				</div>
+			{loading ? <Loading /> : <>
+				{
+					convertedPoolInformation && convertedPoolInformation.length > 0 ? (
+						<ul className={styles.cardList}>
+							{convertedPoolInformation.map((auction) => (
+								<li key={auction.id} className="animate__animated animate__flipInY">
+									<Card {...auction} bordered />
+								</li>
+							))}
+						</ul>
+					) : <EmptyData data="No Pool" />
+				}
+			</>}
+			{!loading && numberOfPages > 1 && (
+				<Pagination
+					className={styles.pagination}
+					numberOfPages={numberOfPages}
+					currentPage={page}
+					onBack={() => setPage(page - 1)}
+					onNext={() => setPage(page + 1)}
+				/>
 			)}
 		</div>
 	);

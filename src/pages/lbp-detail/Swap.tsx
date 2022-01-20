@@ -203,12 +203,12 @@ export const Swap = ({
                     amount: toWei(values.amountTo, isResver ? tokenFrom.decimals : tokenTo.decimals).toString(),
                     amountSec: toWei(values.amountFrom, isResver ? tokenTo.decimals : tokenFrom.decimals).toString(),
                 }
+                console.log('modal data',  swapData)
                 setSwapData(swapData)
             })
             .on("receipt", (r) => {
                 // console.log("receipt", r);
                 setOperation(OPERATION.swapSuccess);
-                setSwapData(singleSwap)
                 // setLastOperation(null);
                 // setPoolId(r.events.Created.returnValues[0]);
                 setLoading(false)

@@ -11,7 +11,7 @@ export const getActivity = (type: number, token?: string) => {
 		case 5:
 			return token ? `Buy ${token}` : "Buy LBPs";
 		case 6:
-			return token ? `Sell ${token}` :  "Sell LBPs";
+			return token ? `Buy ${token}` :  "Sell LBPs";
 		default:
 			return "Unknown";
 

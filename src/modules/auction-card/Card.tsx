@@ -127,7 +127,7 @@ export const Card: FC<DisplayPoolInfoType & MaybeWithClassName & { bordered?: bo
 	const LBP_AUCTION_INFORMATION = {
 		"Start Balance": `${total} ${from?.symbol}`,
 		"Current Price,$": price,
-		"Token Sold": `${numberFormat(Number(sold))} of ${numberFormat(Number(total))} ( ${fill}% )`,
+		"Token Sold": `${numberFormat(Number(sold))} of ${numberFormat(Number(total))} ( ${fill?.toFixed(0)}% )`,
 	};
 
 	return (
