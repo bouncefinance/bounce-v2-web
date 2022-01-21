@@ -1,7 +1,7 @@
 import { FC, useEffect, useMemo, useRef, useState } from "react";
 import * as echarts from 'echarts';
 import styles from './View.module.scss'
-import { getDateSlice, getOption, getPriceSlice } from "./chartDate";
+import { getDateSlice, getOption, getPriceSlice, getTokenFromPriceByWeight } from "./chartDate";
 import { fetchLbpChartData } from "@app/api/lbp/api";
 import { useChainId, useWeb3Provider } from "@app/web3/hooks/use-web3";
 import { getLiquidityBootstrappingPoolContract, getVaultContract } from "@app/web3/api/bounce/lbp";
@@ -45,41 +45,68 @@ export const Charts: FC<IChartsParams> = ({
     const pairDate = new LBPPairData(lbpPairContract, vaultContract, detailData.address)
 
     useEffect(() => {
-        const SLICE = Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / 3600000)
-        const dateSlice = getDateSlice(startDate, endDate, SLICE)
-        setDateSlice(dateSlice)
+
         // console.log('currentWeights0', SLICE)
     }, [startDate, endDate])
 
     useEffect(() => {
         if (!chainId) return
         (async () => {
+            const startDot = getTokenFromPriceByWeight(tokenToPrice * Number(weiToNum(detailData.startAmountToken1, detailData.token1Decimals)), Number(weiToNum(detailData.startAmountToken0, detailData.token0Decimals)), startWeight)
+            const endDot = getTokenFromPriceByWeight(tokenToPrice * Number(weiToNum(detailData.currentAmountToken1, detailData.token1Decimals)), Number(weiToNum(detailData.currentAmountToken0, detailData.token0Decimals)), endWeight)
+
+            // console.log('detailData', tokenToPrice, Number(weiToNum(detailData.startAmountToken0, detailData.token0Decimals)), detailData.startWeightToken0 * 100)
             const beforeSliceData = await fetchLbpChartData(chainId, detailData.address)
-            const BEFORE_SLICE = Math.ceil((new Date().getTime() - new Date(startDate).getTime()) / 3600000) - 1
-            const beforeDateSlice = getDateSlice(startDate, new Date(), BEFORE_SLICE)
+            // const BEFORE_SLICE = Math.ceil((new Date().getTime() - new Date(startDate).getTime()) / 3600000) - 1
+            const __beforeDateSlice = beforeSliceData.map(item => {
+                return item.timestamp
+            })
 
-            console.log('beforeDateSlice', beforeDateSlice)
-            const _beforeSlice: any[] = beforeDateSlice.fill(0.1)
+            const __beforeSlice: any[] = beforeSliceData.map(item => {
+                return item.price
+            })
 
+            if (!__beforeSlice.length) {
+                const middenDot = getTokenFromPriceByWeight(
+                    tokenToPrice * Number(weiToNum(detailData.startAmountToken1, detailData.token1Decimals)),
+                    Number(weiToNum(detailData.startAmountToken0, detailData.token0Decimals)),
+                    (startWeight + endWeight) / 2
+                )
+                __beforeSlice.push(middenDot)
+                __beforeDateSlice.push((startDate.getTime()+ endDate.getTime()) / 2)
+            }
+
+            const _beforeSlice = [startDot, ...__beforeSlice]
+
+            // console.log('beforeDateSlice', beforeDateSlice)
+            // const _beforeSlice: any[] = beforeDateSlice.fill(0.1)
             const weights = await pairDate.getTokensWeight()
             const currentWeight = Number(weiToNum(weights[detailData.isCorrectOrder === CORRECTORDER.true ? 0 : 1], detailData.token0Decimals)) * 100
             const amounts = await pairDate.getTokensAmount()
-            const currentAmountTokenFrom = detailData.isCorrectOrder === CORRECTORDER.true ? Number(weiToNum(amounts[0], detailData.token0Decimals)) : Number(weiToNum(amounts[1], detailData.token1Decimals))
-            const currentAmountTokenTo = detailData.isCorrectOrder === CORRECTORDER.true ? Number(weiToNum(amounts[1], detailData.token1Decimals)) : Number(weiToNum(amounts[0], detailData.token0Decimals))
-            const AFTER_SLICE = Math.ceil((new Date(endDate).getTime() - new Date().getTime()) / 3600000)
+            // console.log('amounts', amounts)
+            const currentAmountTokenFrom = detailData.isCorrectOrder === CORRECTORDER.true ? Number(weiToNum(amounts[0], detailData.token0Decimals)) : Number(weiToNum(amounts[1], detailData.token0Decimals))
+            const currentAmountTokenTo = detailData.isCorrectOrder === CORRECTORDER.true ? Number(weiToNum(amounts[1], detailData.token1Decimals)) : Number(weiToNum(amounts[0], detailData.token1Decimals))
+            // const AFTER_SLICE = Math.ceil((new Date(endDate).getTime() - new Date().getTime()) / 3600000)
+            const AFTER_SLICE = Date.now() > endDate.getTime() ? 0 : 5
             const afterDateSlice = getDateSlice(new Date(), endDate, AFTER_SLICE)
             const _afterSliceData = await getPriceSlice(afterDateSlice, currentAmountTokenFrom, currentAmountTokenTo, currentWeight, endWeight, tokenToPrice)
 
+            // console.log('beforeSlice', {afterDateSlice, currentAmountTokenFrom, currentAmountTokenTo, currentWeight, endWeight, tokenToPrice})
+            const _beforeDateSlice = [startDate.getTime(), ...__beforeDateSlice, afterDateSlice[0] || endDate.getTime()]
             const beforeSlice: any[] = [..._beforeSlice, ...[..._afterSliceData].fill('_', 0, _afterSliceData.length)]
             const afterSlice = [...[..._beforeSlice].fill('_', 0, _beforeSlice.length), ..._afterSliceData]
-            beforeSlice[BEFORE_SLICE] = _afterSliceData[0]
-            console.log('currentWeights1', weights, amounts)
-            // console.log('currentWeights2', afterSlice)
+            beforeSlice[_beforeSlice.length] = _afterSliceData[0] || endDot
+            // console.log('beforeSlice', beforeSlice)
 
             setBeforeSlice(beforeSlice)
             setAfterSlice(afterSlice)
+
+            // const SLICE = Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / 3600000)
+            const dateSlice = getDateSlice(new Date(), endDate, AFTER_SLICE)
+            setDateSlice([..._beforeDateSlice, ...dateSlice])
+            console.log('date', [..._beforeDateSlice, ...dateSlice])
         })()
-    }, [dateSlice, amountTokenFrom, amountTokenTo, startWeight, endWeight, chainId])
+    }, [amountTokenFrom, amountTokenTo, startWeight, endWeight, chainId])
 
 
     useEffect(() => {

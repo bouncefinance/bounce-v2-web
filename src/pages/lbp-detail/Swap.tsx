@@ -78,6 +78,7 @@ export const Swap = ({
             const amountTo = values.amountTo
             if (!amountTo) return setLoading(false)
 
+
             form.change('amountFrom', amountTo)
             setTragger('from')
             // updateQueryApprove(isResver ? tokenFrom : tokenTo, amountTo)
@@ -119,9 +120,15 @@ export const Swap = ({
 
     useEffect(() => {
         (async () => {
-            const swapRate = await pairDate._tokenInForExactTokenOut(tokenFrom.address, numToWei(1, tokenFrom.decimals))
+            const timer = setInterval(async () => {
+                const swapRate = await pairDate._tokenInForExactTokenOut(tokenFrom.address, numToWei(1, tokenFrom.decimals))
+                console.log('swapRate', swapRate)
+                setRate(weiToNum(swapRate, tokenTo.decimals))
+            }, 3000)
 
-            setRate(weiToNum(swapRate, tokenTo.decimals))
+            return () => {
+                clearInterval(timer)
+            }
         })()
         // setOperation(OPERATION.swapSuccess);
     }, [])
@@ -220,6 +227,7 @@ export const Swap = ({
             });
     }
 
+
     return (
         <div className={styles.swapWrapper}>
             <Form
@@ -308,7 +316,6 @@ export const Swap = ({
                                         onChange={async (e) => {
                                             setTragger('to')
                                             setLoading(true)
-
                                             const amountOut = await pairDate._tokenInForExactTokenOut(
                                                 isResver ? tokenFrom.address : tokenTo.address,
                                                 toWei(parseFloat(e.target.value), isResver ? tokenFrom.decimals : tokenTo.decimals
@@ -373,7 +380,6 @@ export const Swap = ({
                                         onChange={async (e) => {
                                             setTragger('from')
                                             setLoading(true)
-                                            // console.log(e.target.value)
                                             const amountOut = await pairDate._tokenInForExactTokenOut(
                                                 isResver ? tokenTo.address : tokenFrom.address,
                                                 toWei(parseFloat(e.target.value), isResver ? tokenTo.decimals : tokenFrom.decimals
@@ -381,6 +387,8 @@ export const Swap = ({
 
                                             props.form.change('amountTo', weiToNum(amountOut, isResver ? tokenFrom.decimals : tokenTo.decimals))
                                             setLoading(false)
+                                            // console.log(e.target.value)
+
                                         }}
                                         after={
                                             <div className={styles.amount}>
@@ -425,9 +433,9 @@ export const Swap = ({
                                 submit
                             >
                                 {
-                                    isEnabled?
-                                    (tokenIsApprove ? 'Exchange' : `Approve ${isResver ? tokenFrom.symbol : tokenTo.symbol}`)
-                                    : 'Not Enable Now'
+                                    isEnabled ?
+                                        (tokenIsApprove ? 'Exchange' : `Approve ${isResver ? tokenFrom.symbol : tokenTo.symbol}`)
+                                        : 'Not Enable Now'
                                 }
                             </PrimaryButton>
                         )}
