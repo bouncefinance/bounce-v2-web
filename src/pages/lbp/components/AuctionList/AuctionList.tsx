@@ -1,7 +1,7 @@
 
 
 import { fetchLbpList, fetchTokenPrice } from '@app/api/lbp/api';
-import { ILBPList } from '@app/api/lbp/types';
+import { ILBPList, ITokenPrice } from '@app/api/lbp/types';
 import { Card, DisplayPoolInfoType } from '@app/modules/auction-card';
 import { EmptyData } from '@app/modules/emptyData/EmptyData';
 import { Loading } from '@app/modules/loading/Loading';
@@ -11,6 +11,7 @@ import { fromWei, weiToNum } from '@app/utils/bn/wei';
 import { getProgress, POOL_STATUS } from '@app/utils/pool';
 import { getIsOpen } from '@app/utils/time';
 import { getLiquidityBootstrappingPoolContract, getVaultContract } from '@app/web3/api/bounce/lbp';
+import { VolumeTokens } from '@app/web3/const/volumeTokens';
 import { useAccount, useChainId, useWeb3Provider } from '@app/web3/hooks/use-web3';
 import BigNumber from 'bignumber.js';
 import { useRouter } from 'next/router';
@@ -83,7 +84,14 @@ export const LBPAuctionList = ({ type }: { type: string }) => {
     const vaultContract = useMemo(() => getVaultContract(provider, chainId), [chainId, provider]);  // 取amount
 
     const getCurrentPrice = async (pool: ILBPList) => {
-        const { data: priceData } = await fetchTokenPrice(chainId, pool?.token1);
+        const result = VolumeTokens?.some(item => item?.address?.toLocaleLowerCase() === pool?.token1);
+        let currentPrice: number;
+        if(!result) {
+            const { data: priceData } = await fetchTokenPrice(chainId, pool?.token1);
+            currentPrice = Number(priceData?.currentPrice);
+        } else {
+            currentPrice = 1;
+        }
         const lbpPairContract = getLiquidityBootstrappingPoolContract(provider, pool?.address)
         const pairDate = new LBPPairData(lbpPairContract, vaultContract, pool?.address)             // 得到实例，当前时刻的pair-data的信息
 
@@ -91,7 +99,7 @@ export const LBPAuctionList = ({ type }: { type: string }) => {
             pool?.token0,
             pool?.currentAmountToken0
         )
-        const price = new BigNumber(weiToNum(amountOut, pool.token1Decimals)).multipliedBy(priceData?.currentPrice || 1).dp(4).toString();     // TODO  amountOut乘以token1的价格
+        const price = new BigNumber(weiToNum(amountOut, pool.token1Decimals)).multipliedBy(currentPrice).dp(4).toString();     //amountOut乘以token1的价格
         return price;
     }
 

@@ -8,7 +8,7 @@ import { useTokenQuery, useTokenSearch } from '@app/web3/api/tokens'
 import { isEth } from '@app/web3/api/eth/use-eth'
 import { getBalance, getEthBalance, getTokenContract } from '@app/web3/api/bounce/erc'
 import { useChainId, useWeb3, useWeb3Provider } from '@app/web3/hooks/use-web3'
-import { fromWei} from '@app/utils/bn/wei'
+import { fromWei } from '@app/utils/bn/wei'
 import { useWeb3React } from '@web3-react/core'
 import { ExtensionInfo } from './ExtensionInfo'
 import { useControlPopUp } from '@app/hooks/use-control-popup'
@@ -34,6 +34,7 @@ export enum OPERATION {
     error = "error",
     cancel = "cancel",
     swapSuccess = "swapSuccess",
+    settingSuccess = "settingSuccess",
 }
 
 export const TITLE = {
@@ -43,6 +44,7 @@ export const TITLE = {
     [OPERATION.error]: "Transaction Failed",
     [OPERATION.cancel]: "Transaction Canceled",
     [OPERATION.success]: "Success!",
+    [OPERATION.settingSuccess]: "Success!",
     [OPERATION.swapSuccess]: "Success!",
 };
 
@@ -53,6 +55,7 @@ export const CONTENT = {
     [OPERATION.error]: "Your transaction was cancelled and wasn’t submitted",
     [OPERATION.cancel]: "Your transaction was cancelled and wasn’t submitted",
     [OPERATION.success]: "The transaction has been successful",
+    [OPERATION.settingSuccess]: "The transaction has been successful",
     [OPERATION.swapSuccess]: '',
 };
 
@@ -153,6 +156,17 @@ export const LBPDetail = (props: {
         </div>
     }
 
+    const successClose = () => {
+        if (operation === OPERATION.swapSuccess || operation === OPERATION.settingSuccess) {
+            setOperation(OPERATION.default);
+            close();
+            window.location.reload();
+        } else {
+            setOperation(OPERATION.default);
+            close();
+        }
+    }
+
 
     return (
         <div>
@@ -193,13 +207,9 @@ export const LBPDetail = (props: {
                 <ProcessingPopUp
                     title={TITLE[operation]}
                     text={operation === OPERATION.swapSuccess ? swapSuccess() : CONTENT[operation]}
-                    onSuccess={() => {
-                        // routerPush(`${LBP_PATH}/${poolId}`);
-                        setOperation(OPERATION.default);
-                        close();
-                    }}
+                    onSuccess={successClose}
                     // onTry={tryAgainAction}
-                    isSuccess={operation === OPERATION.success || operation === OPERATION.swapSuccess}
+                    isSuccess={operation === OPERATION.success || operation === OPERATION.swapSuccess || operation === OPERATION.settingSuccess}
                     isLoading={
                         operation === OPERATION.approval ||
                         operation === OPERATION.pending ||

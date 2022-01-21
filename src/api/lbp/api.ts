@@ -139,7 +139,7 @@ export const postLbpCreate = async (
 	chainId: WEB3_NETWORKS,
 	options: {
 		txHash: string;
-		descriptioin: string;
+		description: string;
 		learnMoreLink: string;
 		tokenLogoUrl: string;
 		contract: string;
@@ -178,7 +178,10 @@ export const fetchLbpSetting = async (
 	};
 };
 
-export interface ILBPChart {}
+export interface ILBPChart {
+	price: number;
+	timestamp: number;
+}
 
 export const fetchLbpChartData = async (
 	chainId: WEB3_NETWORKS,

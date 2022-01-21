@@ -21,6 +21,7 @@ import { isEqualZero } from '@app/utils/validation';
 import { getTokenContract } from '@app/web3/api/bounce/erc';
 import { isLessThan } from '@app/utils/bn';
 import { LBPPairData } from './LBPPairData';
+import { useRequest } from 'ahooks';
 
 const slipConfig = [0.5, 1, 2]
 export interface ISwapparams {
@@ -48,7 +49,7 @@ export const Swap = ({
     const account = useAccount();
     const vaultContract = useMemo(() => getVaultContract(provider, chainId), [chainId, provider]);
     const lbpPairContract = useMemo(() => getLiquidityBootstrappingPoolContract(provider, POOL_ADDRESS), [provider, POOL_ADDRESS]);
-    const [rate, setRate] = useState<string | number>(0)
+    // const [rate, setRate] = useState<string | number>(0)
     const pairDate = new LBPPairData(lbpPairContract, vaultContract, POOL_ADDRESS)
 
     // Submit loading
@@ -77,6 +78,7 @@ export const Swap = ({
         } else {
             const amountTo = values.amountTo
             if (!amountTo) return setLoading(false)
+
 
             form.change('amountFrom', amountTo)
             setTragger('from')
@@ -117,14 +119,30 @@ export const Swap = ({
         }
     }
 
-    useEffect(() => {
-        (async () => {
-            const swapRate = await pairDate._tokenInForExactTokenOut(tokenFrom.address, numToWei(1, tokenFrom.decimals))
 
-            setRate(weiToNum(swapRate, tokenTo.decimals))
-        })()
-        // setOperation(OPERATION.swapSuccess);
-    }, [])
+    // useEffect(() => {
+    //     (async () => {
+    //         const timer = setInterval(async () => {
+    //             const swapRate = await pairDate._tokenInForExactTokenOut(tokenFrom.address, numToWei(1, tokenFrom.decimals))
+    //             console.log('swapRate', swapRate)
+    //             setRate(weiToNum(swapRate, tokenTo.decimals))
+    //         }, 3000)
+
+    //         return () => {
+    //             clearInterval(timer)
+    //         }
+    //     })()
+    //     // setOperation(OPERATION.swapSuccess);
+    // }, [])
+
+    const getSwapRate = async () => {
+        const swapRate = await pairDate._tokenInForExactTokenOut(tokenFrom.address, numToWei(1, tokenFrom.decimals))
+        return weiToNum(swapRate, tokenTo.decimals)
+    }
+
+    const { data: rate } = useRequest(getSwapRate, {
+        pollingInterval: 30000,
+    });
 
     useEffect(() => {
         updateQueryApprove(isResver ? tokenFrom : tokenTo, toWei(99999999, isResver ? tokenFrom.decimals : tokenTo.decimals).toString())
@@ -203,7 +221,7 @@ export const Swap = ({
                     amount: toWei(values.amountTo, isResver ? tokenFrom.decimals : tokenTo.decimals).toString(),
                     amountSec: toWei(values.amountFrom, isResver ? tokenTo.decimals : tokenFrom.decimals).toString(),
                 }
-                console.log('modal data',  swapData)
+                console.log('modal data', swapData)
                 setSwapData(swapData)
             })
             .on("receipt", (r) => {
@@ -219,6 +237,7 @@ export const Swap = ({
                 setLoading(false)
             });
     }
+
 
     return (
         <div className={styles.swapWrapper}>
@@ -308,13 +327,11 @@ export const Swap = ({
                                         onChange={async (e) => {
                                             setTragger('to')
                                             setLoading(true)
-
                                             const amountOut = await pairDate._tokenInForExactTokenOut(
                                                 isResver ? tokenFrom.address : tokenTo.address,
                                                 toWei(parseFloat(e.target.value), isResver ? tokenFrom.decimals : tokenTo.decimals
                                                 ).toString())
-
-                                            props.form.change('amountFrom', weiToNum(amountOut, isResver ? tokenTo.decimals : tokenFrom.decimals))
+                                            props.form.change('amountFrom', e.target.value ? weiToNum(amountOut, isResver ? tokenTo.decimals : tokenFrom.decimals) : undefined)
                                             setLoading(false)
                                         }}
                                         after={
@@ -323,12 +340,17 @@ export const Swap = ({
                                                     {({ form }) => (
                                                         <button
                                                             className={styles.max}
-                                                            onClick={() => {
+                                                            onClick={async() => {
                                                                 const max = isResver ? token0Amount : token1Amount
                                                                 form.change(
                                                                     "amountTo",
                                                                     max
-                                                                )
+                                                                );
+                                                                const amountOut = await pairDate._tokenInForExactTokenOut(
+                                                                    isResver ? tokenFrom.address : tokenTo.address,
+                                                                    toWei(max, isResver ? tokenFrom.decimals : tokenTo.decimals
+                                                                    ).toString())
+                                                                props.form.change('amountFrom', max ? weiToNum(amountOut, isResver ? tokenTo.decimals : tokenFrom.decimals) : undefined)
                                                             }
                                                             }
                                                             type="button"
@@ -373,14 +395,15 @@ export const Swap = ({
                                         onChange={async (e) => {
                                             setTragger('from')
                                             setLoading(true)
-                                            // console.log(e.target.value)
                                             const amountOut = await pairDate._tokenInForExactTokenOut(
                                                 isResver ? tokenTo.address : tokenFrom.address,
                                                 toWei(parseFloat(e.target.value), isResver ? tokenTo.decimals : tokenFrom.decimals
                                                 ).toString())
 
-                                            props.form.change('amountTo', weiToNum(amountOut, isResver ? tokenFrom.decimals : tokenTo.decimals))
+                                            props.form.change('amountTo', e.target.value ? weiToNum(amountOut, isResver ? tokenFrom.decimals : tokenTo.decimals) : undefined )
                                             setLoading(false)
+                                            // console.log(e.target.value)
+
                                         }}
                                         after={
                                             <div className={styles.amount}>
@@ -388,12 +411,18 @@ export const Swap = ({
                                                     {({ form }) => (
                                                         <button
                                                             className={styles.max}
-                                                            onClick={() => {
+                                                            onClick={async() => {
                                                                 const max = isResver ? token1Amount : token0Amount
                                                                 form.change(
                                                                     "amountFrom",
                                                                     max
-                                                                )
+                                                                );
+                                                                const amountOut = await pairDate._tokenInForExactTokenOut(
+                                                                    isResver ? tokenTo.address : tokenFrom.address,
+                                                                    toWei(max, isResver ? tokenTo.decimals : tokenFrom.decimals
+                                                                    ).toString())
+                    
+                                                                props.form.change('amountTo', max ? weiToNum(amountOut, isResver ? tokenFrom.decimals : tokenTo.decimals) : undefined )
                                                             }
                                                             }
                                                             type="button"
@@ -417,20 +446,39 @@ export const Swap = ({
                         )}
                     </FormSpy>
                     <FormSpy>
-                        {(form) => (
-                            <PrimaryButton
-                                className={styles.submit}
-                                size="large"
-                                disabled={loading || !isEnabled}
-                                submit
-                            >
-                                {
-                                    isEnabled?
-                                    (tokenIsApprove ? 'Exchange' : `Approve ${isResver ? tokenFrom.symbol : tokenTo.symbol}`)
-                                    : 'Not Enable Now'
+                        {(form) => {
+                            const checkout = () => {
+                                if(!form?.values?.amountFrom) {
+                                    return false;
+                                } else if(!form?.values?.amountTo) {
+                                    return false;
+                                } else if(isResver) {
+                                    if(Number(form?.values?.amountTo > Number(token0Amount))) {
+                                        return false;
+                                    }
+                                } else {
+                                    if(Number(form?.values?.amountTo > Number(token1Amount))) {
+                                        return false;
+                                    }
                                 }
-                            </PrimaryButton>
-                        )}
+                                return true;
+                            }
+                            const balanceEnough = checkout();
+                            return (
+                                <PrimaryButton
+                                    className={styles.submit}
+                                    size="large"
+                                    disabled={loading || !isEnabled || !balanceEnough}
+                                    submit
+                                >
+                                    {
+                                        isEnabled ?
+                                            (tokenIsApprove ? 'Exchange' : `Approve ${isResver ? tokenFrom.symbol : tokenTo.symbol}`)
+                                            : 'Not Enable Now'
+                                    }
+                                </PrimaryButton>
+                            )
+                        }}
                     </FormSpy>
                 </div>
             </Form >

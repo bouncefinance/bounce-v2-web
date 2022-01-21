@@ -139,7 +139,7 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 						// 存额外信息字段 发post请求
 						const res = await postLbpCreate(chainId, {
 							txHash: h,
-							descriptioin: data?.description,
+							description: data?.description,
 							learnMoreLink: data?.socialLink,
 							tokenLogoUrl: data?.tokenFromImg,
 							contract: data?.tokenFrom?.address,

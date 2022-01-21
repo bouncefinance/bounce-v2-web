@@ -60,19 +60,19 @@ export const getOption = (props: {
 };
 
 export const getDateSlice = (startDate?: Date, endDate?: Date, slice = 5) => {
-	const DIFF_TIME = 1000 * 60 * 60 * 24 * 3;
+	const DIFF_TIME = 1000 * 60 * 60 * 24 * 3; // 3天
 	const startTime = (startDate || new Date()).getTime();
 	const endTime = endDate?.getTime() || startTime + DIFF_TIME;
 
 	const intervalTime = (endTime - startTime) / (slice - 1);
-	const ResTimeArray: number[] = [];
+	const resTimeArray: number[] = [];
 
 	for (let i = 0; i < slice; i++) {
 		const time = startTime + intervalTime * i;
-		ResTimeArray.push(time);
+		resTimeArray.push(time);
 	}
 
-	return ResTimeArray;
+	return resTimeArray;
 };
 
 export const getPriceSlice = async (
@@ -86,14 +86,6 @@ export const getPriceSlice = async (
 	const tokenToPrice = 3800;
 
 	if (amountTokenFrom && amountTokenTo) {
-		// console.log({
-		// 	dateSlice,
-		// 	amountTokenFrom,
-		// 	amountTokenTo,
-		// 	startWeight,
-		// 	endWeight,
-		// });
-
 		const tokenToUSD = amountTokenTo * tokenToPrice;
 		const weightUnit = (endWeight - startWeight) / dateSlice.length;
 
