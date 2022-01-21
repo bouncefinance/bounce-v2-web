@@ -139,7 +139,7 @@ export const postLbpCreate = async (
 	chainId: WEB3_NETWORKS,
 	options: {
 		txHash: string;
-		descriptioin: string;
+		description: string;
 		learnMoreLink: string;
 		tokenLogoUrl: string;
 		contract: string;

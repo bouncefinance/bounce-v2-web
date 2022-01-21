@@ -114,7 +114,7 @@ export const AuctionSettingView = ({
                 })
                 .on("receipt", (r) => {
                     // console.log("receipt", r);
-                    setOperation(OPERATION.success);
+                    setOperation(OPERATION.settingSuccess);
 
                 })
                 .on("error", (e) => {

@@ -331,8 +331,7 @@ export const Swap = ({
                                                 isResver ? tokenFrom.address : tokenTo.address,
                                                 toWei(parseFloat(e.target.value), isResver ? tokenFrom.decimals : tokenTo.decimals
                                                 ).toString())
-
-                                            props.form.change('amountFrom', weiToNum(amountOut, isResver ? tokenTo.decimals : tokenFrom.decimals))
+                                            props.form.change('amountFrom', e.target.value ? weiToNum(amountOut, isResver ? tokenTo.decimals : tokenFrom.decimals) : undefined)
                                             setLoading(false)
                                         }}
                                         after={
@@ -341,12 +340,17 @@ export const Swap = ({
                                                     {({ form }) => (
                                                         <button
                                                             className={styles.max}
-                                                            onClick={() => {
+                                                            onClick={async() => {
                                                                 const max = isResver ? token0Amount : token1Amount
                                                                 form.change(
                                                                     "amountTo",
                                                                     max
-                                                                )
+                                                                );
+                                                                const amountOut = await pairDate._tokenInForExactTokenOut(
+                                                                    isResver ? tokenFrom.address : tokenTo.address,
+                                                                    toWei(max, isResver ? tokenFrom.decimals : tokenTo.decimals
+                                                                    ).toString())
+                                                                props.form.change('amountFrom', max ? weiToNum(amountOut, isResver ? tokenTo.decimals : tokenFrom.decimals) : undefined)
                                                             }
                                                             }
                                                             type="button"
@@ -396,7 +400,7 @@ export const Swap = ({
                                                 toWei(parseFloat(e.target.value), isResver ? tokenTo.decimals : tokenFrom.decimals
                                                 ).toString())
 
-                                            props.form.change('amountTo', weiToNum(amountOut, isResver ? tokenFrom.decimals : tokenTo.decimals))
+                                            props.form.change('amountTo', e.target.value ? weiToNum(amountOut, isResver ? tokenFrom.decimals : tokenTo.decimals) : undefined )
                                             setLoading(false)
                                             // console.log(e.target.value)
 
@@ -407,12 +411,18 @@ export const Swap = ({
                                                     {({ form }) => (
                                                         <button
                                                             className={styles.max}
-                                                            onClick={() => {
+                                                            onClick={async() => {
                                                                 const max = isResver ? token1Amount : token0Amount
                                                                 form.change(
                                                                     "amountFrom",
                                                                     max
-                                                                )
+                                                                );
+                                                                const amountOut = await pairDate._tokenInForExactTokenOut(
+                                                                    isResver ? tokenTo.address : tokenFrom.address,
+                                                                    toWei(max, isResver ? tokenTo.decimals : tokenFrom.decimals
+                                                                    ).toString())
+                    
+                                                                props.form.change('amountTo', max ? weiToNum(amountOut, isResver ? tokenFrom.decimals : tokenTo.decimals) : undefined )
                                                             }
                                                             }
                                                             type="button"
@@ -436,20 +446,39 @@ export const Swap = ({
                         )}
                     </FormSpy>
                     <FormSpy>
-                        {(form) => (
-                            <PrimaryButton
-                                className={styles.submit}
-                                size="large"
-                                disabled={loading || !isEnabled}
-                                submit
-                            >
-                                {
-                                    isEnabled ?
-                                        (tokenIsApprove ? 'Exchange' : `Approve ${isResver ? tokenFrom.symbol : tokenTo.symbol}`)
-                                        : 'Not Enable Now'
+                        {(form) => {
+                            const checkout = () => {
+                                if(!form?.values?.amountFrom) {
+                                    return false;
+                                } else if(!form?.values?.amountTo) {
+                                    return false;
+                                } else if(isResver) {
+                                    if(Number(form?.values?.amountTo > Number(token0Amount))) {
+                                        return false;
+                                    }
+                                } else {
+                                    if(Number(form?.values?.amountTo > Number(token1Amount))) {
+                                        return false;
+                                    }
                                 }
-                            </PrimaryButton>
-                        )}
+                                return true;
+                            }
+                            const balanceEnough = checkout();
+                            return (
+                                <PrimaryButton
+                                    className={styles.submit}
+                                    size="large"
+                                    disabled={loading || !isEnabled || !balanceEnough}
+                                    submit
+                                >
+                                    {
+                                        isEnabled ?
+                                            (tokenIsApprove ? 'Exchange' : `Approve ${isResver ? tokenFrom.symbol : tokenTo.symbol}`)
+                                            : 'Not Enable Now'
+                                    }
+                                </PrimaryButton>
+                            )
+                        }}
                     </FormSpy>
                 </div>
             </Form >

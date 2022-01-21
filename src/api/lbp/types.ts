@@ -52,7 +52,7 @@ export interface ILBPDetail {
 	currentAmountToken0: string;
 	currentAmountToken1: string;
 	currentPrice: number;
-	descriptioin: string;
+	description: string;
 	endTs: number;
 	endWeightToken0: number;
 	endWeightToken1: number;
