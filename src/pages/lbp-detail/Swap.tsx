@@ -21,6 +21,7 @@ import { isEqualZero } from '@app/utils/validation';
 import { getTokenContract } from '@app/web3/api/bounce/erc';
 import { isLessThan } from '@app/utils/bn';
 import { LBPPairData } from './LBPPairData';
+import { useRequest } from 'ahooks';
 
 const slipConfig = [0.5, 1, 2]
 export interface ISwapparams {
@@ -48,7 +49,7 @@ export const Swap = ({
     const account = useAccount();
     const vaultContract = useMemo(() => getVaultContract(provider, chainId), [chainId, provider]);
     const lbpPairContract = useMemo(() => getLiquidityBootstrappingPoolContract(provider, POOL_ADDRESS), [provider, POOL_ADDRESS]);
-    const [rate, setRate] = useState<string | number>(0)
+    // const [rate, setRate] = useState<string | number>(0)
     const pairDate = new LBPPairData(lbpPairContract, vaultContract, POOL_ADDRESS)
 
     // Submit loading
@@ -118,20 +119,30 @@ export const Swap = ({
         }
     }
 
-    useEffect(() => {
-        (async () => {
-            const timer = setInterval(async () => {
-                const swapRate = await pairDate._tokenInForExactTokenOut(tokenFrom.address, numToWei(1, tokenFrom.decimals))
-                console.log('swapRate', swapRate)
-                setRate(weiToNum(swapRate, tokenTo.decimals))
-            }, 3000)
 
-            return () => {
-                clearInterval(timer)
-            }
-        })()
-        // setOperation(OPERATION.swapSuccess);
-    }, [])
+    // useEffect(() => {
+    //     (async () => {
+    //         const timer = setInterval(async () => {
+    //             const swapRate = await pairDate._tokenInForExactTokenOut(tokenFrom.address, numToWei(1, tokenFrom.decimals))
+    //             console.log('swapRate', swapRate)
+    //             setRate(weiToNum(swapRate, tokenTo.decimals))
+    //         }, 3000)
+
+    //         return () => {
+    //             clearInterval(timer)
+    //         }
+    //     })()
+    //     // setOperation(OPERATION.swapSuccess);
+    // }, [])
+
+    const getSwapRate = async () => {
+        const swapRate = await pairDate._tokenInForExactTokenOut(tokenFrom.address, numToWei(1, tokenFrom.decimals))
+        return weiToNum(swapRate, tokenTo.decimals)
+    }
+
+    const { data: rate } = useRequest(getSwapRate, {
+        pollingInterval: 30000,
+    });
 
     useEffect(() => {
         updateQueryApprove(isResver ? tokenFrom : tokenTo, toWei(99999999, isResver ? tokenFrom.decimals : tokenTo.decimals).toString())
@@ -210,7 +221,7 @@ export const Swap = ({
                     amount: toWei(values.amountTo, isResver ? tokenFrom.decimals : tokenTo.decimals).toString(),
                     amountSec: toWei(values.amountFrom, isResver ? tokenTo.decimals : tokenFrom.decimals).toString(),
                 }
-                console.log('modal data',  swapData)
+                console.log('modal data', swapData)
                 setSwapData(swapData)
             })
             .on("receipt", (r) => {

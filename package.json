@@ -27,6 +27,7 @@
     "@web3-react/core": "^6.1.9",
     "@web3-react/injected-connector": "^6.0.7",
     "@web3-react/walletconnect-connector": "^6.2.0",
+    "ahooks": "^3.1.7",
     "babel-plugin-import": "^1.13.3",
     "babel-plugin-storybook-csf-title": "^2.0.0",
     "bignumber.js": "^9.0.2",

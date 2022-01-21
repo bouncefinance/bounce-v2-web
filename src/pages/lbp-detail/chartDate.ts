@@ -73,7 +73,7 @@ export const getOption = (props: {
 				},
 				type: "line",
 				smooth: true,
-				color: "rgba(75, 112, 255, .5)",
+				color: "rgba(0, 0, 0, 0.2)",
 			},
 		],
 	};
