@@ -142,6 +142,7 @@ export const LBPTokenInformation: FC<ProvideTokenInformationType> = ({
 					placeholder="Select a token"
 					filter={withoutEth ? notEtherium : filterToken}
 					required
+					noManage
 				/>
 			</Label>
 			<FormSpy>

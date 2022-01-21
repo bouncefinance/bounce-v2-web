@@ -42,6 +42,7 @@ type SelectTokenType = {
 	onBlur?(): void;
 	onChange(date: string): void;
 	showArrow?: boolean;
+	noManage?: boolean;
 };
 
 export const SelectTokenView: FC<SelectTokenType & MaybeWithClassName> = ({
@@ -58,6 +59,7 @@ export const SelectTokenView: FC<SelectTokenType & MaybeWithClassName> = ({
 	onBlur,
 	error,
 	showArrow = true,
+	noManage
 }) => {
 	const { popUp, close, open } = useControlPopUp();
 
@@ -150,6 +152,7 @@ export const SelectTokenView: FC<SelectTokenType & MaybeWithClassName> = ({
 							onManage={() => setManageOn(true)}
 							name={groupName}
 							options={options}
+							noManage={noManage}
 						/>
 					) : (
 						<Manage tokenLists={tokenList} tokenListControl={tokenListControl} />
@@ -168,7 +171,7 @@ export const SelectToken: FC<
 		MaybeWithClassName & {
 			filter?(token: TokenInfo): boolean;
 		}
-> = ({ filter = passAll, ...props }) => {
+> = ({ filter = passAll, noManage, ...props }) => {
 	const tokenList = useTokenList();
 
 	const tokenListControl = useTokenListControl();
@@ -208,6 +211,7 @@ export const SelectToken: FC<
 			options={options}
 			tokenList={convertedTokensList}
 			tokenListControl={tokenListControl}
+			noManage={noManage}
 			{...props}
 		/>
 	);
