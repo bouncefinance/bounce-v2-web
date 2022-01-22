@@ -50,7 +50,8 @@ export const Swap = ({
     const vaultContract = useMemo(() => getVaultContract(provider, chainId), [chainId, provider]);
     const lbpPairContract = useMemo(() => getLiquidityBootstrappingPoolContract(provider, POOL_ADDRESS), [provider, POOL_ADDRESS]);
     // const [rate, setRate] = useState<string | number>(0)
-    const pairDate = new LBPPairData(lbpPairContract, vaultContract, POOL_ADDRESS)
+    const pairDate = new LBPPairData(lbpPairContract, vaultContract, POOL_ADDRESS);
+    const [btnText, setBtnText] = useState<string>('');
 
     // Submit loading
     const [loading, setLoading] = useState(false)
@@ -237,6 +238,36 @@ export const Swap = ({
                 setLoading(false)
             });
     }
+
+    // 判断按钮是否可用
+    const checkout = (form) => {
+        if(!form?.values?.amountFrom) {
+            return false;
+        } else if(!form?.values?.amountTo) {
+            return false;
+        } else if(isResver) {
+            if(Number(form?.values?.amountTo > Number(token0Amount))) {
+                return false;
+            }
+        } else {
+            if(Number(form?.values?.amountTo > Number(token1Amount))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    useEffect(() => {
+        if(isEnabled) {
+            if(tokenIsApprove) {
+                setBtnText('Exchange')
+            } else {
+                setBtnText(`Approve ${isResver ? tokenFrom.symbol : tokenTo.symbol}`)
+            }
+        } else {
+            setBtnText('Not Enable Now')
+        }
+    }, [isEnabled, tokenIsApprove, isResver, tokenFrom, tokenTo])
 
 
     return (
@@ -447,23 +478,7 @@ export const Swap = ({
                     </FormSpy>
                     <FormSpy>
                         {(form) => {
-                            const checkout = () => {
-                                if(!form?.values?.amountFrom) {
-                                    return false;
-                                } else if(!form?.values?.amountTo) {
-                                    return false;
-                                } else if(isResver) {
-                                    if(Number(form?.values?.amountTo > Number(token0Amount))) {
-                                        return false;
-                                    }
-                                } else {
-                                    if(Number(form?.values?.amountTo > Number(token1Amount))) {
-                                        return false;
-                                    }
-                                }
-                                return true;
-                            }
-                            const balanceEnough = checkout();
+                            const balanceEnough = checkout(form);
                             return (
                                 <PrimaryButton
                                     className={styles.submit}
@@ -471,11 +486,7 @@ export const Swap = ({
                                     disabled={loading || !isEnabled || !balanceEnough}
                                     submit
                                 >
-                                    {
-                                        isEnabled ?
-                                            (tokenIsApprove ? 'Exchange' : `Approve ${isResver ? tokenFrom.symbol : tokenTo.symbol}`)
-                                            : 'Not Enable Now'
-                                    }
+                                    {btnText}
                                 </PrimaryButton>
                             )
                         }}
