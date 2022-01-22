@@ -7,7 +7,7 @@ import { EmptyData } from '@app/modules/emptyData/EmptyData';
 import { Loading } from '@app/modules/loading/Loading';
 import { Pagination } from '@app/modules/pagination';
 import { LBPPairData } from '@app/pages/lbp-detail/LBPPairData';
-import { fromWei, weiToNum } from '@app/utils/bn/wei';
+import { fromWei, numToWei, weiToNum } from '@app/utils/bn/wei';
 import { getProgress, POOL_STATUS } from '@app/utils/pool';
 import { getIsOpen } from '@app/utils/time';
 import { getLiquidityBootstrappingPoolContract, getVaultContract } from '@app/web3/api/bounce/lbp';
@@ -97,7 +97,7 @@ export const LBPAuctionList = ({ type }: { type: string }) => {
 
         const amountOut = await pairDate._tokenInForExactTokenOut(
             pool?.token0,
-            pool?.currentAmountToken0
+            numToWei(1, pool.token0Decimals)        // 计算的是单价，不是总价
         )
         const price = new BigNumber(weiToNum(amountOut, pool.token1Decimals)).multipliedBy(currentPrice).dp(4).toString();     //amountOut乘以token1的价格
         return price;
