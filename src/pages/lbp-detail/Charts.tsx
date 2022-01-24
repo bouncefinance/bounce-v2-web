@@ -68,11 +68,16 @@ export const Charts: FC<IChartsParams> = ({
             let __beforeDateSlice = [];
             let __beforeSlice: any[] = [];
             let _beforeSlice = [];
+            beforeSliceData = await fetchLbpChartData(chainId, detailData.address);
+
+            const weights = await pairDate.getTokensWeight()
+            const currentWeight = Number(weiToNum(weights[detailData.isCorrectOrder === CORRECTORDER.true ? 0 : 1], detailData.token0Decimals)) * 100
 
             // 池子开始后才开始请求数据
-            if(new Date().getTime() > startDate.getTime()) {
+            if (new Date().getTime() > startDate.getTime()) {
+                const thisEndDate = Date.now() < endDate.getTime() ? new Date() : endDate
+                const thisEndWeight = Date.now() < endDate.getTime() ? currentWeight : endWeight
                 // console.log('detailData', tokenToPrice, Number(weiToNum(detailData.startAmountToken0, detailData.token0Decimals)), detailData.startWeightToken0 * 100)
-                beforeSliceData = await fetchLbpChartData(chainId, detailData.address);
                 // const BEFORE_SLICE = Math.ceil((new Date().getTime() - new Date(startDate).getTime()) / 3600000) - 1
                 __beforeDateSlice = beforeSliceData.map(item => {
                     return item.timestamp * 1000
@@ -80,33 +85,40 @@ export const Charts: FC<IChartsParams> = ({
                 __beforeSlice = beforeSliceData.map(item => {
                     return item.price
                 })
-    
+
                 if (!__beforeSlice.length) {
                     const middenDot = getTokenFromPriceByWeight(
                         tokenToPrice * Number(weiToNum(detailData.startAmountToken1, detailData.token1Decimals)),
                         Number(weiToNum(detailData.startAmountToken0, detailData.token0Decimals)),
-                        (startWeight + endWeight) / 2
+                        (startWeight + thisEndWeight) / 2
                     )
                     __beforeSlice.push(middenDot)
-                    __beforeDateSlice.push((startDate.getTime() + endDate.getTime()) / 2)
+                    __beforeDateSlice.push((startDate.getTime() + thisEndDate.getTime()) / 2)
                 }
-    
+
                 _beforeSlice = [startDot, ...__beforeSlice]
-    
+
                 console.log('__beforeDateSlice', __beforeDateSlice)
             }
 
             // console.log('beforeDateSlice', beforeDateSlice)
             // const _beforeSlice: any[] = beforeDateSlice.fill(0.1)
-            const weights = await pairDate.getTokensWeight()
-            const currentWeight = Number(weiToNum(weights[detailData.isCorrectOrder === CORRECTORDER.true ? 0 : 1], detailData.token0Decimals)) * 100
+
             const amounts = await pairDate.getTokensAmount()
             // console.log('amounts', amounts)
             const currentAmountTokenFrom = detailData.isCorrectOrder === CORRECTORDER.true ? Number(weiToNum(amounts[0], detailData.token0Decimals)) : Number(weiToNum(amounts[1], detailData.token0Decimals))
             const currentAmountTokenTo = detailData.isCorrectOrder === CORRECTORDER.true ? Number(weiToNum(amounts[1], detailData.token1Decimals)) : Number(weiToNum(amounts[0], detailData.token1Decimals))
             // const AFTER_SLICE = Math.ceil((new Date(endDate).getTime() - new Date().getTime()) / 3600000)
-            const AFTER_SLICE = Date.now() > endDate.getTime() ? 0 : 5
-           
+
+            const AFTER_SLICE = (() => {
+                if (Date.now() > startDate.getTime() && Date.now() < endDate.getTime() && !beforeSliceData.length) {
+                    // 没有数据的情况下，保证实线和虚线的横坐标分段一致才能画出平滑的曲线
+                    const diffTime = (Date.now() - startDate.getTime()) / 2
+                    return Math.ceil((endDate.getTime() - Date.now()) / diffTime)
+                }
+
+                return Date.now() > endDate.getTime() ? 0 : 5
+            })()
 
             // console.log('beforeSlice', {afterDateSlice, currentAmountTokenFrom, currentAmountTokenTo, currentWeight, endWeight, tokenToPrice})
             let _beforeDateSlice = [];
@@ -114,13 +126,13 @@ export const Charts: FC<IChartsParams> = ({
             let afterSlice = [];
             let afterDateSlice = [];
             let _afterSliceData = [];
-            if(new Date().getTime() > startDate.getTime()) {
+            if (new Date().getTime() > startDate.getTime()) {
                 afterDateSlice = getDateSlice(new Date(), endDate, AFTER_SLICE)
                 _afterSliceData = await getPriceSlice(afterDateSlice, currentAmountTokenFrom, currentAmountTokenTo, currentWeight, endWeight, tokenToPrice)
-                console.log('_afterSliceData', _afterSliceData, afterDateSlice)
+                // console.log('_afterSliceData', _afterSliceData, afterDateSlice)
                 _beforeDateSlice = [startDate.getTime(), ...__beforeDateSlice, afterDateSlice[0] || endDate.getTime()]
                 beforeSlice = [..._beforeSlice, ...[..._afterSliceData].fill('_', 0, _afterSliceData.length - 1)]
-                
+
             } else {
                 afterDateSlice = getDateSlice(startDate, endDate, AFTER_SLICE)
                 _afterSliceData = await getPriceSlice(afterDateSlice, currentAmountTokenFrom, currentAmountTokenTo, currentWeight, endWeight, tokenToPrice)
@@ -133,13 +145,13 @@ export const Charts: FC<IChartsParams> = ({
 
             // const SLICE = Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / 3600000)
             let dateSlice;
-            if(new Date().getTime() > startDate.getTime()) {
+            if (new Date().getTime() > startDate.getTime()) {
                 dateSlice = getDateSlice(new Date(), endDate, AFTER_SLICE)
                 dateSlice?.shift()      // 删除第一个元素
             } else {
                 dateSlice = getDateSlice(startDate, endDate, AFTER_SLICE)
             }
-            
+
             console.log('beforeSlice', dateSlice)
             setDateSlice([..._beforeDateSlice, ...dateSlice])
             console.log('date', [..._beforeDateSlice, ...dateSlice])
