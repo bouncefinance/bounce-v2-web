@@ -1,5 +1,6 @@
 import moment from "moment";
 
+// echart 配置项
 export const getOption = (props: {
 	dateSlice: any[];
 	// priceSlice: any[];
@@ -9,14 +10,14 @@ export const getOption = (props: {
 }) => {
 	return {
 		xAxis: {
-			data: props.dateSlice.map((i) => moment(i).format("D MMM, HH:00")),
+			data: props.dateSlice.map((i) => moment(i).format("D MMM, HH:mm")),
 			axisLabel: {
 				formatter: (value: string) => {
 					if (props.model === "day") {
 						return moment(value).format("DD MMM");
 					}
 
-					return moment(value).format("HH:00");
+					return moment(value).format("HH:mm");
 				},
 			},
 		},
@@ -79,8 +80,9 @@ export const getOption = (props: {
 	};
 };
 
+// 分割时间成五段
 export const getDateSlice = (startDate?: Date, endDate?: Date, slice = 5) => {
-	const DIFF_TIME = 1000 * 60 * 60 * 24 * 3;
+	const DIFF_TIME = 1000 * 60 * 60 * 24 * 3; // 三天
 	const startTime = (startDate || new Date()).getTime();
 	const endTime = endDate?.getTime() || startTime + DIFF_TIME;
 

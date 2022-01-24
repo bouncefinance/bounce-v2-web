@@ -8,6 +8,7 @@ import { getLiquidityBootstrappingPoolContract, getVaultContract } from "@app/we
 import { LBPPairData } from "./LBPPairData";
 import { CORRECTORDER, ILBPDetail } from "@app/api/lbp/types";
 import { weiToNum } from "@app/utils/bn/wei";
+import moment from "moment";
 
 // const SLICE = 10
 
@@ -34,12 +35,20 @@ export const Charts: FC<IChartsParams> = ({
     detailData
 }) => {
     const ref = useRef<HTMLDivElement | null>(null)
-    const [dateSlice, setDateSlice] = useState(getDateSlice())
+    const [dateSlice, setDateSlice] = useState(getDateSlice(startDate, endDate))
     const [beforeSlice, setBeforeSlice] = useState([])
     const [afterSlice, setAfterSlice] = useState([])
     const chainId = useChainId()
     const provider = useWeb3Provider();
 
+    useEffect(() => {
+        dateSlice?.map((item, index) => {
+            console.log(index, moment(item).format('YYYY-MM-DD HH:mm:ss'))
+        })
+
+    }, [dateSlice])
+
+    // 获取实时价格的实例
     const vaultContract = useMemo(() => getVaultContract(provider, chainId), [chainId, provider]);
     const lbpPairContract = useMemo(() => getLiquidityBootstrappingPoolContract(provider, detailData.address), [provider, detailData.address]);
     const pairDate = new LBPPairData(lbpPairContract, vaultContract, detailData.address)
@@ -55,28 +64,37 @@ export const Charts: FC<IChartsParams> = ({
             const startDot = getTokenFromPriceByWeight(tokenToPrice * Number(weiToNum(detailData.startAmountToken1, detailData.token1Decimals)), Number(weiToNum(detailData.startAmountToken0, detailData.token0Decimals)), startWeight)
             const endDot = getTokenFromPriceByWeight(tokenToPrice * Number(weiToNum(detailData.currentAmountToken1, detailData.token1Decimals)), Number(weiToNum(detailData.currentAmountToken0, detailData.token0Decimals)), endWeight)
 
-            // console.log('detailData', tokenToPrice, Number(weiToNum(detailData.startAmountToken0, detailData.token0Decimals)), detailData.startWeightToken0 * 100)
-            const beforeSliceData = await fetchLbpChartData(chainId, detailData.address)
-            // const BEFORE_SLICE = Math.ceil((new Date().getTime() - new Date(startDate).getTime()) / 3600000) - 1
-            const __beforeDateSlice = beforeSliceData.map(item => {
-                return item.timestamp
-            })
+            let beforeSliceData = [];
+            let __beforeDateSlice = [];
+            let __beforeSlice: any[] = [];
+            let _beforeSlice = [];
 
-            const __beforeSlice: any[] = beforeSliceData.map(item => {
-                return item.price
-            })
-
-            if (!__beforeSlice.length) {
-                const middenDot = getTokenFromPriceByWeight(
-                    tokenToPrice * Number(weiToNum(detailData.startAmountToken1, detailData.token1Decimals)),
-                    Number(weiToNum(detailData.startAmountToken0, detailData.token0Decimals)),
-                    (startWeight + endWeight) / 2
-                )
-                __beforeSlice.push(middenDot)
-                __beforeDateSlice.push((startDate.getTime()+ endDate.getTime()) / 2)
+            // 池子开始后才开始请求数据
+            if(new Date().getTime() > startDate.getTime()) {
+                // console.log('detailData', tokenToPrice, Number(weiToNum(detailData.startAmountToken0, detailData.token0Decimals)), detailData.startWeightToken0 * 100)
+                beforeSliceData = await fetchLbpChartData(chainId, detailData.address);
+                // const BEFORE_SLICE = Math.ceil((new Date().getTime() - new Date(startDate).getTime()) / 3600000) - 1
+                __beforeDateSlice = beforeSliceData.map(item => {
+                    return item.timestamp * 1000
+                })
+                __beforeSlice = beforeSliceData.map(item => {
+                    return item.price
+                })
+    
+                if (!__beforeSlice.length) {
+                    const middenDot = getTokenFromPriceByWeight(
+                        tokenToPrice * Number(weiToNum(detailData.startAmountToken1, detailData.token1Decimals)),
+                        Number(weiToNum(detailData.startAmountToken0, detailData.token0Decimals)),
+                        (startWeight + endWeight) / 2
+                    )
+                    __beforeSlice.push(middenDot)
+                    __beforeDateSlice.push((startDate.getTime() + endDate.getTime()) / 2)
+                }
+    
+                _beforeSlice = [startDot, ...__beforeSlice]
+    
+                console.log('__beforeDateSlice', __beforeDateSlice)
             }
-
-            const _beforeSlice = [startDot, ...__beforeSlice]
 
             // console.log('beforeDateSlice', beforeDateSlice)
             // const _beforeSlice: any[] = beforeDateSlice.fill(0.1)
@@ -88,21 +106,41 @@ export const Charts: FC<IChartsParams> = ({
             const currentAmountTokenTo = detailData.isCorrectOrder === CORRECTORDER.true ? Number(weiToNum(amounts[1], detailData.token1Decimals)) : Number(weiToNum(amounts[0], detailData.token1Decimals))
             // const AFTER_SLICE = Math.ceil((new Date(endDate).getTime() - new Date().getTime()) / 3600000)
             const AFTER_SLICE = Date.now() > endDate.getTime() ? 0 : 5
-            const afterDateSlice = getDateSlice(new Date(), endDate, AFTER_SLICE)
-            const _afterSliceData = await getPriceSlice(afterDateSlice, currentAmountTokenFrom, currentAmountTokenTo, currentWeight, endWeight, tokenToPrice)
+           
 
             // console.log('beforeSlice', {afterDateSlice, currentAmountTokenFrom, currentAmountTokenTo, currentWeight, endWeight, tokenToPrice})
-            const _beforeDateSlice = [startDate.getTime(), ...__beforeDateSlice, afterDateSlice[0] || endDate.getTime()]
-            const beforeSlice: any[] = [..._beforeSlice, ...[..._afterSliceData].fill('_', 0, _afterSliceData.length)]
-            const afterSlice = [...[..._beforeSlice].fill('_', 0, _beforeSlice.length), ..._afterSliceData]
+            let _beforeDateSlice = [];
+            let beforeSlice: any[] = [];
+            let afterSlice = [];
+            let afterDateSlice = [];
+            let _afterSliceData = [];
+            if(new Date().getTime() > startDate.getTime()) {
+                afterDateSlice = getDateSlice(new Date(), endDate, AFTER_SLICE)
+                _afterSliceData = await getPriceSlice(afterDateSlice, currentAmountTokenFrom, currentAmountTokenTo, currentWeight, endWeight, tokenToPrice)
+                console.log('_afterSliceData', _afterSliceData, afterDateSlice)
+                _beforeDateSlice = [startDate.getTime(), ...__beforeDateSlice, afterDateSlice[0] || endDate.getTime()]
+                beforeSlice = [..._beforeSlice, ...[..._afterSliceData].fill('_', 0, _afterSliceData.length - 1)]
+                
+            } else {
+                afterDateSlice = getDateSlice(startDate, endDate, AFTER_SLICE)
+                _afterSliceData = await getPriceSlice(afterDateSlice, currentAmountTokenFrom, currentAmountTokenTo, currentWeight, endWeight, tokenToPrice)
+            }
+            afterSlice = [...[..._beforeSlice].fill('_', 0, _beforeSlice.length), ..._afterSliceData]
             beforeSlice[_beforeSlice.length] = _afterSliceData[0] || endDot
-            // console.log('beforeSlice', beforeSlice)
 
             setBeforeSlice(beforeSlice)
             setAfterSlice(afterSlice)
 
             // const SLICE = Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / 3600000)
-            const dateSlice = getDateSlice(new Date(), endDate, AFTER_SLICE)
+            let dateSlice;
+            if(new Date().getTime() > startDate.getTime()) {
+                dateSlice = getDateSlice(new Date(), endDate, AFTER_SLICE)
+                dateSlice?.shift()      // 删除第一个元素
+            } else {
+                dateSlice = getDateSlice(startDate, endDate, AFTER_SLICE)
+            }
+            
+            console.log('beforeSlice', dateSlice)
             setDateSlice([..._beforeDateSlice, ...dateSlice])
             console.log('date', [..._beforeDateSlice, ...dateSlice])
         })()
@@ -112,11 +150,11 @@ export const Charts: FC<IChartsParams> = ({
     useEffect(() => {
         if (ref && ref.current) {
             const myChart = echarts.init(ref.current);
-            myChart.setOption(getOption({
-                dateSlice: dateSlice,
+            myChart.setOption(getOption({   // echart 基本配置项
+                dateSlice: dateSlice,   // 横坐标
                 // priceSlice: priceSlice,
-                beforeSlice: beforeSlice,
-                afterSlice: afterSlice,
+                beforeSlice: beforeSlice,   // 实线部分（1.时间已过，没有交易  2. 时间已过，有交易）
+                afterSlice: afterSlice,     // 虚线部分（未到时间预测的价格）
                 model: (dateSlice.length >= 2 && dateSlice[dateSlice.length - 1] - dateSlice[0] > 1000 * 60 * 60 * 24) ? 'day' : 'hour'
             }))
         }
