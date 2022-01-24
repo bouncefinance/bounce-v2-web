@@ -4,8 +4,8 @@ import { OTC_TYPE } from "@app/api/otc/const";
 import { Layout } from "@app/layout";
 import NoSsr from "@app/modules/no-ssr/NoSsr";
 import { RequireConnectedWallet } from "@app/modules/require-connected-wallet";
-import { pageWithLayout } from "@app/utils/pageInLayout";
 import { CreateLBP } from "@app/pages/create-lbp";
+import { pageWithLayout } from "@app/utils/pageInLayout";
 
 const LBPCreatePage = pageWithLayout(
 	() => {
@@ -13,17 +13,17 @@ const LBPCreatePage = pageWithLayout(
 		const { type } = router.query;
 
 		return (
-			<NoSsr>
-				<RequireConnectedWallet>
-					<CreateLBP />
-				</RequireConnectedWallet>
-			</NoSsr>
+			<RequireConnectedWallet>
+				<CreateLBP />
+			</RequireConnectedWallet>
 		);
 	},
 	({ children }) => (
-		<Layout title="" description="">
-			{children}
-		</Layout>
+		<NoSsr>
+			<Layout title="" description="">
+				{children}
+			</Layout>
+		</NoSsr>
 	)
 );
 

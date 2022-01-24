@@ -6,16 +6,14 @@ import { pageWithLayout } from "@app/utils/pageInLayout";
 
 const GovernancePage = pageWithLayout(
 	() => {
-		return (
-			<NoSsr>
-				<Governance />
-			</NoSsr>
-		);
+		return <Governance />;
 	},
 	({ children }) => (
-		<Layout title="" description="">
-			{children}
-		</Layout>
+		<NoSsr>
+			<Layout title="" description="">
+				{children}
+			</Layout>
+		</NoSsr>
 	)
 );
 

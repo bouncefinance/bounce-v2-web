@@ -35,17 +35,17 @@ const ProposalViewPage = pageWithLayout(
 		}
 
 		return (
-			<NoSsr>
-				<RequireConnectedWallet>
-					<ProposalDetail proposalIndex={+index} proposalId={String(id)} />
-				</RequireConnectedWallet>
-			</NoSsr>
+			<RequireConnectedWallet>
+				<ProposalDetail proposalIndex={+index} proposalId={String(id)} />
+			</RequireConnectedWallet>
 		);
 	},
 	({ children }) => (
-		<Layout title="" description="">
-			{children}
-		</Layout>
+		<NoSsr>
+			<Layout title="" description="">
+				{children}
+			</Layout>
+		</NoSsr>
 	)
 );
 
