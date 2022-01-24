@@ -7,17 +7,17 @@ import { pageWithLayout } from "@app/utils/pageInLayout";
 const UpcomingLBPPage = pageWithLayout(
 	() => {
 		return (
-			<NoSsr>
-				<RequireConnectedWallet>
-					<LbpView type="upcoming" />
-				</RequireConnectedWallet>
-			</NoSsr>
+			<RequireConnectedWallet>
+				<LbpView type="upcoming" />
+			</RequireConnectedWallet>
 		);
 	},
 	({ children }) => (
-		<Layout title="" description="">
-			{children}
-		</Layout>
+		<NoSsr>
+			<Layout title="" description="">
+				{children}
+			</Layout>
+		</NoSsr>
 	)
 );
 

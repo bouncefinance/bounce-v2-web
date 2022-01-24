@@ -7,17 +7,17 @@ import { pageWithLayout } from "@app/utils/pageInLayout";
 const CreateProposalPage = pageWithLayout(
 	() => {
 		return (
-			<NoSsr>
-				<RequireConnectedWallet>
-					<CreateProposal />
-				</RequireConnectedWallet>
-			</NoSsr>
+			<RequireConnectedWallet>
+				<CreateProposal />
+			</RequireConnectedWallet>
 		);
 	},
 	({ children }) => (
-		<Layout title="" description="">
-			{children}
-		</Layout>
+		<NoSsr>
+			<Layout title="" description="">
+				{children}
+			</Layout>
+		</NoSsr>
 	)
 );
 

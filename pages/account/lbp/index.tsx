@@ -7,18 +7,18 @@ import { pageWithLayout } from "@app/utils/pageInLayout";
 const LBPPage = pageWithLayout(
 	() => {
 		return (
-			<NoSsr>
-				<RequireConnectedWallet>
-					<Account type="lbp" />
-				</RequireConnectedWallet>
-			</NoSsr>
+			<RequireConnectedWallet>
+				<Account type="lbp" />
+			</RequireConnectedWallet>
 		);
 	},
 	({ children }) => (
-		<Layout title="" description="">
-			{children}
-		</Layout>
+		<NoSsr>
+			<Layout title="" description="">
+				{children}
+			</Layout>
+		</NoSsr>
 	)
 );
 
-export default LBPPage
+export default LBPPage;
