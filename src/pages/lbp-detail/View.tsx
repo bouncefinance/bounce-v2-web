@@ -1,5 +1,5 @@
 import classnames from "classnames";
-import { FC, ReactChild, ReactNode, useCallback } from "react";
+import { FC, ReactChild, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 
 import { CopyAddress } from "@app/modules/copy-to-clipboard";
 import { Currency } from "@app/modules/currency";
@@ -26,6 +26,10 @@ import { getCloseDuration } from "@app/modules/auction-card/Card";
 import { Tooltip } from "@material-ui/core";
 import moment from "moment";
 import { numberFormat } from "@app/utils/toThousands";
+import { useChainId, useWeb3Provider } from "@app/web3/hooks/use-web3";
+import { getVaultContract } from "@app/web3/api/bounce/lbp";
+import { VolumeTokens } from "@app/web3/const/volumeTokens";
+import { fetchTokenPrice } from "@app/api/lbp/api";
 
 export const DurationTooltip = ({ startTs, endTs }: { startTs: number, endTs: number }) => {
 	return <div className={styles.durationTime}>
@@ -67,7 +71,7 @@ export const View: FC<LBPDetailViewType> = ({
 	children, id, name, status, openAt, closeAt, onZero, totalVolume, liquidity, tokenSold,
 	extension, onBack, detailData
 }) => {
-
+	const [tokenToPrice, setTokenToPrice] = useState<number>(1);
 	const LBPSTATUS: Record<POOL_STATUS, ReactNode> = {
 		[POOL_STATUS.COMING]: (
 			<span className={styles.lbpComing}>Start in <Timer timer={openAt} onZero={onZero} /> </span>
@@ -92,6 +96,24 @@ export const View: FC<LBPDetailViewType> = ({
 			return `${Math.floor(diffTime / ONEDAY)} ${Math.floor(diffTime / ONEDAY) > 1 ? 'Days' : 'Day'}`
 		}
 	}, [openAt, closeAt])
+	const provider = useWeb3Provider();
+	const chainId = useChainId();
+	const vaultContract = useMemo(() => getVaultContract(provider, chainId), [chainId, provider]);  // 取amount  
+
+	useEffect(() => {
+		(async () => {
+			const result = VolumeTokens?.some(item => item?.address?.toLocaleLowerCase() === detailData?.token1);
+			let current: number;
+			if (!result) {
+				const { data: priceData } = await fetchTokenPrice(chainId, detailData?.token1);
+				current = Number(priceData?.currentPrice);
+			} else {
+				current = 1;
+			}
+			setTokenToPrice(current)
+		})()
+	}, [provider, chainId, vaultContract, detailData])
+
 
 	return (
 		<section className={styles.component}>
@@ -154,7 +176,7 @@ export const View: FC<LBPDetailViewType> = ({
 										startDate={new Date(detailData.startTs * 1000)}
 										endDate={new Date(detailData.endTs * 1000)}
 										// 这里要取外部预言机的价格
-										tokenToPrice={1}
+										tokenToPrice={tokenToPrice}
 										detailData={detailData}
 									/>
 								}

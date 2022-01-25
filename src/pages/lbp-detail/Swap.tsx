@@ -24,6 +24,8 @@ import { LBPPairData } from './LBPPairData';
 import { useRequest } from 'ahooks';
 import { CORRECTORDER, ILBPDetail } from '@app/api/lbp/types';
 import { getPriceSlice } from './chartDate';
+import { VolumeTokens } from '@app/web3/const/volumeTokens';
+import { fetchTokenPrice } from '@app/api/lbp/api';
 
 const slipConfig = [0.5, 1, 2]
 export interface ISwapparams {
@@ -281,10 +283,17 @@ export const Swap = ({
             const weights = await pairDate.getTokensWeight()
             const currentWeight = Number(weiToNum(weights[detailData.isCorrectOrder === CORRECTORDER.true ? 0 : 1], detailData.token0Decimals)) * 100;
             const endWeight = detailData.endWeightToken0 * 100;
-            const tokenToPrice = 1;
+            const result = VolumeTokens?.some(item => item?.address?.toLocaleLowerCase() === detailData?.token1);
+			let tokenToPrice: number;
+			if (!result) {
+				const { data: priceData } = await fetchTokenPrice(chainId, detailData?.token1);
+				tokenToPrice = Number(priceData?.currentPrice);
+			} else {
+				tokenToPrice = 1;
+			}
     
             const current = await getPriceSlice([new Date().getTime()], currentAmountTokenFrom, currentAmountTokenTo, currentWeight, endWeight, tokenToPrice)
-            setCurrentPrice(current)
+            setCurrentPrice(current)		
         })()
     }, [pairDate, detailData])
 

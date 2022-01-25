@@ -25,7 +25,11 @@ export class LBPPairData {
 	}
 
 	async getPoolIdByte32() {
-		return this.poolId_byte32 || ((await this.pairContract.methods.getPoolId().call()) as string);
+		try {
+			return this.poolId_byte32 || ((await this.pairContract.methods.getPoolId().call()) as string);
+		} catch (err) {
+			return Promise.reject(`getPoolIdByte32 error: ${err}`);
+		}
 	}
 
 	async getTokensWeight() {

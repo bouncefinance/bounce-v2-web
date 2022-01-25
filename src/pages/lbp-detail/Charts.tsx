@@ -208,7 +208,7 @@ export const Charts: FC<IChartsParams> = ({
 			setDateSlice([..._beforeDateSlice, ...dateSlice]);
 			console.log("date", [..._beforeDateSlice, ...dateSlice]);
 		})();
-	}, [amountTokenFrom, amountTokenTo, startWeight, endWeight, chainId]);
+	}, [amountTokenFrom, amountTokenTo, startWeight, endWeight, chainId, tokenToPrice]);
 
 	useEffect(() => {
 		if (ref && ref.current) {
