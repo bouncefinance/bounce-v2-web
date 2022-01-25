@@ -16,7 +16,7 @@ import { approveLbpVault, FundManagement, getBounceProxyContract, getLbpVaultAll
 import { useAccount, useChainId, useWeb3Provider } from '@app/web3/hooks/use-web3';
 import { OPERATION } from './LBPDetail';
 import { getUserDate } from '../create-lbp/createLBP';
-import { numToWei, toWei, unlimitedAuthorization, weiToNum } from '@app/utils/bn/wei';
+import { fromWei, numToWei, toWei, unlimitedAuthorization, weiToNum } from '@app/utils/bn/wei';
 import { isEqualZero } from '@app/utils/validation';
 import { getTokenContract } from '@app/web3/api/bounce/erc';
 import { isLessThan } from '@app/utils/bn';
@@ -24,6 +24,8 @@ import { LBPPairData } from './LBPPairData';
 import { useRequest } from 'ahooks';
 import { CORRECTORDER, ILBPDetail } from '@app/api/lbp/types';
 import { getPriceSlice } from './chartDate';
+import { VolumeTokens } from '@app/web3/const/volumeTokens';
+import { fetchTokenPrice } from '@app/api/lbp/api';
 
 const slipConfig = [0.5, 1, 2]
 export interface ISwapparams {
@@ -281,10 +283,17 @@ export const Swap = ({
             const weights = await pairDate.getTokensWeight()
             const currentWeight = Number(weiToNum(weights[detailData.isCorrectOrder === CORRECTORDER.true ? 0 : 1], detailData.token0Decimals)) * 100;
             const endWeight = detailData.endWeightToken0 * 100;
-            const tokenToPrice = 1;
+            const result = VolumeTokens?.some(item => item?.address?.toLocaleLowerCase() === detailData?.token1?.toLocaleLowerCase());
+			let tokenToPrice: number;
+			if (!result) {
+				const { data: priceData } = await fetchTokenPrice(chainId, detailData?.token1);
+				tokenToPrice = Number(priceData?.currentPrice);
+			} else {
+				tokenToPrice = 1;
+			}
     
             const current = await getPriceSlice([new Date().getTime()], currentAmountTokenFrom, currentAmountTokenTo, currentWeight, endWeight, tokenToPrice)
-            setCurrentPrice(current)
+            setCurrentPrice(current)		
         })()
     }, [pairDate, detailData])
 
@@ -380,7 +389,7 @@ export const Swap = ({
                                             const amountOut = await pairDate._tokenInForExactTokenOut(
                                                 isResver ? tokenFrom.address : tokenTo.address,
                                                 toWei(parseFloat(e.target.value), isResver ? tokenFrom.decimals : tokenTo.decimals
-                                                ).toString())
+                                                ).toString())                                        
                                             props.form.change('amountFrom', e.target.value ? weiToNum(amountOut, isResver ? tokenTo.decimals : tokenFrom.decimals) : undefined)
                                             setLoading(false)
                                         }}

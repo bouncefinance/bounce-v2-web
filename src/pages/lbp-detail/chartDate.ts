@@ -26,11 +26,12 @@ export const getOption = ({
 			pieces: [
 				{ lt: 0, color: "rgba(75, 112, 255, 1)" },
 				{
-					lte: beforeSlice.length,
+					lte: beforeSlice.length - 1,
 					color: "rgba(75, 112, 255, 1)",
 				},
 				{
-					gt: beforeSlice.length,
+					gte: beforeSlice.length - 1,
+					lte: datas.length,
 					color: "rgba(0,0,0,0.2)",
 				},
 			],
@@ -69,7 +70,6 @@ export const getOption = ({
 			},
 		],
 	};
-	console.log("===> getOptions:", beforeSlice, afterSlice, config);
 
 	return config;
 };
@@ -80,15 +80,15 @@ export const getDateSlice = (startDate?: Date, endDate?: Date, slice = 5) => {
 	const startTime = (startDate || new Date()).getTime();
 	const endTime = endDate?.getTime() || startTime + DIFF_TIME;
 
-	const intervalTime = (endTime - startTime) / (slice - 1);
-	const ResTimeArray: number[] = [];
+	const intervalTime = (endTime - startTime) / slice;
+	const resTimeArray: number[] = [];
 
-	for (let i = 0; i < slice; i++) {
+	for (let i = 0; i < slice + 1; i++) {
 		const time = startTime + intervalTime * i;
-		ResTimeArray.push(parseInt(time + ""));
+		resTimeArray.push(parseInt(time + ""));
 	}
 
-	return ResTimeArray;
+	return resTimeArray;
 };
 
 export const getPriceSlice = async (
