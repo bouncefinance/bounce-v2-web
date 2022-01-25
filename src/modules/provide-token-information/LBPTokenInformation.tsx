@@ -81,11 +81,17 @@ export const LBPTokenInformation: FC<ProvideTokenInformationType> = ({
 		[]
 	);
 
-	// lbp select token过滤价值币(DAI, USDC, WETH)
+	// lbp select token只显示价值币(DAI, USDC, WETH)
 	const filterToken = useCallback(
 		(token: TokenInfo) =>  filterPopularToken?.some((v) => v.address?.toLocaleLowerCase() === token?.address?.toLocaleLowerCase()),
 		[]
 	);
+	// 过滤掉不显示价值币（DAI, USDC, WETH）
+	const filterLaunchToken = useCallback(
+		(token: TokenInfo) =>  filterPopularToken.every((item) => item?.address !== token.address),
+		[]
+	);
+	console.log('后', filterLaunchToken)
 	const [tokenFromImg, setTokenFromImg] = useState(initialState.tokenFromUrl)
 	const chainId = useChainId();
 
@@ -106,7 +112,7 @@ export const LBPTokenInformation: FC<ProvideTokenInformationType> = ({
 				<SelectTokenField
 					name="tokenFrom"
 					placeholder="Select a token"
-					filter={withoutEth ? notEtherium : undefined}
+					filter={withoutEth ? notEtherium : filterLaunchToken}
 					required
 				/>
 				{address && <NavLink
@@ -142,6 +148,7 @@ export const LBPTokenInformation: FC<ProvideTokenInformationType> = ({
 					placeholder="Select a token"
 					filter={withoutEth ? notEtherium : filterToken}
 					required
+					noManage
 				/>
 			</Label>
 			<FormSpy>

@@ -87,7 +87,7 @@ export const Layout: FC<LayoutType> = ({
 	};
 
 	useEffect(() => {
-		checkIP();
+		// checkIP();
 	}, [router]);
 
 	return (

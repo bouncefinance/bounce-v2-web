@@ -12,6 +12,7 @@ import { RightArrow2 } from "@app/ui/icons/arrow-right-2";
 import { fromWei } from "@app/utils/bn/wei";
 import {
     composeValidators,
+    isEnoughBalance,
     isEqualZero,
     isFromToTokensDifferent,
     isValidWei,
@@ -105,54 +106,61 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
             <div className={styles.container}>
                 <div className={styles.left}>
                     <FormSpy subscription={{ values: true }}>
-                        {(props) => (
-                            <Label
-                                Component="label"
-                                className={styles.row}
-                                label="Launch Token Amount"
-                                after={
-                                    <span className={styles.balance}>
-                                        Balance: {newBalanceFrom} <Symbol token={props.values.tokenTo} />
-                                    </span>
-                                }
-                            >
-                                <TextField
-                                    type="number"
-                                    name="amountFrom"
-                                    placeholder="0.00"
-                                    step={FLOAT}
-                                    after={
-                                        <div className={styles.amount}>
-                                            <FormSpy>
-                                                {({ form }) => (
-                                                    <button
-                                                        className={styles.max}
-                                                        onClick={() => {
-                                                            form.change(
-                                                                "amountFrom",
-                                                                newBalanceFrom
-                                                                    ? newBalanceFrom.toString()
-                                                                    : 0
-                                                            )
-                                                        }
-                                                        }
-                                                        type="button"
-                                                    >
-                                                        MAX
-                                                    </button>
+                        {(props) => {
 
-                                                )}
-                                            </FormSpy>
-                                            {
-                                                <Currency coin={tokenFrom} small />
-                                            }
-                                        </div>
+                            console.log('数据', props.values)
+
+                            return (
+                                <Label
+                                    Component="label"
+                                    className={styles.row}
+                                    label="Launch Token Amount"
+                                    after={
+                                        <span className={styles.balance}>
+                                            Balance: {newBalanceFrom} <Symbol token={props.values.tokenTo} />
+                                        </span>
                                     }
-                                    validate={composeValidators(isEqualZero, isValidWei)}
-                                    required
-                                />
-                            </Label>
-                        )}
+                                >
+                                    <TextField
+                                        type="number"
+                                        name="amountFrom"
+                                        placeholder="0.00"
+                                        step={FLOAT}
+                                        after={
+                                            <div className={styles.amount}>
+                                                <FormSpy>
+                                                    {({ form }) => (
+                                                        <button
+                                                            className={styles.max}
+                                                            onClick={() => {
+                                                                form.change(
+                                                                    "amountFrom",
+                                                                    newBalanceFrom
+                                                                        ? newBalanceFrom.toString()
+                                                                        : 0
+                                                                )
+                                                            }
+                                                            }
+                                                            type="button"
+                                                        >
+                                                            MAX
+                                                        </button>
+    
+                                                    )}
+                                                </FormSpy>
+                                                {
+                                                    <Currency coin={tokenFrom} small />
+                                                }
+                                            </div>
+                                        }
+                                        validate={composeValidators(isEqualZero, isValidWei, 
+                                            isEnoughBalance(newBalanceFrom)
+                                            )}
+                                        required
+                                    />
+                                </Label>
+                            )
+                        }}
                     </FormSpy>
 
                     <FormSpy subscription={{ values: true }}>
@@ -195,7 +203,9 @@ export const LbpParametersView: FC<MaybeWithClassName & BuyingViewType> = ({
                                             <Currency token={tokenTo.address} small />
                                         </div>
                                     }
-                                    validate={composeValidators(isEqualZero, isValidWei)}
+                                    validate={composeValidators(isEqualZero, isValidWei, 
+                                        isEnoughBalance(newBalanceTo)
+                                        )}
                                     required
                                 />
                             </Label>

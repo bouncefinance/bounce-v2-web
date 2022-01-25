@@ -21,6 +21,7 @@ type ListOfTokensType = {
 	options: Array<ShortTokenInfo>;
 	onChange(item: any): void;
 	onManage(): void;
+	noManage?: boolean;
 };
 
 const LINE_HEIGHT = 64;
@@ -62,6 +63,7 @@ export const ListOfTokens: FC<ListOfTokensType> = ({
 	name,
 	onChange,
 	onManage,
+	noManage
 }) => {
 	const [searchValue, setSearch] = useState("");
 	const handleOnSearch = (e: ChangeEvent<HTMLInputElement>) =>
@@ -132,7 +134,8 @@ export const ListOfTokens: FC<ListOfTokensType> = ({
 					</SizeHolder>
 				</StrollableContainer>
 			</div>
-			<div className={styles.footer}>
+			{
+				!noManage && <div className={styles.footer}>
 				<Button
 					variant="text"
 					color="primary-black"
@@ -143,6 +146,8 @@ export const ListOfTokens: FC<ListOfTokensType> = ({
 					Manage
 				</Button>
 			</div>
+			}
+			
 		</div>
 	);
 };

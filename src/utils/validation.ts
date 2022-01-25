@@ -37,6 +37,10 @@ export function isValidWei(value: string): string | undefined {
 		: undefined;
 }
 
+export const isEnoughBalance = (balance: number) => (value: string): string | undefined => {
+	return +value > +balance ? `You don’t have enough balance` : undefined;
+};
+
 export function isDateRequired(date: Date): string | undefined {
 	if (!date) {
 		return isRequired(null);
