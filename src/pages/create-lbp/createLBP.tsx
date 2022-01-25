@@ -192,8 +192,7 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 		if (operation === OPERATION.createSuccess && poolAddress) {
 			setOperation(OPERATION.default);
 			close();
-			// routerPush(`${LBP_PATH}/${poolAddress}`)
-			location.href = `${location.origin}${LBP_PATH}/${poolAddress}`
+			routerPush(`${LBP_PATH}/${poolAddress}`)
 		} else {
 			setOperation(OPERATION.default);
 			close();
@@ -212,11 +211,7 @@ export const CreateLBP: FC<MaybeWithClassName> = () => {
 				<ProcessingPopUp
 					title={TITLE[operation]}
 					text={CONTENT[operation]}
-					onSuccess={() => {
-						setTimeout(() => {
-							onSuccessAction(poolAddress)
-						}, 1000)
-					}}
+					onSuccess={() => onSuccessAction(poolAddress)}
 					onTry={tryAgainAction}
 					isSuccess={operation === OPERATION.success || operation === OPERATION.createSuccess}
 					isLoading={
