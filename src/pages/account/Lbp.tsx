@@ -5,7 +5,7 @@ import { Pagination } from "@app/modules/pagination";
 
 import { Button } from "@app/ui/button";
 import { Select } from "@app/ui/select";
-import { fromWei, weiToNum } from "@app/utils/bn/wei";
+import { fromWei, numToWei, weiToNum } from "@app/utils/bn/wei";
 import { getProgress, POOL_STATUS } from "@app/utils/otc";
 import { getIsOpen } from "@app/utils/time";
 import { getBounceOtcContract } from "@app/web3/api/bounce/otc";
@@ -103,7 +103,7 @@ export const Lbp = () => {
 
 		const amountOut = await pairDate._tokenInForExactTokenOut(
 			pool?.token0,
-			pool?.currentAmountToken0
+			numToWei(1, pool.token0Decimals)        // 计算的是单价，不是总价
 		)
 		const price = new BigNumber(weiToNum(amountOut, pool.token1Decimals)).multipliedBy(1).dp(4).toString();     // amountOut乘以token1的价格
 		return price;
