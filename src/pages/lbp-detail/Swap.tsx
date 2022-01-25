@@ -16,7 +16,7 @@ import { approveLbpVault, FundManagement, getBounceProxyContract, getLbpVaultAll
 import { useAccount, useChainId, useWeb3Provider } from '@app/web3/hooks/use-web3';
 import { OPERATION } from './LBPDetail';
 import { getUserDate } from '../create-lbp/createLBP';
-import { numToWei, toWei, unlimitedAuthorization, weiToNum } from '@app/utils/bn/wei';
+import { fromWei, numToWei, toWei, unlimitedAuthorization, weiToNum } from '@app/utils/bn/wei';
 import { isEqualZero } from '@app/utils/validation';
 import { getTokenContract } from '@app/web3/api/bounce/erc';
 import { isLessThan } from '@app/utils/bn';
@@ -380,7 +380,7 @@ export const Swap = ({
                                             const amountOut = await pairDate._tokenInForExactTokenOut(
                                                 isResver ? tokenFrom.address : tokenTo.address,
                                                 toWei(parseFloat(e.target.value), isResver ? tokenFrom.decimals : tokenTo.decimals
-                                                ).toString())
+                                                ).toString())                                        
                                             props.form.change('amountFrom', e.target.value ? weiToNum(amountOut, isResver ? tokenTo.decimals : tokenFrom.decimals) : undefined)
                                             setLoading(false)
                                         }}

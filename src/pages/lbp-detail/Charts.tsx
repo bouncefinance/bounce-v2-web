@@ -109,7 +109,7 @@ export const Charts: FC<IChartsParams> = ({
 				if (!__beforeSlice.length) {
 					const middenDot = getTokenFromPriceByWeight(
 						tokenToPrice *
-							Number(weiToNum(detailData.startAmountToken1, detailData.token1Decimals)),
+						Number(weiToNum(detailData.startAmountToken1, detailData.token1Decimals)),
 						Number(weiToNum(detailData.startAmountToken0, detailData.token0Decimals)),
 						(startWeight + thisEndWeight) / 2
 					);
@@ -157,7 +157,7 @@ export const Charts: FC<IChartsParams> = ({
 			let afterSlice = [];
 			let afterDateSlice = [];
 			let _afterSliceData = [];
-			if (new Date().getTime() > startDate.getTime()) {
+			if (Date.now() > startDate.getTime()) {
 				afterDateSlice = getDateSlice(new Date(), endDate, AFTER_SLICE);
 				_afterSliceData = await getPriceSlice(
 					afterDateSlice,
@@ -190,7 +190,7 @@ export const Charts: FC<IChartsParams> = ({
 				);
 			}
 			afterSlice = _afterSliceData; // [...[..._beforeSlice].fill("_", 0, _beforeSlice.length), ..._afterSliceData];
-			beforeSlice[_beforeSlice.length] = _afterSliceData[0] || endDot;
+			beforeSlice[_beforeSlice.length] = _afterSliceData[0] ? _afterSliceData.shift() : endDot;
 
 			setBeforeSlice(beforeSlice);
 			setAfterSlice(afterSlice);
@@ -222,7 +222,7 @@ export const Charts: FC<IChartsParams> = ({
 					afterSlice: afterSlice, // 虚线部分（未到时间预测的价格）
 					model:
 						dateSlice.length >= 2 &&
-						dateSlice[dateSlice.length - 1] - dateSlice[0] > 1000 * 60 * 60 * 24
+							dateSlice[dateSlice.length - 1] - dateSlice[0] > 1000 * 60 * 60 * 24
 							? OptModel.DAY
 							: OptModel.HOUR,
 				})
