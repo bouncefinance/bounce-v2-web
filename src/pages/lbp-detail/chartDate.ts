@@ -1,37 +1,51 @@
 import moment from "moment";
+import type { EChartsOption } from "echarts";
 
-// echart 配置项
-export const getOption = (props: {
+export enum OptModel {
+	DAY = "DAY",
+	HOUR = "HOUR",
+}
+interface IOptionProps {
 	dateSlice: any[];
-	// priceSlice: any[];
 	beforeSlice: any[];
 	afterSlice: any[];
-	model: "day" | "hour";
-}) => {
-	return {
+	model: OptModel;
+}
+export const getOption = ({
+	dateSlice,
+	beforeSlice,
+	afterSlice,
+	model,
+}: IOptionProps): EChartsOption => {
+	const datas = [...beforeSlice, ...afterSlice].map((v) => Number(v));
+
+	const config: EChartsOption = {
+		visualMap: {
+			show: false,
+			dimension: 0,
+			pieces: [
+				{ lt: 0, color: "rgba(75, 112, 255, 1)" },
+				{
+					lt: beforeSlice.length,
+					color: "rgba(75, 112, 255, 1)",
+				},
+				{
+					gte: beforeSlice.length,
+					color: "rgba(0,0,0,0.2)",
+				},
+			],
+		},
 		xAxis: {
-			data: props.dateSlice.map((i) => moment(i).format("D MMM, HH:mm")),
+			data: dateSlice.map((i) => moment(i).format("D MMM, HH:mm")),
 			axisLabel: {
 				formatter: (value: string) => {
-					if (props.model === "day") {
+					if (model === OptModel.DAY) {
 						return moment(value).format("DD MMM");
 					}
 
 					return moment(value).format("HH:mm");
 				},
 			},
-		},
-		tooltip: {
-			trigger: "axis",
-			// axisPointer: {
-			// 	type: 'cross'
-			// },
-			// backgroundColor: 'rgba(255, 255, 255, 0.8)',
-			// formatter: (data: any) => {
-			// 	console.log('getOption', data)
-			// 	const value = data[0].value === '_' ? data[1].value : data[0].value
-			// 	return `$ ${value}`
-			// }
 		},
 		yAxis: {
 			axisLabel: {
@@ -40,44 +54,23 @@ export const getOption = (props: {
 				},
 			},
 		},
+
+		tooltip: {
+			trigger: "axis",
+		},
+
 		series: [
 			{
-				symbol: "none",
-				name: "Price",
-				data: props.beforeSlice,
-				itemStyle: {
-					normal: {
-						label: {
-							formatter: (value: number) => {
-								return `$${value}`;
-							},
-						},
-					},
-				},
-				type: "line",
-
-				smooth: true,
-				color: "rgba(75, 112, 255, 1)",
-			},
-			{
-				symbol: "none",
-				name: "Price",
-				data: props.afterSlice,
-				itemStyle: {
-					normal: {
-						label: {
-							formatter: (value: number) => {
-								return `$ ${value}`;
-							},
-						},
-					},
-				},
+				data: datas,
 				type: "line",
 				smooth: true,
-				color: "rgba(0, 0, 0, 0.2)",
+				showSymbol: false,
 			},
 		],
 	};
+	console.log("===> getOptions:", beforeSlice, afterSlice, config);
+
+	return config;
 };
 
 // 分割时间成五段
