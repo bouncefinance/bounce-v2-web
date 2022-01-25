@@ -7,18 +7,18 @@ import { pageWithLayout } from "@app/utils/pageInLayout";
 const AuctionPage = pageWithLayout(
 	() => {
 		return (
-			<NoSsr>
-				<RequireConnectedWallet>
-					<Account type="auction" />
-				</RequireConnectedWallet>
-			</NoSsr>
+			<RequireConnectedWallet>
+				<Account type="auction" />
+			</RequireConnectedWallet>
 		);
 	},
 	({ children }) => (
-		<Layout title="" description="">
-			{children}
-		</Layout>
+		<NoSsr>
+			<Layout title="" description="">
+				{children}
+			</Layout>
+		</NoSsr>
 	)
 );
 
-export default AuctionPage
+export default AuctionPage;

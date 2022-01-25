@@ -1,3 +1,4 @@
+import { useSize } from "ahooks";
 import classNames from "classnames";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -9,6 +10,7 @@ import { ConnectWalletProvider } from "@app/modules/connect-wallet-modal/Connect
 import { Footer } from "@app/modules/footer";
 import { Header } from "@app/modules/header";
 
+import { MobilePopUp } from "@app/modules/mobile-pop-up";
 import { Vector } from "@app/ui/icons/vector";
 
 import { Web3ProviderRoot } from "../web3/provider/Web3Provider";
@@ -64,6 +66,8 @@ export const Layout: FC<LayoutType> = ({
 	const [isIpLegal, setIsIpLegal] = useState<boolean>(true);
 	const router = useRouter();
 
+	const size = useSize(document.querySelector("body"));
+
 	const checkIP = async () => {
 		try {
 			const result = await fetch("https://geolocation-db.com/json/");
@@ -72,9 +76,9 @@ export const Layout: FC<LayoutType> = ({
 			if (!res) return;
 
 			const { country_code } = res;
-			// 屏蔽中国和美国的 IP
 
-			if (!country_code || country_code === "CN" || country_code === "US") {
+			// 屏蔽中国和美国的 IP
+			if (country_code === "CN" || country_code === "US") {
 				setIsIpLegal(false);
 			}
 		} catch (error) {
@@ -99,10 +103,6 @@ export const Layout: FC<LayoutType> = ({
 					<div className={styles.desktop}>
 						<WaitForRouter>{children}</WaitForRouter>
 					</div>
-					<div className={styles.mobile}>
-						Sorry, this event is unavailable on mobile. Please visit our desktop website to
-						participate.
-					</div>
 					<a
 						className={classNames(styles.vector)}
 						href="https://forms.gle/Bv6yr9ysWogjnuQQ9"
@@ -114,8 +114,10 @@ export const Layout: FC<LayoutType> = ({
 				</main>
 				<Footer />
 			</div>
-			{/* 测试需要，临时放开权限控制 */}
-			{/* <BlockPopUp visible={!isIpLegal} /> */}
+
+			<BlockPopUp visible={!isIpLegal} />
+
+			<MobilePopUp visible={size?.width < 835 || false} />
 		</Providers>
 	);
 };
