@@ -167,6 +167,11 @@ export const LBPDetail = (props: {
         }
     }
 
+    const update = () => {
+        window.location.reload();
+    }
+
+
 
     return (
         <div>
@@ -176,7 +181,7 @@ export const LBPDetail = (props: {
                 name={`${detailData?.token0Symbol} Token Launch Auction`}
                 openAt={Number(detailData?.startTs) * 1000}
                 closeAt={Number(detailData?.endTs) * 1000}
-                onZero={getData}
+                onZero={update}
                 onBack={() => goBack()}
                 totalVolume={`$ ${Number(detailData?.totalSwapVolume)?.toFixed(2)}`}
                 liquidity={`$ ${Number(detailData?.totalLiquidity)?.toFixed(2) || 0}`}
@@ -201,6 +206,7 @@ export const LBPDetail = (props: {
                     isEnabled={settingData?.swapEnable === ENABLED.open && detailData?.status === 2}
                     swapFee={settingData?.swapFee}
                     setSwapData={setData}
+                    detailData={detailData}
                 />}
             </View>
             {popUp.defined ? (

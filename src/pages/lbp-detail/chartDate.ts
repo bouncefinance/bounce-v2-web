@@ -26,11 +26,11 @@ export const getOption = ({
 			pieces: [
 				{ lt: 0, color: "rgba(75, 112, 255, 1)" },
 				{
-					lt: beforeSlice.length,
+					lte: beforeSlice.length,
 					color: "rgba(75, 112, 255, 1)",
 				},
 				{
-					gte: beforeSlice.length,
+					gt: beforeSlice.length,
 					color: "rgba(0,0,0,0.2)",
 				},
 			],
@@ -61,8 +61,9 @@ export const getOption = ({
 
 		series: [
 			{
-				data: datas,
 				type: "line",
+				name: "Price",
+				data: datas,
 				smooth: true,
 				showSymbol: false,
 			},
@@ -101,15 +102,6 @@ export const getPriceSlice = async (
 	const priceSlice = [];
 
 	if (amountTokenFrom && amountTokenTo) {
-		console.log({
-			dateSlice,
-			amountTokenFrom,
-			amountTokenTo,
-			startWeight,
-			endWeight,
-			tokenToPrice,
-		});
-
 		const tokenToUSD = amountTokenTo * tokenToPrice;
 		const weightUnit = (endWeight - startWeight) / dateSlice.length;
 

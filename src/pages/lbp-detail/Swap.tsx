@@ -22,6 +22,8 @@ import { getTokenContract } from '@app/web3/api/bounce/erc';
 import { isLessThan } from '@app/utils/bn';
 import { LBPPairData } from './LBPPairData';
 import { useRequest } from 'ahooks';
+import { CORRECTORDER, ILBPDetail } from '@app/api/lbp/types';
+import { getPriceSlice } from './chartDate';
 
 const slipConfig = [0.5, 1, 2]
 export interface ISwapparams {
@@ -34,10 +36,11 @@ export interface ISwapparams {
     isEnabled: boolean,
     swapFee: number,
     setSwapData?: (swapData: any) => void;
+    detailData?: ILBPDetail;
 }
 
 export const Swap = ({
-    token0: tokenFrom, token1: tokenTo, token0Amount, token1Amount, setOperation, poolAddress, isEnabled, swapFee, setSwapData
+    token0: tokenFrom, token1: tokenTo, token0Amount, token1Amount, setOperation, poolAddress, isEnabled, swapFee, setSwapData, detailData
 }: ISwapparams) => {
     const POOL_ADDRESS = poolAddress
     const [isResver, setIsResver] = useState(false)
@@ -52,6 +55,7 @@ export const Swap = ({
     // const [rate, setRate] = useState<string | number>(0)
     const pairDate = new LBPPairData(lbpPairContract, vaultContract, POOL_ADDRESS);
     const [btnText, setBtnText] = useState<string>('');
+    const [currentPrice, setCurrentPrice] = useState<string[]>([]);
 
     // Submit loading
     const [loading, setLoading] = useState(false)
@@ -241,16 +245,16 @@ export const Swap = ({
 
     // 判断按钮是否可用
     const checkout = (form) => {
-        if(!form?.values?.amountFrom) {
+        if (!form?.values?.amountFrom) {
             return false;
-        } else if(!form?.values?.amountTo) {
+        } else if (!form?.values?.amountTo) {
             return false;
-        } else if(isResver) {
-            if(Number(form?.values?.amountTo > Number(token0Amount))) {
+        } else if (isResver) {
+            if (Number(form?.values?.amountTo > Number(token0Amount))) {
                 return false;
             }
         } else {
-            if(Number(form?.values?.amountTo > Number(token1Amount))) {
+            if (Number(form?.values?.amountTo > Number(token1Amount))) {
                 return false;
             }
         }
@@ -258,8 +262,8 @@ export const Swap = ({
     }
 
     useEffect(() => {
-        if(isEnabled) {
-            if(tokenIsApprove) {
+        if (isEnabled) {
+            if (tokenIsApprove) {
                 setBtnText('Exchange')
             } else {
                 setBtnText(`Approve ${isResver ? tokenFrom.symbol : tokenTo.symbol}`)
@@ -268,6 +272,21 @@ export const Swap = ({
             setBtnText('Not Enable Now')
         }
     }, [isEnabled, tokenIsApprove, isResver, tokenFrom, tokenTo])
+
+    useEffect(() => {
+        (async () => {
+            const amounts = await pairDate.getTokensAmount()
+            const currentAmountTokenFrom = detailData.isCorrectOrder === CORRECTORDER.true ? Number(weiToNum(amounts[0], detailData.token0Decimals)) : Number(weiToNum(amounts[1], detailData.token0Decimals))
+            const currentAmountTokenTo = detailData.isCorrectOrder === CORRECTORDER.true ? Number(weiToNum(amounts[1], detailData.token1Decimals)) : Number(weiToNum(amounts[0], detailData.token1Decimals));
+            const weights = await pairDate.getTokensWeight()
+            const currentWeight = Number(weiToNum(weights[detailData.isCorrectOrder === CORRECTORDER.true ? 0 : 1], detailData.token0Decimals)) * 100;
+            const endWeight = detailData.endWeightToken0 * 100;
+            const tokenToPrice = 1;
+    
+            const current = await getPriceSlice([new Date().getTime()], currentAmountTokenFrom, currentAmountTokenTo, currentWeight, endWeight, tokenToPrice)
+            setCurrentPrice(current)
+        })()
+    }, [pairDate, detailData])
 
 
     return (
@@ -330,7 +349,7 @@ export const Swap = ({
                 </div >
 
                 <div className={styles.showPrice}>
-                    <strong>Current Price</strong>
+                    <strong>{`Current Price $${currentPrice?.[0] || '-'}`}</strong>
                     <p>1 {isResver ? tokenFrom.symbol : tokenTo.symbol} = ~{
                         (isResver ? new Bignumber(rate) : new Bignumber(1).div(rate))
                             .dp(4).toString()} {isResver ? tokenTo.symbol : tokenFrom.symbol} </p>
@@ -371,7 +390,7 @@ export const Swap = ({
                                                     {({ form }) => (
                                                         <button
                                                             className={styles.max}
-                                                            onClick={async() => {
+                                                            onClick={async () => {
                                                                 const max = isResver ? token0Amount : token1Amount
                                                                 form.change(
                                                                     "amountTo",
@@ -430,15 +449,14 @@ export const Swap = ({
                                                 isResver ? tokenTo.address : tokenFrom.address,
                                                 toWei(parseFloat(e.target.value), isResver ? tokenTo.decimals : tokenFrom.decimals
                                                 ).toString())
-
-                                            props.form.change('amountTo', e.target.value ? weiToNum(amountOut, isResver ? tokenFrom.decimals : tokenTo.decimals) : undefined )
+                                            props.form.change('amountTo', e.target.value ? weiToNum(amountOut, isResver ? tokenFrom.decimals : tokenTo.decimals) : undefined)
                                             setLoading(false)
                                             // console.log(e.target.value)
 
                                         }}
                                         after={
                                             <div className={styles.amount}>
-                                                <FormSpy>
+                                                {/* <FormSpy>
                                                     {({ form }) => (
                                                         <button
                                                             className={styles.max}
@@ -462,7 +480,7 @@ export const Swap = ({
                                                         </button>
 
                                                     )}
-                                                </FormSpy>
+                                                </FormSpy> */}
                                                 {
                                                     tokenFrom && tokenTo && <Currency coin={isResver ? tokenTo : tokenFrom} small />
                                                 }
