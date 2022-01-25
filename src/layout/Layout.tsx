@@ -80,14 +80,14 @@ export const Layout: FC<LayoutType> = ({
 					<div /* className={styles.desktop} */>
 						<WaitForRouter>{children}</WaitForRouter>
 					</div>
-					<a
+					{/* <a
 						className={classNames(styles.vector)}
 						href="https://forms.gle/Bv6yr9ysWogjnuQQ9"
 						target="__blank"
 						title="forms"
 					>
 						<Vector />
-					</a>
+					</a> */}
 				</main>
 				<DesktopFooter className={styles.desktop} />
 				<MobileFooter className={styles.mobile} />

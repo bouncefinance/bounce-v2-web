@@ -2,14 +2,14 @@
 
 .component {
   position: relative;
-
+  width: 100%;
   display: grid;
   grid-auto-flow: column;
   align-items: center;
-  
+  justify-content: flex-start;
   min-width: 15rem;
-  height: 2.75rem;
-  padding-left: 1rem;
+  // height: 2.75rem;
+  height: 100%;
   padding-right: 3.5rem;
 
   box-sizing: border-box;
@@ -20,13 +20,12 @@
 }
 
 .balance {
-  font-size: 0.875rem;
-  font-weight: var(--medium);
+  font-size: 1rem;
   color: rgba(var(--primary-black), 0.8);
 }
 
 .address {
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: var(--medium);
   color: rgba(var(--primary-black), 0.4);
 }
@@ -44,6 +43,8 @@
   top: 0;
   bottom: 0;
   right: 0;
+  display:flex;
+  align-items: center;
 
   &:hover .dropdown,
   &:focus .dropdown {

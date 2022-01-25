@@ -9,7 +9,10 @@ import { useScatteredContinuousState } from "@app/hooks/use-continuous-state";
 import { DotLinks } from "@app/modules/header/ui/dots";
 import { UserInfo } from "@app/modules/header/ui/user-info";
 import { NavLink, PrimaryButton } from "@app/ui/button";
+import { Add } from "@app/ui/icons/add";
+import { Close } from "@app/ui/icons/close";
 import { Logo } from "@app/ui/icons/logo";
+import { NewClose } from "@app/ui/icons/new-close";
 import { Toggle } from "@app/ui/icons/toggle";
 
 import { useConnected } from "@app/web3/hooks/use-web3";
@@ -58,7 +61,7 @@ export const HeaderView: FC<HeaderType & MaybeWithClassName> = ({ className, act
 					>
 						Home
 					</NavLink>
-					<DotLinks className={styles.dots} />
+					{mobileNavigation.present && <DotLinks className={styles.dots} />}
 					<Navigation className={styles.navigation} />
 					<div className={styles.buttons}>
 						<NavLink
@@ -79,8 +82,16 @@ export const HeaderView: FC<HeaderType & MaybeWithClassName> = ({ className, act
 							</PrimaryButton>
 						)}
 					</div>
+					<button className={styles["add"]}>
+						<Add />
+					</button>
 					<button className={styles.toggle} onClick={toggleMobileNavigationDisplay} ref={toggleRef}>
-						<Toggle />
+						{mobileNavigation.present ? (
+							<NewClose style={{ color: "#fff" }} />
+						) : (
+							<Toggle style={{ color: "#fff" }} />
+						)}
+
 						<span>{mobileNavigation.present ? "Close" : "Open"}</span>
 					</button>
 				</div>

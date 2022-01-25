@@ -1,12 +1,14 @@
 .component {
   display: grid;
   grid-template-rows: auto 1fr;
-  height: calc(var(--window-height) - var(--header-height));
-  padding: 2rem;
+  height: calc(var(--window-height) - var(--header-height) - var(--footer-height));
+  // padding: 2rem;
+  padding: 1.5rem;
 
   box-sizing: border-box;
 
-  background-color: rgba(var(--primary-white), 1);
+  // background-color: rgba(var(--primary-white), 1);
+  background-color: rgba(var(--primary-black), 1);
 }
 
 .list {
@@ -16,8 +18,16 @@
 
   margin: 0;
   padding: 0;
+  padding-top: 65px;
 
   list-style: none;
+  color: rgba(var(--primary-white),1);
+  .nav {
+    color: rgba(var(--primary-white),1);
+    font-size: 24px;
+    // font-family: var(--secondary-font);
+    font-weight: normal;
+  }
 }
 
 .item {

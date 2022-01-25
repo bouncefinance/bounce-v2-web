@@ -47,7 +47,7 @@ export const MobileNavigation: FC<ComponentType> = ({
 				{Object.keys(links).map((key) => {
 					return (
 						<li key={key} className={styles.item}>
-							<NavLink href={links[key]} onClick={onClick} {...settings}>
+							<NavLink href={links[key]} className={styles.nav} onClick={onClick} {...settings}>
 								{key}
 							</NavLink>
 						</li>

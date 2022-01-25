@@ -1,13 +1,15 @@
 .footer {
 	display: flex;
+	padding: 0 1.5rem;
+	height: 3.75rem;
+	// line-height: 3.75rem;
 }
 
 .connect-btn {
-	height: 5rem;
+	height: 3.75rem;
 	margin: 0 auto;
 
 	font-size: 1rem;
-	line-height: 20px;
 	display: flex;
 	align-items: center;
 	text-align: center;
