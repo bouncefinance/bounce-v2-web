@@ -6,16 +6,14 @@ import { pageWithLayout } from "@app/utils/pageInLayout";
 
 const PrivacyPolicyPage = pageWithLayout(
 	() => {
-		return (
-			<NoSsr>
-				<PrivacyPolicy />
-			</NoSsr>
-		);
+		return <PrivacyPolicy />;
 	},
 	({ children }) => (
-		<Layout title="" description="">
-			{children}
-		</Layout>
+		<NoSsr>
+			<Layout title="" description="">
+				{children}
+			</Layout>
+		</NoSsr>
 	)
 );
 

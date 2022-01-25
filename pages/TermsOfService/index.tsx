@@ -6,16 +6,14 @@ import { pageWithLayout } from "@app/utils/pageInLayout";
 
 const TermsOfServicePage = pageWithLayout(
 	() => {
-		return (
-			<NoSsr>
-				<TermsOfService />
-			</NoSsr>
-		);
+		return <TermsOfService />;
 	},
 	({ children }) => (
-		<Layout title="" description="">
-			{children}
-		</Layout>
+		<NoSsr>
+			<Layout title="" description="">
+				{children}
+			</Layout>
+		</NoSsr>
 	)
 );
 
