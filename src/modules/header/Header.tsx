@@ -82,9 +82,9 @@ export const HeaderView: FC<HeaderType & MaybeWithClassName> = ({ className, act
 							</PrimaryButton>
 						)}
 					</div>
-					<button className={styles["add"]}>
+					<NavLink className={styles.add} href={CREATE_PATH} variant="outlined">
 						<Add />
-					</button>
+					</NavLink>
 					<button className={styles.toggle} onClick={toggleMobileNavigationDisplay} ref={toggleRef}>
 						{mobileNavigation.present ? (
 							<NewClose style={{ color: "#fff" }} />

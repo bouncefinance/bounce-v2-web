@@ -5,7 +5,8 @@
 	display: flex;
 	flex-direction: column;
 
-	min-height: calc(100vh - var(--header-height) - var(--footer-height) - 1px);
+	min-height: calc(100vh - var(--header-height) - var(--footer-height) - .0625rem);
+	// padding: 1.5rem;
 }
 
 .search {
@@ -13,32 +14,39 @@
 	top: var(--header-height);
 	z-index: 10;
 
-	height: 8.75rem;
+	height: 140px;
 
 	transition-timing-function: linear;
 	transition-duration: 350ms;
 	transition-property: height;
 }
+.filter-button {
+	height: 48px;
+	margin-bottom: 1.5rem;
+	border: .0625rem solid rgba(var(--primary-black),1);
+	background-color: rgba(var(--primary-white),1);
+	font-weight: var(--medium);
+}
 
 .fullscreen {
-	// height: calc(100vh - var(--header-height) - var(--footer-height) - 1px);
-	height: calc(100vh - var(--header-height) - 3.75rem - 1px);
+	// height: calc(100vh - var(--header-height) - var(--footer-height) - .0625rem);
+	height: calc(100vh - var(--header-height) - 60px - .0625rem);
 }
 
 .form {
 	display: grid;
-	// grid-template-columns: 1fr 1fr 1fr 14.5rem;
+	// grid-template-columns: 1fr 1fr 1fr 232px;
 	// grid-column-gap: calc(var(--spacing-unit) * 0.5);
 
 	@include mixin.from(media.$lg) {
-		grid-template-columns: 1fr 1fr 1fr 14.5rem;
+		grid-template-columns: 1fr 1fr 1fr 232px;
 		grid-column-gap: calc(var(--spacing-unit) * 0.5);
 	}
 
 	@include mixin.until(media.$lg) {
-		grid-template-rows: repeat(3, 3.75rem) auto;
-    grid-template-columns: 19.5rem;
-		row-gap: 0.75rem;
+		grid-template-rows: repeat(3, 60px) auto;
+    grid-template-columns: 312px;
+		row-gap: 12px;
     justify-content: center;
 	}
 }
@@ -50,21 +58,21 @@
 	}
 
 	@include mixin.until(media.$lg) {
-		margin-top: 1.25rem;
+		margin-top: 20px;
 	}
 }
 
 .result {
 	flex-grow: 1;
 	display: grid;
-	grid-template-rows: 100%;
-
-	padding: calc(var(--spacing-unit) * 6);
+	// grid-template-rows: 100%;
+	padding: 1.5rem;
 }
 
 .list {
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
+	// grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: 1fr;
 	grid-gap: calc(var(--spacing-unit) * 3);
 
 	margin: 0;

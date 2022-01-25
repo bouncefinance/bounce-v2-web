@@ -243,6 +243,7 @@ export const Auction = () => {
 	return (
 		<AuctionView
 			onSubmit={onSubmit}
+			setConvertedPoolInformation={() => setConvertedPoolInformation(EMPTY_ARRAY)}
 			result={convertedPoolInformation.length ? convertedPoolInformation : undefined}
 			initialSearchState={initialSearchState}
 			currentPage={page}

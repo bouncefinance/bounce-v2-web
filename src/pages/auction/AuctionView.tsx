@@ -21,6 +21,7 @@ import { PopupTeleporterTarget } from "@app/ui/pop-up-container";
 
 type AuctionType = {
 	result?: DisplayPoolInfoType[];
+	setConvertedPoolInformation?(): void;
 	initialSearchState?: any;
 	numberOfPages: number;
 	currentPage: number;
@@ -43,6 +44,7 @@ const LIST = [
 export const AuctionView: FC<AuctionType & MaybeWithClassName> = ({
 	className,
 	result,
+	setConvertedPoolInformation,
 	onSubmit,
 	numberOfPages,
 	currentPage,
@@ -53,62 +55,73 @@ export const AuctionView: FC<AuctionType & MaybeWithClassName> = ({
 	return (
 		<>
 			<div className={classNames(className, styles.component)}>
-				<Search
-					className={classNames(styles.search, result === undefined && styles.fullscreen)}
-					title="Find Auction"
-					text="Fill in the fields optional below to easily find the auction that suits you"
-					visibleText={result === undefined}
-				>
-					<Form className={styles.form} onSubmit={onSubmit} initialValues={initialSearchState}>
-						<div className={styles["select-field-wrapper"]}>
-							<SelectTokenField name="token-type" placeholder="Select a token" />
-						</div>
-						<div className={styles["select-field-wrapper"]}>
-							<SelectField
-								name="auctionType"
-								placeholder="Choose Auction Type"
-								options={LIST}
-								required
-							/>
-						</div>
-						<div className={styles["select-field-wrapper"]}>
-							<PoolSearchField placeholder="Pool Information (Optional)" name="pool" />
-						</div>
-						<Button
-							className={styles.submit}
-							size="large"
-							color="ocean-blue"
-							variant="contained"
-							submit
-						>
-							Search
-						</Button>
-					</Form>
-				</Search>
+				{!result && (
+					<Search
+						className={classNames(styles.search, result === undefined && styles.fullscreen)}
+						title="Find Auction"
+						text="Fill in the fields optional below to easily find the auction that suits you"
+						visibleText={result === undefined}
+					>
+						<Form className={styles.form} onSubmit={onSubmit} initialValues={initialSearchState}>
+							<div className={styles["select-field-wrapper"]}>
+								<SelectTokenField name="token-type" placeholder="Select a token" />
+							</div>
+							<div className={styles["select-field-wrapper"]}>
+								<SelectField
+									name="auctionType"
+									placeholder="Choose Auction Type"
+									options={LIST}
+									required
+								/>
+							</div>
+							<div className={styles["select-field-wrapper"]}>
+								<PoolSearchField placeholder="Pool Information (Optional)" name="pool" />
+							</div>
+
+							<Button
+								className={styles.submit}
+								size="large"
+								color="ocean-blue"
+								variant="contained"
+								submit
+							>
+								Search
+							</Button>
+						</Form>
+					</Search>
+				)}
 				{result && result.length > 0 && (
 					<section className={styles.result}>
-						<GutterBox>
-							{result && (
-								<>
-									<ul className={styles.list}>
-										{result.map((auction) => (
-											<li key={uid(auction)} className="animate__animated animate__flipInY">
-												<Card {...auction} />
-											</li>
-										))}
-									</ul>
-									{numberOfPages > 1 && (
-										<Pagination
-											className={styles.pagination}
-											numberOfPages={numberOfPages}
-											currentPage={currentPage}
-											onBack={onBack}
-											onNext={onNext}
-										/>
-									)}
-								</>
-							)}
-						</GutterBox>
+						<Button
+							variant="outlined"
+							size="large"
+							className={styles["filter-button"]}
+							onClick={() => setConvertedPoolInformation()}
+						>
+							Filters
+						</Button>
+						{/* <GutterBox> */}
+						{result && (
+							<>
+								<ul className={styles.list}>
+									{result.map((auction) => (
+										<li key={uid(auction)} className="animate__animated animate__flipInY">
+											<Card {...auction} />
+										</li>
+									))}
+								</ul>
+								{numberOfPages > 1 && (
+									<Pagination
+										className={styles.pagination}
+										numberOfPages={numberOfPages}
+										currentPage={currentPage}
+										onBack={onBack}
+										onNext={onNext}
+									/>
+								)}
+							</>
+						)}
+						{/* </GutterBox> */}
 					</section>
 				)}
 			</div>

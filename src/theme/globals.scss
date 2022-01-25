@@ -16,6 +16,7 @@ body {
 * {
   outline: none;
   -webkit-tap-highlight-color: transparent;
+  -webkit-overflow-scrolling: touch;
 
   &::-moz-focus-inner {
     border: 0;

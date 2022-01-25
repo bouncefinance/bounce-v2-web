@@ -4,21 +4,23 @@
 .component {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  // min-height: 100vh;
+  height: 100vh;
   width: 100%;
   overflow: hidden;
 }
 
 .header {
-  position: sticky;
-  top: 0;
-  z-index: 20;
+  // position: sticky;
+  // top: 0;
+  // z-index: 20;
+  height: 5rem;
 }
 
 .main {
   position: relative;
-  flex-grow: 1;
-  // height: calc(100vh - 156px);
+  flex: 1;
+  overflow-y: auto;
 }
 
 .vector {
