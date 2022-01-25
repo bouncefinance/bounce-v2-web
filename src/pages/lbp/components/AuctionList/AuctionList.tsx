@@ -84,7 +84,7 @@ export const LBPAuctionList = ({ type }: { type: string }) => {
     const vaultContract = useMemo(() => getVaultContract(provider, chainId), [chainId, provider]);  // 取amount
 
     const getCurrentPrice = async (pool: ILBPList) => {
-        const result = VolumeTokens?.some(item => item?.address?.toLocaleLowerCase() === pool?.token1);
+        const result = VolumeTokens?.some(item => item?.address?.toLocaleLowerCase() === pool?.token1?.toLocaleLowerCase());
         let currentPrice: number;
         if(!result) {
             const { data: priceData } = await fetchTokenPrice(chainId, pool?.token1);

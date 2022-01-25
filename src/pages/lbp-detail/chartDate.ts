@@ -76,7 +76,7 @@ export const getOption = ({
 
 // 分割时间成五段
 export const getDateSlice = (startDate?: Date, endDate?: Date, slice = 5) => {
-	const DIFF_TIME = 864000000 * 3; // 三天
+	const DIFF_TIME = 1000 * 60 * 60 * 24 * 3; // 三天
 	const startTime = (startDate || new Date()).getTime();
 	const endTime = endDate?.getTime() || startTime + DIFF_TIME;
 

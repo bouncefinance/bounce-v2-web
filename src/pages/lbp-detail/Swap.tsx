@@ -283,7 +283,7 @@ export const Swap = ({
             const weights = await pairDate.getTokensWeight()
             const currentWeight = Number(weiToNum(weights[detailData.isCorrectOrder === CORRECTORDER.true ? 0 : 1], detailData.token0Decimals)) * 100;
             const endWeight = detailData.endWeightToken0 * 100;
-            const result = VolumeTokens?.some(item => item?.address?.toLocaleLowerCase() === detailData?.token1);
+            const result = VolumeTokens?.some(item => item?.address?.toLocaleLowerCase() === detailData?.token1?.toLocaleLowerCase());
 			let tokenToPrice: number;
 			if (!result) {
 				const { data: priceData } = await fetchTokenPrice(chainId, detailData?.token1);

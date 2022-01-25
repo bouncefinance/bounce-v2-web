@@ -102,7 +102,7 @@ export const View: FC<LBPDetailViewType> = ({
 
 	useEffect(() => {
 		(async () => {
-			const result = VolumeTokens?.some(item => item?.address?.toLocaleLowerCase() === detailData?.token1);
+			const result = VolumeTokens?.some(item => item?.address?.toLocaleLowerCase() === detailData?.token1?.toLocaleLowerCase());
 			let current: number;
 			if (!result) {
 				const { data: priceData } = await fetchTokenPrice(chainId, detailData?.token1);
