@@ -247,33 +247,49 @@ export const Swap = ({
 
     // 判断按钮是否可用
     const checkout = (form) => {
-        if (!form?.values?.amountFrom) {
-            return false;
-        } else if (!form?.values?.amountTo) {
-            return false;
-        } else if (isResver) {
-            if (Number(form?.values?.amountTo > Number(token0Amount))) {
-                return false;
-            }
-        } else {
-            if (Number(form?.values?.amountTo > Number(token1Amount))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    useEffect(() => {
+        const restAmount = isResver ? fromWei(detailData?.currentAmountToken1, detailData?.token1Decimals).toNumber() : fromWei(detailData?.currentAmountToken0, detailData?.token0Decimals).toNumber()
         if (isEnabled) {
             if (tokenIsApprove) {
                 setBtnText('Exchange')
+                if (!form?.values?.amountFrom) {
+                    setBtnText('Exchange')
+                    return false;
+                } else if (!form?.values?.amountTo) {
+                    setBtnText('Exchange')
+                    return false;
+                } else {
+                    if (Number(form?.values?.amountTo) > (isResver ? Number(token0Amount) : Number(token1Amount))) {    // 判断上面输入框的余额
+                        setBtnText('You don’t have enough balance');
+                        return false;
+                    }
+                    if(Number(form?.values?.amountFrom) > restAmount) {     // 判断下面输入框的数量不大于池子剩余量
+                        setBtnText('Insufficient balance');
+                        return false;
+                    }
+                    return true;
+                }
+                
             } else {
-                setBtnText(`Approve ${isResver ? tokenFrom.symbol : tokenTo.symbol}`)
+                setBtnText(`Approve ${isResver ? tokenFrom.symbol : tokenTo.symbol}`);
+                return false;
             }
         } else {
-            setBtnText('Not Enable Now')
+            setBtnText('Not Enable Now');
+            return false;
         }
-    }, [isEnabled, tokenIsApprove, isResver, tokenFrom, tokenTo])
+    }
+
+    // useEffect(() => {
+    //     if (isEnabled) {
+    //         if (tokenIsApprove) {
+    //             setBtnText('Exchange')
+    //         } else {
+    //             setBtnText(`Approve ${isResver ? tokenFrom.symbol : tokenTo.symbol}`)
+    //         }
+    //     } else {
+    //         setBtnText('Not Enable Now')
+    //     }
+    // }, [isEnabled, tokenIsApprove, isResver, tokenFrom, tokenTo])
 
     useEffect(() => {
         (async () => {
@@ -295,7 +311,7 @@ export const Swap = ({
             const current = await getPriceSlice([new Date().getTime()], currentAmountTokenFrom, currentAmountTokenTo, currentWeight, endWeight, tokenToPrice)
             setCurrentPrice(current)		
         })()
-    }, [pairDate, detailData])
+    }, [detailData, rate])
 
 
     return (
