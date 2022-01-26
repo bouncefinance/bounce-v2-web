@@ -22,6 +22,7 @@ export interface ILBPList {
 	token1Symbol: string;
 	token1ThumbURL: string;
 	isCorrectOrder: number;
+	isWithdrawed: number;
 }
 
 export interface ILBPHistory {
