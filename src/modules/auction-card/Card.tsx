@@ -43,7 +43,7 @@ export type DisplayPoolInfoType = {
 	total?: number;
 	from?: IToken;
 	to?: IToken;
-	price?: number;
+	price?: number | string;
 	fill?: number;
 	needClaim?: boolean;
 	isLbpCard?: boolean;

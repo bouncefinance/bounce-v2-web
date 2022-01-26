@@ -84,6 +84,10 @@ export const LBPAuctionList = ({ type }: { type: string }) => {
     const vaultContract = useMemo(() => getVaultContract(provider, chainId), [chainId, provider]);  // 取amount
 
     const getCurrentPrice = async (pool: ILBPList) => {
+        if(pool.isWithdrawed) {
+            return '-'
+        }
+
         const result = VolumeTokens?.some(item => item?.address?.toLocaleLowerCase() === pool?.token1?.toLocaleLowerCase());
         let currentPrice: number;
         if(!result) {
@@ -141,7 +145,7 @@ export const LBPAuctionList = ({ type }: { type: string }) => {
                         from: token0,
                         to: token1,
                         total: parseFloat(fromWei(pool?.startAmountToken0, token0.decimals).toFixed()),
-                        price: Number(currentPrice),
+                        price: currentPrice,
                         sold: parseFloat(fromWei(swapAmount, token0.decimals).toFixed()),
                         startTs: pool?.startTs,
                         endTs: pool?.endTs,

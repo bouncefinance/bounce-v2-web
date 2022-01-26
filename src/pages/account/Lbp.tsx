@@ -100,6 +100,9 @@ export const Lbp = () => {
 	const vaultContract = useMemo(() => getVaultContract(provider, chainId), [chainId, provider]);  // 取amount
 
 	const getCurrentPrice = async (pool: ILBPList) => {
+		if(pool.isWithdrawed) {
+            return '-'
+        }
 		const lbpPairContract = getLiquidityBootstrappingPoolContract(provider, pool?.address)
 		const pairDate = new LBPPairData(lbpPairContract, vaultContract, pool?.address)             // 得到实例，当前时刻的pair-data的信息
 		let currentPrice: number;
@@ -161,7 +164,7 @@ export const Lbp = () => {
 						from: token0,
 						to: token1,
 						total: parseFloat(fromWei(pool?.startAmountToken0, token0.decimals).toFixed()),
-						price: Number(price),
+						price: price,
 						sold: parseFloat(fromWei(swapAmount, token0.decimals).toFixed()),
 						startTs: pool?.startTs,
 						endTs: pool?.endTs,
