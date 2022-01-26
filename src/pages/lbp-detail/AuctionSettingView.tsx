@@ -83,7 +83,8 @@ export const AuctionSettingView = ({
                 })
                 .on("receipt", (r) => {
                     // console.log("receipt", r);
-                    setOperation(OPERATION.success);
+                    // setOperation(OPERATION.success);
+                    setOperation(OPERATION.settingSuccess);
                     // setLastOperation(null);
                     // setPoolId(r.events.Created.returnValues[0]);
                 })
