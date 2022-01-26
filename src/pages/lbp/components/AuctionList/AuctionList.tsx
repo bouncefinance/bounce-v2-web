@@ -1,7 +1,7 @@
 
 
 import { fetchLbpList, fetchTokenPrice } from '@app/api/lbp/api';
-import { ILBPList, ITokenPrice } from '@app/api/lbp/types';
+import { ILBPList} from '@app/api/lbp/types';
 import { Card, DisplayPoolInfoType } from '@app/modules/auction-card';
 import { EmptyData } from '@app/modules/emptyData/EmptyData';
 import { Loading } from '@app/modules/loading/Loading';

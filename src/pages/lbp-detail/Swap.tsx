@@ -295,7 +295,7 @@ export const Swap = ({
             const current = await getPriceSlice([new Date().getTime()], currentAmountTokenFrom, currentAmountTokenTo, currentWeight, endWeight, tokenToPrice)
             setCurrentPrice(current)		
         })()
-    }, [pairDate, detailData])
+    }, [detailData, rate])
 
 
     return (

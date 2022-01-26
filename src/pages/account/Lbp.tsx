@@ -22,6 +22,8 @@ import { getLiquidityBootstrappingPoolContract, getVaultContract } from "@app/we
 import { LBPPairData } from "../lbp-detail/LBPPairData";
 import { Loading } from "@app/modules/loading/Loading";
 import { EmptyData } from "@app/modules/emptyData/EmptyData";
+import { VolumeTokens } from "@app/web3/const/volumeTokens";
+import { fetchTokenPrice } from "@app/api/lbp/api";
 
 const WINDOW_SIZE = 9;
 const EMPTY_ARRAY = [];
@@ -100,12 +102,20 @@ export const Lbp = () => {
 	const getCurrentPrice = async (pool: ILBPList) => {
 		const lbpPairContract = getLiquidityBootstrappingPoolContract(provider, pool?.address)
 		const pairDate = new LBPPairData(lbpPairContract, vaultContract, pool?.address)             // 得到实例，当前时刻的pair-data的信息
+		let currentPrice: number;
+		const result = VolumeTokens?.some(item => item?.address?.toLocaleLowerCase() === pool?.token1?.toLocaleLowerCase());
+        if(!result) {
+            const { data: priceData } = await fetchTokenPrice(chainId, pool?.token1);
+            currentPrice = Number(priceData?.currentPrice);
+        } else {
+            currentPrice = 1;
+        }
 
 		const amountOut = await pairDate._tokenInForExactTokenOut(
 			pool?.token0,
 			numToWei(1, pool.token0Decimals)        // 计算的是单价，不是总价
 		)
-		const price = new BigNumber(weiToNum(amountOut, pool.token1Decimals)).multipliedBy(1).dp(4).toString();     // amountOut乘以token1的价格
+		const price = new BigNumber(weiToNum(amountOut, pool.token1Decimals)).multipliedBy(currentPrice).dp(4).toString();     // amountOut乘以token1的价格
 		return price;
 	}
 

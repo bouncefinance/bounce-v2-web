@@ -21,6 +21,7 @@ export interface ILBPList {
 	token1SmallURL: string;
 	token1Symbol: string;
 	token1ThumbURL: string;
+	isCorrectOrder: number;
 }
 
 export interface ILBPHistory {
