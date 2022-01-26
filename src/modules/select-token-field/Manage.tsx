@@ -1,26 +1,30 @@
-import { TokenInfo } from "@uniswap/token-lists";
-import React, { ChangeEvent, FC, useRef, useState } from "react";
+import { useRequest } from "ahooks";
+import React, { FC, useEffect, useState } from "react";
 
 import { StrollableContainer } from "react-stroller";
 
 import { uid } from "react-uid";
 
-import { Currency } from "@app/modules/currency";
 import { ShortTokenListInfo, TokenListControl } from "@app/modules/select-token-field/types";
 import { Button } from "@app/ui/button";
 
-import { Search } from "@app/ui/icons/search";
+import { Delete } from "@app/ui/icons/delete";
+import { Share } from "@app/ui/icons/share";
 import { Input } from "@app/ui/input";
-import { ScrollBar, VerticalScrollIndicator } from "@app/ui/stroller-components";
+import { Spinner } from "@app/ui/spinner";
+import { ScrollBar } from "@app/ui/stroller-components";
 
-import { Body1, Caption } from "@app/ui/typography";
+import { Body1 } from "@app/ui/typography";
 import { queryERC20Token } from "@app/web3/api/eth/api";
 import { useLocallyDefinedTokens } from "@app/web3/api/tokens/local-tokens";
 
 import { useChainId, useWeb3Provider } from "@app/web3/hooks/use-web3";
 
 import styles from "./Manage.module.scss";
+import { IErc20TokenRes } from "./SelectToken";
 import { Toggle } from "./Toggle";
+
+import emptySVG from "./assets/empty.svg";
 
 enum TOGGLES {
 	list = "list",
@@ -29,8 +33,20 @@ enum TOGGLES {
 interface IManageProps {
 	tokenLists: ShortTokenListInfo[];
 	tokenListControl: TokenListControl;
+	tokenResult: IErc20TokenRes;
+	setTokenResult: (result: IErc20TokenRes) => void;
+	setPopUpContent: (content: "selectToken" | "manage" | "importToken") => void;
 }
-interface IListsContentProps extends IManageProps {}
+interface IListsContentProps {
+	tokenLists: ShortTokenListInfo[];
+	tokenListControl: TokenListControl;
+	setPopUpContent: (content: "selectToken" | "manage" | "importToken") => void;
+}
+interface ITokensContentProps {
+	tokenResult: IErc20TokenRes;
+	setTokenResult: (result: IErc20TokenRes) => void;
+	setPopUpContent: (content: "selectToken" | "manage" | "importToken") => void;
+}
 
 const ListsContent: FC<IListsContentProps> = ({ tokenLists, tokenListControl }) => {
 	return (
@@ -54,58 +70,142 @@ const ListsContent: FC<IListsContentProps> = ({ tokenLists, tokenListControl }) 
 	);
 };
 
-const TokensContent: FC = () => {
+const TokensContent: FC<ITokensContentProps> = ({
+	setPopUpContent,
+	tokenResult,
+	setTokenResult,
+}) => {
 	const chainId = useChainId();
 	const provider = useWeb3Provider();
-
 	const [localTokens, setLocalTokens] = useLocallyDefinedTokens();
 
-	const addTokenByAddress = async (e: ChangeEvent<HTMLInputElement>) => {
-		e.preventDefault();
+	const [extraLoading, setExtraLoading] = useState<boolean>(false);
+	const [addressValue, setAddressValue] = useState<string>("");
 
-		const address = e.target.value;
+	const { loading, run } = useRequest(
+		() => {
+			return queryERC20Token(provider, addressValue, chainId);
+		},
+		{
+			manual: true,
+			debounceWait: 300,
+			ready: !!addressValue && addressValue.search(/^0x[a-zA-Z0-9]{40}$/i) !== -1,
+			onBefore: () => {
+				setExtraLoading(true);
+			},
+			onSuccess: (res) => {
+				setTokenResult(res);
+			},
+			onError: (err) => {
+				console.log("queryERC20Token error", err);
+			},
+			onFinally: () => {
+				setTimeout(() => {
+					setExtraLoading(false);
+				}, 600);
+			},
+		}
+	);
 
-		const newToken: TokenInfo = {
-			chainId,
-			name: `custom token`,
-			...(await queryERC20Token(provider, address, chainId)),
-		};
-		setLocalTokens([...localTokens, newToken]);
-	};
+	useEffect(() => {
+		if (addressValue.search(/^0x[a-zA-Z0-9]{40}$/i) !== -1) {
+			run();
+		} else {
+			setTokenResult(undefined);
+		}
+	}, [addressValue, run, setTokenResult]);
 
 	return (
-		<>
+		<div className={styles.tokensContent}>
 			<div className={styles.search}>
 				<Input
 					name="search"
 					type="text"
 					placeholder={"0x0000 address"}
-					onChange={addTokenByAddress}
+					value={addressValue}
+					onChange={(e) => {
+						setAddressValue(e.target.value);
+					}}
 				/>
 			</div>
-			<div className={styles.custom}>
-				<div>
-					{localTokens.length > 0 ? (
-						<StrollableContainer bar={ScrollBar} draggable>
-							<ul className={styles.customList}>
-								{localTokens.map((token) => (
-									<li key={uid(token)}>
-										<Currency token={token.address} />
-									</li>
-								))}
-							</ul>
-						</StrollableContainer>
-					) : (
-						<Body1>0 Custom Tokens</Body1>
-					)}
-				</div>
-				<div className={styles.footer}>
-					<Body1 Component="span" lighten={50}>
-						Tip: Custom tokens are stored locally in your browser
-					</Body1>
-				</div>
+
+			{loading || extraLoading ? (
+				<Spinner size="small" className={styles.blackSpinner} />
+			) : (
+				tokenResult && (
+					<div className={styles.searchResult}>
+						<div className={styles.currency}>
+							<img src={emptySVG} alt="empty" />
+							<span>{tokenResult.symbol}</span>
+						</div>
+
+						<Button
+							className={styles.importBtn}
+							size="medium"
+							color={"primary-black"}
+							variant={"contained"}
+							onClick={() => {
+								setPopUpContent("importToken");
+							}}
+						>
+							Import
+						</Button>
+					</div>
+				)
+			)}
+
+			<div className={styles.tokenHeader}>
+				<Body1 className={styles.tokenCount} Component="section">
+					{localTokens?.length ?? 0} Custom Tokens
+				</Body1>
+
+				<Button
+					variant="text"
+					className={styles.clearAllBtn}
+					onClick={() => {
+						setLocalTokens([]);
+					}}
+				>
+					Clear all
+				</Button>
 			</div>
-		</>
+
+			<div className={styles.listWrapper}>
+				{localTokens.length > 0 && (
+					<StrollableContainer bar={ScrollBar} draggable>
+						<ul className={styles.customList}>
+							{localTokens.map((token) => (
+								<li key={uid(token)}>
+									<img src={emptySVG} className={styles.emptySVG} alt="empty" />
+
+									<span className={styles.symbol}>{token.symbol}</span>
+
+									<div className={styles.btnGroup}>
+										<Button
+											icon={<Delete />}
+											onClick={() => {
+												setLocalTokens(
+													localTokens.filter((localToken) => localToken.address !== token.address)
+												);
+											}}
+										>
+											delete
+										</Button>
+										<Button icon={<Share />}>share</Button>
+									</div>
+								</li>
+							))}
+						</ul>
+					</StrollableContainer>
+				)}
+			</div>
+
+			<div className={styles.footer}>
+				<Body1 Component="span" lighten={50}>
+					Tip: Custom tokens are stored locally in your browser
+				</Body1>
+			</div>
+		</div>
 	);
 };
 
@@ -132,7 +232,14 @@ export const Manage: FC<IManageProps> = (props) => {
 					Tokens
 				</Button>
 			</div>
-			{toggle === TOGGLES.tokens && <TokensContent />}
+
+			{toggle === TOGGLES.tokens && (
+				<TokensContent
+					setPopUpContent={props.setPopUpContent}
+					tokenResult={props.tokenResult}
+					setTokenResult={props.setTokenResult}
+				/>
+			)}
 			{toggle === TOGGLES.list && <ListsContent {...props} />}
 		</div>
 	);
