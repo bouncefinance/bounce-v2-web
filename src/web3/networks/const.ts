@@ -12,14 +12,14 @@ export const CHAINS_INFO = {
 	1: { currency: "ETH", explorer: { name: "etherscan", url: "https://etherscan.io" } },
 	4: {
 		currency: "ETH",
-		explorer: { name: "rinkeby.etherscan", Url: "https://rinkeby.etherscan.io" },
+		explorer: { name: "rinkeby.etherscan", url: "https://rinkeby.etherscan.io" },
 	},
-	56: { currency: "BNB", explorer: { name: "bscscan", Url: "https://bscscan.com" } },
-	137: { currency: "MATIC", explorer: { name: "polygonscan", Url: "https://polygonscan.com" } },
+	56: { currency: "BNB", explorer: { name: "bscscan", url: "https://bscscan.com" } },
+	137: { currency: "MATIC", explorer: { name: "polygonscan", url: "https://polygonscan.com" } },
 	42161: {
 		currency: "ETH",
-		explorer: { name: "arbiscan", Url: "https://arbiscan.io" },
+		explorer: { name: "arbiscan", url: "https://arbiscan.io" },
 	},
-	250: { currency: "FTM", explorer: { name: "ftmscan", Url: "https://ftmscan.com" } },
-	// 43114: { currency: "AVAX", explorer: { name: "snowtrace", Url: "https://snowtrace.io" } },
+	250: { currency: "FTM", explorer: { name: "ftmscan", url: "https://ftmscan.com" } },
+	// 43114: { currency: "AVAX", explorer: { name: "snowtrace", url: "https://snowtrace.io" } },
 };

@@ -1,4 +1,5 @@
 import { useRequest } from "ahooks";
+import classNames from "classnames";
 import React, { FC, useEffect, useState } from "react";
 
 import { StrollableContainer } from "react-stroller";
@@ -18,7 +19,10 @@ import { Body1 } from "@app/ui/typography";
 import { queryERC20Token } from "@app/web3/api/eth/api";
 import { useLocallyDefinedTokens } from "@app/web3/api/tokens/local-tokens";
 
+import { filterPopularToken } from "@app/web3/const/filterToken";
 import { useChainId, useWeb3Provider } from "@app/web3/hooks/use-web3";
+
+import { CHAINS_INFO } from "@app/web3/networks/const";
 
 import styles from "./Manage.module.scss";
 import { IErc20TokenRes } from "./SelectToken";
@@ -78,9 +82,14 @@ const TokensContent: FC<ITokensContentProps> = ({
 	const chainId = useChainId();
 	const provider = useWeb3Provider();
 	const [localTokens, setLocalTokens] = useLocallyDefinedTokens();
+	const localTokensOnCurChain = localTokens.filter((token) => token.chainId === chainId);
 
 	const [extraLoading, setExtraLoading] = useState<boolean>(false);
 	const [addressValue, setAddressValue] = useState<string>("");
+
+	const handleClearAll = () => {
+		setLocalTokens(localTokens.filter((token) => token.chainId !== chainId));
+	};
 
 	const { loading, run } = useRequest(
 		() => {
@@ -122,8 +131,10 @@ const TokensContent: FC<ITokensContentProps> = ({
 					name="search"
 					type="text"
 					placeholder={"0x0000 address"}
-					value={addressValue}
+					value={provider ? addressValue : "Please connect your wallet"}
+					readOnly={!provider}
 					onChange={(e) => {
+						console.log("e.target.value: ", e.target.value);
 						setAddressValue(e.target.value);
 					}}
 				/>
@@ -147,6 +158,15 @@ const TokensContent: FC<ITokensContentProps> = ({
 							onClick={() => {
 								setPopUpContent("importToken");
 							}}
+							disabled={
+								!!localTokensOnCurChain.find(
+									(token) => token.address === tokenResult.address && token.chainId === chainId
+								) ||
+								!!filterPopularToken.find(
+									(popularToken) =>
+										popularToken.address === tokenResult.address && popularToken.chainId === chainId
+								)
+							}
 						>
 							Import
 						</Button>
@@ -156,25 +176,24 @@ const TokensContent: FC<ITokensContentProps> = ({
 
 			<div className={styles.tokenHeader}>
 				<Body1 className={styles.tokenCount} Component="section">
-					{localTokens?.length ?? 0} Custom Tokens
+					{localTokensOnCurChain?.length ?? 0} Custom Tokens
 				</Body1>
 
-				<Button
-					variant="text"
-					className={styles.clearAllBtn}
-					onClick={() => {
-						setLocalTokens([]);
-					}}
-				>
+				<Button variant="text" className={styles.clearAllBtn} onClick={handleClearAll}>
 					Clear all
 				</Button>
 			</div>
 
-			<div className={styles.listWrapper}>
-				{localTokens.length > 0 && (
+			<div
+				className={classNames(
+					styles.listWrapper,
+					(tokenResult || loading) && styles.ListWrapperWithTokenResult
+				)}
+			>
+				{localTokensOnCurChain?.length > 0 && (
 					<StrollableContainer bar={ScrollBar} draggable>
 						<ul className={styles.customList}>
-							{localTokens.map((token) => (
+							{localTokensOnCurChain.map((token) => (
 								<li key={uid(token)}>
 									<img src={emptySVG} className={styles.emptySVG} alt="empty" />
 
@@ -185,13 +204,28 @@ const TokensContent: FC<ITokensContentProps> = ({
 											icon={<Delete />}
 											onClick={() => {
 												setLocalTokens(
-													localTokens.filter((localToken) => localToken.address !== token.address)
+													localTokens.filter((localToken) => {
+														return (
+															localToken.chainId !== token.chainId ||
+															localToken.address !== token.address
+														);
+													})
 												);
 											}}
 										>
 											delete
 										</Button>
-										<Button icon={<Share />}>share</Button>
+										<Button
+											icon={<Share />}
+											onClick={() => {
+												window.open(
+													`${CHAINS_INFO[chainId].explorer.url}/token/${token.address}`,
+													"_blank"
+												);
+											}}
+										>
+											share
+										</Button>
 									</div>
 								</li>
 							))}

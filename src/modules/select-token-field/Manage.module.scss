@@ -109,7 +109,10 @@
 	height: 100%;
 
 	overflow: hidden;
-	margin-top: 11px;
+}
+
+.ListWrapperWithTokenResult {
+	height: 130px;
 }
 
 .customList {
@@ -119,6 +122,8 @@
 
 	margin: 0;
 	padding: 0;
+
+	max-height: 190px;
 
 	list-style: none;
 
@@ -168,13 +173,15 @@
 
 .tokensContent {
 	display: grid;
-	grid-template-rows: auto auto 20px 190px 60px;
+	grid-template-rows: 60px auto 20px 1fr 60px;
 	grid-template-areas: "search" "searchResult" "tokenHeader" "customList" "footer";
 	row-gap: calc(var(--spacing-unit) * 1.375);
 }
 
 .blackSpinner {
-	margin: 0 auto;
+	width: 16px;
+	height: 16px;
+	margin: 16px auto;
 
 	border-left: 1px solid transparent !important;
 	border-top: 1px solid rgba(var(--primary-black), 1) !important;
