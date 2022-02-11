@@ -23,7 +23,7 @@ const getOtcAddress = defineNetworkMapper({
 });
 
 const getBounceProxyAddress = defineNetworkMapper({
-	[WEB3_NETWORKS.ETH]: "",
+	[WEB3_NETWORKS.ETH]: "0x8c4a7df4e50b4538f425050fb033566adf35f5c4",
 	[WEB3_NETWORKS.RINKEBY]: "0x7d845541f5fFcB81c0846814870De164bDe8d4E7",
 	[WEB3_NETWORKS.BINANCE]: "",
 	[WEB3_NETWORKS.POLYGON]: "",
@@ -32,7 +32,7 @@ const getBounceProxyAddress = defineNetworkMapper({
 });
 
 const getVaultAddress = defineNetworkMapper({
-	[WEB3_NETWORKS.ETH]: "",
+	[WEB3_NETWORKS.ETH]: "0xba12222222228d8ba445958a75a0704d566bf2c8",
 	[WEB3_NETWORKS.RINKEBY]: "0xba12222222228d8ba445958a75a0704d566bf2c8",
 	[WEB3_NETWORKS.BINANCE]: "",
 	[WEB3_NETWORKS.POLYGON]: "",
