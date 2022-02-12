@@ -16,6 +16,7 @@ import { ScrollBar } from "@app/ui/stroller-components";
 import { Heading1 } from "@app/ui/typography";
 
 import { Button } from "../button";
+import { NewClose } from "../icons/new-close";
 import { Shadow } from "../shadow";
 import { suppressEvent } from "../utils/suppress-event";
 
@@ -95,7 +96,7 @@ export const PopUpContainer: FC<ComponentType & MaybeWithClassName> = ({
 				autoFocus
 				enabled={visible}
 				onEscapeKey={!withoutClose && onClose}
-				onClickOutside={!withoutClose && onClose}
+				// onClickOutside={!withoutClose && onClose}
 			>
 				<div data-autofocus-inside>
 					{/* eslint-disable-next-line max-len */}
@@ -121,7 +122,7 @@ export const PopUpContainer: FC<ComponentType & MaybeWithClassName> = ({
 							{!withoutClose && (
 								<Button
 									className={styles.close}
-									icon={<Close />}
+									icon={<NewClose color="#000" style={{ width: "20px" }} />}
 									color="primary-black"
 									variant="text"
 									onClick={onClose}

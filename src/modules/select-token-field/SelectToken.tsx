@@ -142,6 +142,7 @@ export const SelectTokenView: FC<SelectTokenType & MaybeWithClassName> = ({
 					onBack={() => setManageOn(false)}
 					withBack={manageOn}
 					fixedHeight={true}
+					withoutClose={false}
 				>
 					{!manageOn ? (
 						<ListOfTokens
