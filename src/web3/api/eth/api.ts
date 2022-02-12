@@ -20,6 +20,10 @@ export const queryERC20Token = async (
 		throw new Error("empty address given");
 	}
 
+	if (!provider) {
+		throw new Error("provider not given");
+	}
+
 	const address = dirtyAddress?.toLowerCase();
 
 	if (isEqualTo(address, 0)) {

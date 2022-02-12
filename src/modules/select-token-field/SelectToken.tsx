@@ -1,7 +1,7 @@
 import { TokenInfo } from "@uniswap/token-lists";
 import classNames from "classnames";
 
-import React, { CSSProperties, FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useUID } from "react-uid";
 
@@ -25,6 +25,7 @@ import { uriToHttp } from "@app/web3/api/tokens/ens/helpers";
 
 import { Icon } from "../icon";
 
+import ImportToken from "./ImportToken";
 import { ListOfTokens } from "./ListOfTokens";
 import styles from "./SelectToken.module.scss";
 // import EMPTY from "./assets/empty.svg";
@@ -42,8 +43,14 @@ type SelectTokenType = {
 	onBlur?(): void;
 	onChange(date: string): void;
 	showArrow?: boolean;
-	noManage?: boolean;
 };
+
+export interface IErc20TokenRes {
+	symbol: string;
+	decimals: number;
+	address: string;
+	antiFake: boolean;
+}
 
 export const SelectTokenView: FC<SelectTokenType & MaybeWithClassName> = ({
 	name,
@@ -59,7 +66,6 @@ export const SelectTokenView: FC<SelectTokenType & MaybeWithClassName> = ({
 	onBlur,
 	error,
 	showArrow = true,
-	noManage
 }) => {
 	const { popUp, close, open } = useControlPopUp();
 
@@ -70,7 +76,14 @@ export const SelectTokenView: FC<SelectTokenType & MaybeWithClassName> = ({
 	const defaultActive: ShortTokenInfo = initialActive
 		? initialActive
 		: placeholder
-		? { key: undefined, title: undefined, currency: placeholder, img: undefined, source: undefined }
+		? {
+				key: undefined,
+				title: undefined,
+				currency: placeholder,
+				img: undefined,
+				source: undefined,
+				address: undefined,
+		  }
 		: options[0];
 
 	const [active, setActive] = useState<ShortTokenInfo>(defaultActive);
@@ -87,6 +100,12 @@ export const SelectTokenView: FC<SelectTokenType & MaybeWithClassName> = ({
 		[close]
 	);
 
+	const popUpTitle = {
+		selectToken: "Select a token",
+		manage: "Manage",
+		importToken: "Import Token",
+	};
+
 	//result changed: trigger changes
 	useEffect(() => {
 		if (changed && !popUp.defined && onChange) {
@@ -95,13 +114,10 @@ export const SelectTokenView: FC<SelectTokenType & MaybeWithClassName> = ({
 		}
 	}, [active, changed, onChange, popUp]);
 
-	const [manageOn, setManageOn] = useState(false);
-
-	useEffect(() => {
-		if (!popUp.defined) {
-			setManageOn(false);
-		}
-	}, [popUp.defined]);
+	const [popUpContent, setPopUpContent] = useState<"selectToken" | "manage" | "importToken">(
+		"selectToken"
+	);
+	const [tokenResult, setTokenResult] = useState<IErc20TokenRes>();
 
 	return (
 		// eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
@@ -125,7 +141,7 @@ export const SelectTokenView: FC<SelectTokenType & MaybeWithClassName> = ({
 				>
 					{active && (
 						<div className={styles.value}>
-							{active.img && <Icon src={active.img} />}
+							{<Icon src={active?.img} />}
 							<span>{active.currency}</span>
 						</div>
 					)}
@@ -136,26 +152,55 @@ export const SelectTokenView: FC<SelectTokenType & MaybeWithClassName> = ({
 				<PopUpContainer
 					animated={popUp.present}
 					visible={popUp.defined}
-					onClose={close}
+					onClose={() => {
+						setTokenResult(undefined);
+						close();
+					}}
 					maxWidth={640}
-					title={!manageOn ? "Select a token" : "Manage"}
+					title={popUpTitle[popUpContent]}
 					scrollable={false}
 					onBlur={onBlur}
-					onBack={() => setManageOn(false)}
-					withBack={manageOn}
+					onBack={() => {
+						if (popUpContent === "manage") {
+							setPopUpContent("selectToken");
+						} else if (popUpContent === "importToken") {
+							setPopUpContent("manage");
+						}
+					}}
+					withBack={popUpContent && popUpContent !== "selectToken"}
 					fixedHeight={true}
 				>
-					{!manageOn ? (
+					{popUpContent === "selectToken" && (
 						<ListOfTokens
 							active={active}
 							onChange={handleChange}
-							onManage={() => setManageOn(true)}
+							onManage={() => setPopUpContent("manage")}
 							name={groupName}
 							options={options}
-							noManage={noManage}
+							onClickImportBtn={() => setPopUpContent("importToken")}
+							tokenResult={tokenResult}
+							setTokenResult={setTokenResult}
 						/>
-					) : (
-						<Manage tokenLists={tokenList} tokenListControl={tokenListControl} />
+					)}
+
+					{popUpContent === "manage" && (
+						<Manage
+							tokenResult={tokenResult}
+							setTokenResult={setTokenResult}
+							tokenLists={tokenList}
+							tokenListControl={tokenListControl}
+							setPopUpContent={setPopUpContent}
+						/>
+					)}
+
+					{popUpContent === "importToken" && (
+						<ImportToken
+							tokenResult={tokenResult}
+							afterImport={() => {
+								setTokenResult(undefined);
+								setPopUpContent("selectToken");
+							}}
+						/>
 					)}
 					<popUp.DefinePresent />
 				</PopUpContainer>
@@ -171,7 +216,7 @@ export const SelectToken: FC<
 		MaybeWithClassName & {
 			filter?(token: TokenInfo): boolean;
 		}
-> = ({ filter = passAll, noManage, ...props }) => {
+> = ({ filter = passAll, ...props }) => {
 	const tokenList = useTokenList();
 
 	const tokenListControl = useTokenListControl();
@@ -190,6 +235,7 @@ export const SelectToken: FC<
 					currency: token.symbol,
 					img: token.logoURI ? uriToHttp(token.logoURI)[0] : "",
 					source: token.source,
+					address: token.address,
 				};
 			}),
 		[filter, tokens]
@@ -211,7 +257,6 @@ export const SelectToken: FC<
 			options={options}
 			tokenList={convertedTokensList}
 			tokenListControl={tokenListControl}
-			noManage={noManage}
 			{...props}
 		/>
 	);
