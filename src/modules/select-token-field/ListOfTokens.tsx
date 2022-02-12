@@ -118,7 +118,8 @@ export const ListOfTokens: FC<ListOfTokensType> = ({
 			!options.find((option) => {
 				return option.address?.toLowerCase() === addressValue.toLowerCase();
 			}) &&
-			addressValue.search(/^0x[a-zA-Z0-9]{40}$/i) !== -1
+			addressValue.search(/^0x[a-zA-Z0-9]{40}$/i) !== -1 &&
+			!noManage
 		) {
 			run();
 		} else {
@@ -130,7 +131,7 @@ export const ListOfTokens: FC<ListOfTokensType> = ({
 				option.title?.toLowerCase().includes(addressValue) ||
 				option.key?.toLowerCase().includes(addressValue)
 		);
-	}, [addressValue, options, run, setTokenResult]);
+	}, [addressValue, options, run, setTokenResult, noManage]);
 
 	return (
 		<div className={styles.component}>
