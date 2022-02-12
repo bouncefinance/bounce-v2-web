@@ -43,6 +43,7 @@ type SelectTokenType = {
 	onBlur?(): void;
 	onChange(date: string): void;
 	showArrow?: boolean;
+	noManage?: boolean;
 };
 
 export interface IErc20TokenRes {
@@ -66,6 +67,7 @@ export const SelectTokenView: FC<SelectTokenType & MaybeWithClassName> = ({
 	onBlur,
 	error,
 	showArrow = true,
+	noManage,
 }) => {
 	const { popUp, close, open } = useControlPopUp();
 
@@ -177,6 +179,7 @@ export const SelectTokenView: FC<SelectTokenType & MaybeWithClassName> = ({
 							onManage={() => setPopUpContent("manage")}
 							name={groupName}
 							options={options}
+							noManage={noManage}
 							onClickImportBtn={() => setPopUpContent("importToken")}
 							tokenResult={tokenResult}
 							setTokenResult={setTokenResult}
@@ -216,7 +219,7 @@ export const SelectToken: FC<
 		MaybeWithClassName & {
 			filter?(token: TokenInfo): boolean;
 		}
-> = ({ filter = passAll, ...props }) => {
+> = ({ filter = passAll, noManage, ...props }) => {
 	const tokenList = useTokenList();
 
 	const tokenListControl = useTokenListControl();
@@ -257,6 +260,7 @@ export const SelectToken: FC<
 			options={options}
 			tokenList={convertedTokensList}
 			tokenListControl={tokenListControl}
+			noManage={noManage}
 			{...props}
 		/>
 	);

@@ -28,6 +28,7 @@ type ListOfTokensType = {
 	options: Array<ShortTokenInfo>;
 	onChange(item: any): void;
 	onManage(): void;
+	noManage?: boolean;
 	setTokenResult: (token: IErc20TokenRes) => void;
 	onClickImportBtn: () => void;
 	tokenResult: IErc20TokenRes;
@@ -72,6 +73,7 @@ export const ListOfTokens: FC<ListOfTokensType> = ({
 	name,
 	onChange,
 	onManage,
+	noManage,
 	setTokenResult,
 	onClickImportBtn,
 	tokenResult,
@@ -214,17 +216,19 @@ export const ListOfTokens: FC<ListOfTokensType> = ({
 				</div>
 			)}
 
-			<div className={styles.footer}>
-				<Button
-					variant="text"
-					color="primary-black"
-					size="medium"
-					iconBefore={<Pen width={24} style={{ width: 24, marginRight: 10 }} />}
-					onClick={onManage}
-				>
-					Manage
-				</Button>
-			</div>
+			{!noManage && (
+				<div className={styles.footer}>
+					<Button
+						variant="text"
+						color="primary-black"
+						size="medium"
+						iconBefore={<Pen width={24} style={{ width: 24, marginRight: 10 }} />}
+						onClick={onManage}
+					>
+						Manage
+					</Button>
+				</div>
+			)}
 		</div>
 	);
 };

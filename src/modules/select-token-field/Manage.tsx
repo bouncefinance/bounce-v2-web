@@ -134,7 +134,6 @@ const TokensContent: FC<ITokensContentProps> = ({
 					value={provider ? addressValue : "Please connect your wallet"}
 					readOnly={!provider}
 					onChange={(e) => {
-						console.log("e.target.value: ", e.target.value);
 						setAddressValue(e.target.value);
 					}}
 				/>
