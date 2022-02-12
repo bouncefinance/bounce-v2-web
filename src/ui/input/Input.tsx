@@ -41,7 +41,7 @@ export const Input: FC<InputType & MaybeWithClassName> = ({
 	onBlur,
 	onFocus,
 	inputProps,
-	hasTip
+	hasTip,
 }) => {
 	const [inputFocused, setInputFocused] = useState(false);
 
@@ -80,7 +80,7 @@ export const Input: FC<InputType & MaybeWithClassName> = ({
 					name={name}
 					type={type}
 					value={value}
-					placeholder={!inputFocused && placeholder}
+					placeholder={!inputFocused ? placeholder : undefined}
 					readOnly={readOnly}
 					required={required}
 					onChange={onChange}
@@ -92,7 +92,9 @@ export const Input: FC<InputType & MaybeWithClassName> = ({
 				/>
 				{after}
 			</div>
-			<div className={classNames(styles.error, hasTip && styles.hasTip)}>{error && <Caption Component="span">{error}</Caption>}</div>
+			<div className={classNames(styles.error, hasTip && styles.hasTip)}>
+				{error && <Caption Component="span">{error}</Caption>}
+			</div>
 		</div>
 	);
 };
