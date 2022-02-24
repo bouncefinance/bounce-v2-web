@@ -11,9 +11,9 @@ import { defineNetworkMapper } from "@app/web3/networks/utils";
 import { TokenInfo } from "@uniswap/token-lists";
 
 export type TokenOutType = {
-	tokenFrom: TokenInfo
-	tokenTo: TokenInfo
-	tokenFromImg: string
+	tokenFrom: TokenInfo;
+	tokenTo: TokenInfo;
+	tokenFromImg: string;
 };
 
 const TokenImp = () => {
@@ -25,18 +25,18 @@ const TokenImp = () => {
 		tokenTo: data.tokenTo?.address,
 	};
 
-	const [tokenFrom, setTokenFrom] = useState<TokenInfo>()
-	const [tokenTo, setTokenTo] = useState<TokenInfo>()
-	const [tokenFromUrl, setTokenFromUrl] = useState<string>()
+	const [tokenFrom, setTokenFrom] = useState<TokenInfo>();
+	const [tokenTo, setTokenTo] = useState<TokenInfo>();
+	const [tokenFromUrl, setTokenFromUrl] = useState<string>();
 
 	const onSubmit = async (_values: any) => {
 		addData({
 			tokenFrom: {
 				...tokenFrom,
-				logoURI: tokenFromUrl
+				logoURI: tokenFromUrl,
 			},
 			tokenTo: tokenTo,
-			tokenFromImg: tokenFromUrl
+			tokenFromImg: tokenFromUrl,
 		});
 
 		moveForward();
@@ -51,7 +51,7 @@ const TokenImp = () => {
 			const record1 = findToken(tokenFrom);
 
 			if (record1) {
-				setTokenFrom(record1)
+				setTokenFrom(record1);
 				setAddress(record1.address);
 			}
 		}
@@ -59,13 +59,13 @@ const TokenImp = () => {
 		if (tokenTo) {
 			const record2 = findToken(tokenTo);
 			if (record2) {
-				setTokenTo(record2)
+				setTokenTo(record2);
 			}
 		}
 	};
 
 	const onImgChange = (tokenFromUrl: string | null) => {
-		setTokenFromUrl(tokenFromUrl || tokenFrom?.logoURI)
+		setTokenFromUrl(tokenFromUrl || tokenFrom?.logoURI);
 	};
 
 	const getLinkByNetwork = defineNetworkMapper({
@@ -75,8 +75,9 @@ const TokenImp = () => {
 		[WEB3_NETWORKS.POLYGON]: `https://polygonscan.com/address/${address}`,
 		[WEB3_NETWORKS.ARBITRUM]: `https://arbiscan.io/address/${address}`,
 		[WEB3_NETWORKS.FANTOM]: `https://ftmscan.com/address/${address}`,
+		[WEB3_NETWORKS.SYSCOIN]: `https://explorer.syscoin.org/address/${address}`,
+		[WEB3_NETWORKS.SyscoinTanenbaumTestnet]: `https://tanenbaum.io/ddress/${address}`,
 	});
-
 
 	return (
 		<LBPTokenInformation
