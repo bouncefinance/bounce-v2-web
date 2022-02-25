@@ -228,6 +228,7 @@ export const ConfirmationImp: FC<CommonType> = ({ type }) => {
 				poolDuration={wapperDuration(startDate, endDate)}
 				amount={wrapperAmount(tokenFrom, amountFrom, tokenTo, amountTo)}
 				weights={wrapperWeight(tokenFrom, tokenTo, startWeight, endWeight)}
+				tokenFrom={tokenFrom}
 			>
 				<div className={styles.step}>
 					<SerialNo

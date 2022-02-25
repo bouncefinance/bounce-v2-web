@@ -3,6 +3,7 @@ import { Button, CommonType, PrimaryButton } from '@app/ui/button/Button';
 import { DescriptionList } from '@app/ui/description-list';
 import { Spinner } from '@app/ui/spinner';
 import { Heading3 } from '@app/ui/typography';
+import { TokenInfo } from '@uniswap/token-lists';
 import classNames from 'classnames';
 import React, { Children, FC, ReactChild, ReactNode, useEffect, useState } from 'react'
 import styles from './Confirmation.module.scss'
@@ -17,7 +18,8 @@ type ConfirmationType = {
     tradingFee: string
     poolDuration: string
     amount: ReactNode
-    weights: ReactNode
+    weights: ReactNode,
+    tokenFrom?: TokenInfo
 };
 
 export const ConfirmationView: FC<MaybeWithClassName & ConfirmationType & CommonType> = ({
@@ -30,6 +32,7 @@ export const ConfirmationView: FC<MaybeWithClassName & ConfirmationType & Common
     poolDuration,
     amount,
     weights,
+    tokenFrom,
     children
 }) => {
     const TOKEN_DATA = {
@@ -51,7 +54,7 @@ export const ConfirmationView: FC<MaybeWithClassName & ConfirmationType & Common
 
     return (
         <div className={classNames(className, styles.component)}>
-            <Heading3 className={styles.subTitle}>{'MONICA Token Launch Auction Pool'}</Heading3>
+            <Heading3 className={styles.subTitle}>{`${tokenFrom?.symbol} Token Launch Auction Pool`}</Heading3>
             <div className={styles.body}>
                 <div className={styles.leftInfo}>
                     <div className={styles.wrapperBox}>
