@@ -70,7 +70,7 @@ export const queryERC20Token = async (
 					address,
 					antiFake: true,
 				};
-			case WEB3_NETWORKS.SyscoinTanenbaumTestnet:
+			case WEB3_NETWORKS.SyscoinTestnet:
 				return {
 					symbol: "tSYS",
 					decimals: 18,

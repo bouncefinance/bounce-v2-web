@@ -7,7 +7,7 @@ export enum WEB3_NETWORKS {
 	// AVALANCHE = 43114,
 	FANTOM = 250,
 	SYSCOIN = 57,
-	SyscoinTanenbaumTestnet = 5700,
+	SyscoinTestnet = 5700,
 }
 
 export const CHAINS_INFO = {

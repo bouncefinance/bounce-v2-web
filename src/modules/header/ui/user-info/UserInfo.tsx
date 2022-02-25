@@ -247,11 +247,11 @@ const chainConfig: IChainConfig[] = [
 	{
 		chainId: 5700,
 		name: "Syscoin Testnet",
-		fullName: "Syscoin Tanenbaum Testnet",
+		fullName: "Syscoin Testnet",
 		icon: require("./assets/chain-syscoin.svg"),
 		config: {
 			chainId: "0x1644",
-			chainName: "Syscoin Tanenbaum Testnet",
+			chainName: "Syscoin Testnet",
 			nativeCurrency: {
 				name: "tSYS",
 				symbol: "tSYS",
