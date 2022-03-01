@@ -42,6 +42,13 @@ export const queryERC20Token = async (
 					address,
 					antiFake: true,
 				};
+			case WEB3_NETWORKS.ARBITRUM:
+				return {
+					symbol: "ETH",
+					decimals: 18,
+					address,
+					antiFake: true,
+				};
 			// case WEB3_NETWORKS.AVALANCHE:
 			// 	return {
 			// 		symbol: "AVAX",
@@ -52,6 +59,20 @@ export const queryERC20Token = async (
 			case WEB3_NETWORKS.FANTOM:
 				return {
 					symbol: "FTM",
+					decimals: 18,
+					address,
+					antiFake: true,
+				};
+			case WEB3_NETWORKS.SYSCOIN:
+				return {
+					symbol: "SYS",
+					decimals: 18,
+					address,
+					antiFake: true,
+				};
+			case WEB3_NETWORKS.SyscoinTestnet:
+				return {
+					symbol: "tSYS",
 					decimals: 18,
 					address,
 					antiFake: true,

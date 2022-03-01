@@ -226,6 +226,42 @@ const chainConfig: IChainConfig[] = [
 		},
 		isHidden: true,
 	},
+	{
+		chainId: 57,
+		name: "Syscoin",
+		fullName: "Syscoin Mainnet",
+		icon: require("./assets/chain-syscoin.svg"),
+		config: {
+			chainId: "0x39",
+			chainName: "Syscoin Mainnet",
+			nativeCurrency: {
+				name: "SYS",
+				symbol: "SYS",
+				decimals: 18,
+			},
+			rpcUrls: ["https://rpc.syscoin.org"],
+			blockExplorerUrls: ["https://explorer.syscoin.org/"],
+		},
+		isHidden: false,
+	},
+	{
+		chainId: 5700,
+		name: "Syscoin Testnet",
+		fullName: "Syscoin Testnet",
+		icon: require("./assets/chain-syscoin.svg"),
+		config: {
+			chainId: "0x1644",
+			chainName: "Syscoin Testnet",
+			nativeCurrency: {
+				name: "tSYS",
+				symbol: "tSYS",
+				decimals: 18,
+			},
+			rpcUrls: ["https://rpc.tanenbaum.io"],
+			blockExplorerUrls: ["https://tanenbaum.io"],
+		},
+		isHidden: false,
+	},
 ];
 
 export const SelectChain: FC<ISelectChain> = ({ currentChain }) => {
@@ -313,7 +349,7 @@ export const SelectChain: FC<ISelectChain> = ({ currentChain }) => {
 									}}
 								>
 									<div className={styles.imgBox}>
-										<img src={item.icon} alt="" style={{ maxWidth: "16px", maxHeight: "16px" }} />
+										<img src={item.icon} alt="" />
 									</div>
 									<span>{item.fullName}</span>
 								</li>

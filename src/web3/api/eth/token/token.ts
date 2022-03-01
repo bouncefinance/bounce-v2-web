@@ -6,6 +6,7 @@ import BNB from "./assets/bnb.svg";
 import ETHER from "./assets/eth.svg";
 import FTM from "./assets/ftm.svg";
 import POLYGON from "./assets/polygon.svg";
+import SYS from "./assets/sys.svg";
 
 import { makeToken } from "./utils";
 
@@ -63,6 +64,26 @@ const getBaseToken = (chainId: number) => {
 				"FTM",
 				"Fantom",
 				FTM
+			);
+
+		case 57:
+			return makeToken(
+				chainId,
+				"0x0000000000000000000000000000000000000000",
+				18,
+				"SYS",
+				"SYSCOIN",
+				SYS
+			);
+
+		case 5700:
+			return makeToken(
+				chainId,
+				"0x0000000000000000000000000000000000000000",
+				18,
+				"tSYS",
+				"SYSCOIN",
+				SYS
 			);
 
 		default:
