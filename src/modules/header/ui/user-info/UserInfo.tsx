@@ -244,7 +244,7 @@ const chainConfig: IChainConfig[] = [
 		},
 		isHidden: false,
 	},
-	{
+	/* {
 		chainId: 5700,
 		name: "Syscoin Testnet",
 		fullName: "Syscoin Testnet",
@@ -261,7 +261,7 @@ const chainConfig: IChainConfig[] = [
 			blockExplorerUrls: ["https://tanenbaum.io"],
 		},
 		isHidden: false,
-	},
+	}, */
 ];
 
 export const SelectChain: FC<ISelectChain> = ({ currentChain }) => {
