@@ -70,13 +70,13 @@ export const queryERC20Token = async (
 					address,
 					antiFake: true,
 				};
-			case WEB3_NETWORKS.SyscoinTestnet:
-				return {
-					symbol: "tSYS",
-					decimals: 18,
-					address,
-					antiFake: true,
-				};
+			// case WEB3_NETWORKS.SyscoinTestnet:
+			// 	return {
+			// 		symbol: "tSYS",
+			// 		decimals: 18,
+			// 		address,
+			// 		antiFake: true,
+			// 	};
 			default:
 				return {
 					symbol: "ETH",
