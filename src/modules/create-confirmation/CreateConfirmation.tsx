@@ -16,7 +16,7 @@ type CreateConfirmationType = {
 	moveBack(): void;
 	onComplete(): void;
 	bigScreen?: boolean;
-	canSubmit?: boolean
+	canSubmit?: boolean;
 };
 
 export const CreateConfirmation: FC<CreateConfirmationType & MaybeWithClassName & WithChildren> = ({
@@ -26,7 +26,7 @@ export const CreateConfirmation: FC<CreateConfirmationType & MaybeWithClassName 
 	onComplete,
 	children,
 	bigScreen,
-	canSubmit = true
+	canSubmit = true,
 }) => {
 	const [loading, setLoading] = useState(false);
 

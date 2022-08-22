@@ -8,6 +8,7 @@ export enum WEB3_NETWORKS {
 	FANTOM = 250,
 	SYSCOIN = 57,
 	// SyscoinTestnet = 5700,
+	DOGECHAIN = 2000,
 }
 
 export const CHAINS_INFO = {
@@ -32,4 +33,8 @@ export const CHAINS_INFO = {
 	// 	explorer: { name: "Tanenbaum Explorer", url: "https://tanenbaum.io" },
 	// },
 	// 43114: { currency: "AVAX", explorer: { name: "snowtrace", url: "https://snowtrace.io" } },
+	2000: {
+		currency: "DOGE",
+		explorer: { name: "explorer.dogechain", url: "https://explorer.dogechain.dog" },
+	},
 };

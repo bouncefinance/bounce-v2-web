@@ -134,6 +134,27 @@ const chainConfig: IChainConfig[] = [
 		},
 	},
 	{
+		chainId: 2000,
+		name: "Dogechain",
+		fullName: "Dogechain Mainnet",
+		icon: require("./assets/chain-dogechain.svg"),
+		config: {
+			chainId: "0x7d0",
+			chainName: "Dogechain Mainnet",
+			nativeCurrency: {
+				name: "Wrapped Dogecoin",
+				symbol: "DOGE",
+				decimals: 18,
+			},
+			rpcUrls: [
+				"https://rpc01-sg.dogechain.dog",
+				"https://rpc02-sg.dogechain.dog",
+				"https://rpc03-sg.dogechain.dog",
+			],
+			blockExplorerUrls: ["https://explorer.dogechain.dog"],
+		},
+	},
+	{
 		chainId: 128,
 		name: "HECO",
 		fullName: "HECO",

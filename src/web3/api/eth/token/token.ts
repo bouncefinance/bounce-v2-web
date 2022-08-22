@@ -7,6 +7,7 @@ import ETHER from "./assets/eth.svg";
 import FTM from "./assets/ftm.svg";
 import POLYGON from "./assets/polygon.svg";
 import SYS from "./assets/sys.svg";
+import DOGE from "./assets/doge.svg";
 
 import { makeToken } from "./utils";
 
@@ -84,6 +85,16 @@ const getBaseToken = (chainId: number) => {
 				"tSYS",
 				"SYSCOIN",
 				SYS
+			);
+
+		case 2000:
+			return makeToken(
+				chainId,
+				"0x0000000000000000000000000000000000000000",
+				18,
+				"DOGE",
+				"DogeChain",
+				DOGE
 			);
 
 		default:

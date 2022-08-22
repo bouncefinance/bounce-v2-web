@@ -42,6 +42,13 @@ export const queryERC20Token = async (
 					address,
 					antiFake: true,
 				};
+			case WEB3_NETWORKS.DOGECHAIN:
+				return {
+					symbol: "DOGE",
+					decimals: 18,
+					address,
+					antiFake: true,
+				};
 			case WEB3_NETWORKS.ARBITRUM:
 				return {
 					symbol: "ETH",
