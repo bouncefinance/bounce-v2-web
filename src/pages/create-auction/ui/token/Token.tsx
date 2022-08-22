@@ -59,6 +59,7 @@ const TokenImp = () => {
 		[WEB3_NETWORKS.SYSCOIN]: `https://explorer.syscoin.org/address/${address}`,
 		// [WEB3_NETWORKS.SyscoinTestnet]: `https://tanenbaum.io/address/${address}`,
 		// [WEB3_NETWORKS.AVALANCHE]: `https://snowtrace.io/address/${address}`,
+		[WEB3_NETWORKS.DOGECHAIN]: `https://explorer.dogechain.dog/address/${address}`,
 	});
 
 	return (

@@ -77,6 +77,7 @@ const TokenImp = () => {
 		[WEB3_NETWORKS.FANTOM]: `https://ftmscan.com/address/${address}`,
 		[WEB3_NETWORKS.SYSCOIN]: `https://explorer.syscoin.org/address/${address}`,
 		// [WEB3_NETWORKS.SyscoinTestnet]: `https://tanenbaum.io/address/${address}`,
+		[WEB3_NETWORKS.DOGECHAIN]: `https://explorer.dogechain.dog/address/${address}`,
 	});
 
 	return (

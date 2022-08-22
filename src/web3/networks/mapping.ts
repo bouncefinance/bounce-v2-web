@@ -12,6 +12,7 @@ const getFixSwapAddress = defineNetworkMapper({
 	[WEB3_NETWORKS.FANTOM]: "0x94E7d2a17EAA6A86DFD2Fddb639F9878d8377CC7",
 	[WEB3_NETWORKS.SYSCOIN]: "0x94E7d2a17EAA6A86DFD2Fddb639F9878d8377CC7",
 	// [WEB3_NETWORKS.SyscoinTestnet]: "0x0A6318AB6B0C414679c0eB6a97035f4a3ef98606",
+	[WEB3_NETWORKS.DOGECHAIN]: "0x264D087C20761A565524212237cB762e0D86cE25",
 });
 
 const getOtcAddress = defineNetworkMapper({
@@ -24,6 +25,7 @@ const getOtcAddress = defineNetworkMapper({
 	[WEB3_NETWORKS.FANTOM]: "0x94aCe08a344efa23Ac118AA94A66A8D699E8a1A1",
 	[WEB3_NETWORKS.SYSCOIN]: "0x94aCe08a344efa23Ac118AA94A66A8D699E8a1A1",
 	// [WEB3_NETWORKS.SyscoinTestnet]: "0x94796Ee977b6759209b9c69Ee872848168f50123",
+	[WEB3_NETWORKS.DOGECHAIN]: "0xC7F6Ed92aEd2b70892FF978cd93b887E206B9e72",
 });
 
 const getBounceProxyAddress = defineNetworkMapper({
@@ -35,6 +37,7 @@ const getBounceProxyAddress = defineNetworkMapper({
 	[WEB3_NETWORKS.FANTOM]: "",
 	[WEB3_NETWORKS.SYSCOIN]: "",
 	// [WEB3_NETWORKS.SyscoinTestnet]: "",
+	[WEB3_NETWORKS.DOGECHAIN]: "0x87d811661BB10Af6D236b5458Eeb2f4614723FB8",
 });
 
 const getVaultAddress = defineNetworkMapper({
@@ -46,6 +49,7 @@ const getVaultAddress = defineNetworkMapper({
 	[WEB3_NETWORKS.FANTOM]: "",
 	[WEB3_NETWORKS.SYSCOIN]: "",
 	// [WEB3_NETWORKS.SyscoinTestnet]: "",
+	[WEB3_NETWORKS.DOGECHAIN]: "",
 });
 
 export enum ADDRESS_MAPPING {

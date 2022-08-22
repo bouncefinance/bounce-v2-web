@@ -8,6 +8,7 @@ import { Community } from "@app/ui/icons/community";
 import { Medium } from "@app/ui/icons/medium";
 import { Telegram } from "@app/ui/icons/telegram";
 import { Twitter } from "@app/ui/icons/twitter";
+import { Bsc } from "@app/ui/icons/bsc";
 
 import styles from "./Footer.module.scss";
 
@@ -15,6 +16,9 @@ export const HeaderView: FC<MaybeWithClassName> = ({ className }) => {
 	return (
 		<footer className={styles["footer"]}>
 			<div className={styles["left-wrap"]}>
+				<NavLink icon={<Bsc />} href="https://accounts.binance.com/en/register?ref=10760676">
+					<></>
+				</NavLink>
 				<NavLink icon={<Medium />} href="https://medium.com/@bouncefinance">
 					<></>
 				</NavLink>
