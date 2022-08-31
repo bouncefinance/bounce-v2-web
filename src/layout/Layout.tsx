@@ -2,10 +2,10 @@ import { useSize } from "ahooks";
 import classNames from "classnames";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import React, { createContext, FC, memo, ReactNode } from "react";
+import React, { createContext, FC, memo, ReactNode, useEffect, useState } from "react";
 
 import { ApplicationWrappers } from "@app/layout/ApplicationWrappers";
-// import { BlockPopUp } from "@app/modules/block-pop-up";
+import { BlockPopUp } from "@app/modules/block-pop-up";
 import { ConnectWalletProvider } from "@app/modules/connect-wallet-modal/ConnectWalletProvider";
 import { Footer } from "@app/modules/footer";
 import { Header } from "@app/modules/header";
@@ -63,32 +63,32 @@ export const Layout: FC<LayoutType> = ({
 	description = "",
 	keywords,
 }) => {
-	// const [isIpLegal, setIsIpLegal] = useState<boolean>(true);
-	// const router = useRouter();
+	const [isIpLegal, setIsIpLegal] = useState<boolean>(true);
+	const router = useRouter();
 
 	const size = useSize(document.querySelector("body"));
 
-	// const checkIP = async () => {
-	// 	try {
-	// 		const result = await fetch("https://geolocation-db.com/json/");
-	// 		const res = await result.json();
+	const checkIP = async () => {
+		try {
+			const result = await fetch("https://geolocation-db.com/json/");
+			const res = await result.json();
 
-	// 		if (!res) return;
+			if (!res) return;
 
-	// 		const { country_code } = res;
+			const { country_code } = res;
 
-	// 		// 屏蔽中国和美国的 IP
-	// 		if (country_code === "CN" || country_code === "US") {
-	// 			setIsIpLegal(false);
-	// 		}
-	// 	} catch (error) {
-	// 		console.log("error");
-	// 	}
-	// };
+			// 屏蔽中国和美国的 IP
+			if (country_code === "CN" || country_code === "US") {
+				setIsIpLegal(false);
+			}
+		} catch (error) {
+			console.log("error");
+		}
+	};
 
-	// useEffect(() => {
-	// checkIP();
-	// }, [router]);
+	useEffect(() => {
+		checkIP();
+	}, [router]);
 
 	return (
 		<Providers>
@@ -115,7 +115,7 @@ export const Layout: FC<LayoutType> = ({
 				<Footer />
 			</div>
 
-			{/* <BlockPopUp visible={!isIpLegal} /> */}
+			<BlockPopUp visible={!isIpLegal} />
 
 			<MobilePopUp visible={size?.width < 835 || false} />
 		</Providers>
