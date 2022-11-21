@@ -125,7 +125,7 @@ export const Farm: FC<MaybeWithClassName> = ({ className }) => {
 					handleUnStake(amount);
 					break;
 				case "claim":
-					handleClaim();
+					handleClaim(amount);
 					break;
 			}
 		};
@@ -213,13 +213,13 @@ export const Farm: FC<MaybeWithClassName> = ({ className }) => {
 		}
 	};
 
-	const handleClaim = async () => {
+	const handleClaim = async (amount) => {
 		setOperationStatus(OPERATION.confirm);
 		openProcess();
 
 		try {
 			await stakingContract.methods
-				.claimReward()
+				.claimReward(amount)
 				.send({ from: account })
 				.on("transactionHash", () => {
 					setOperationStatus(OPERATION.pending);
