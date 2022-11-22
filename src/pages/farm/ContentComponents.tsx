@@ -10,7 +10,14 @@ import { PrimaryButton } from "@app/ui/button";
 import { ShortLogo } from "@app/ui/icons/short-logo";
 import { Heading1 } from "@app/ui/typography";
 import { weiToNum } from "@app/utils/bn/wei";
-import { composeValidators, isEqualZero, isValidWei } from "@app/utils/validation";
+import {
+	composeValidators,
+	isEqualZero,
+	isNumberWith2DgitsAnd2Decimal,
+	isValidWei,
+} from "@app/utils/validation";
+import useRewardOutMin from "@app/hooks/use-reward-out-min";
+import { Spinner } from "@app/ui/spinner";
 
 const FLOAT = "0.0001";
 interface IContent {
@@ -155,9 +162,12 @@ export const UnStakeBody: FC<IContent> = ({ onClose, onSubmit, stakeAmount }) =>
 };
 
 export const ClaimBody: FC<IContent> = ({ onClose, onSubmit, amount, stakeAmount }) => {
-	const handleSubmit = () => {
+	const { loading: isRewardOutMinLoading, runAsync: asyncGetRewardOutMmin } = useRewardOutMin();
+
+	const handleSubmit = async (values: { slippage: string }) => {
+		const rewardOutMin = await asyncGetRewardOutMmin(values.slippage);
+		onSubmit(rewardOutMin.raw.toString());
 		onClose();
-		onSubmit();
 	};
 
 	return (
@@ -167,9 +177,52 @@ export const ClaimBody: FC<IContent> = ({ onClose, onSubmit, amount, stakeAmount
 				<span>{weiToNum(amount.toString(), 18, 6)}</span>
 				<span>Auction</span>
 			</div>
-			<PrimaryButton size="large" onClick={handleSubmit}>
-				Claim
-			</PrimaryButton>
+
+			<Form onSubmit={handleSubmit} className={styles.form}>
+				<Label
+					Component="label"
+					label="Slippage tolerance"
+					tooltip="Your transaction will revert if the price changes unfavorably by more than this percentage."
+				>
+					<TextField
+						className={styles.slippageInput}
+						type="number"
+						name="slippage"
+						placeholder="0.00"
+						step={FLOAT}
+						after={
+							<div className={styles.amount}>
+								<FormSpy>
+									{({ form }) => (
+										<button
+											className={styles.max}
+											onClick={() => form.change("slippage", "0.50")}
+											type="button"
+										>
+											Auto
+										</button>
+									)}
+								</FormSpy>
+								%
+							</div>
+						}
+						required
+						validate={composeValidators(isNumberWith2DgitsAnd2Decimal)}
+					/>
+				</Label>
+
+				<FormSpy>
+					{(form) => (
+						<PrimaryButton
+							size="large"
+							submit
+							disabled={!form.dirty || form.hasValidationErrors || isRewardOutMinLoading}
+						>
+							{isRewardOutMinLoading ? <Spinner size="small" /> : "Claim"}
+						</PrimaryButton>
+					)}
+				</FormSpy>
+			</Form>
 			<div className={styles.amountItem}>
 				<span>Your Auction Staked</span>
 				<span>{weiToNum(stakeAmount.toString())}</span>

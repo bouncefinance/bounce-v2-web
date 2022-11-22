@@ -11,6 +11,10 @@ export const isNotGreaterThan = (max: number) => (value: string): string | undef
 	return +value > max ? "You have exceeded the limit." : undefined;
 };
 
+export const isNotLessThan = (min: number) => (value: string): string | undefined => {
+	return +value < min ? "You have exceeded the limit." : undefined;
+};
+
 export const isEqualZero = (value: string): string | undefined => {
 	return +value === 0 ? "Should be a more than 0" : undefined;
 };
@@ -62,4 +66,12 @@ export const isThanGreateAddrss = (address1: string, address2: string) => {
 	const num2 = new BN(parseInt(address2.substring(0, 8), 16));
 
 	return num1.sub(num2).gt(new BN(0));
+};
+
+export const isNumberWith2DgitsAnd2Decimal = (input: string | number) => {
+	const pattern = /^([1-9]\d|\d)(\.\d{1,2})?$/;
+
+	return String(input).search(pattern) > -1
+		? undefined
+		: "Should be less than 100 and no more than 2 digits after point";
 };
