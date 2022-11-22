@@ -178,11 +178,17 @@ export const ClaimBody: FC<IContent> = ({ onClose, onSubmit, amount, stakeAmount
 				<span>Auction</span>
 			</div>
 
-			<Form onSubmit={handleSubmit} className={styles.form}>
+			<Form onSubmit={handleSubmit} className={styles.form} initialValues={{ slippage: "0.5" }}>
 				<Label
 					Component="label"
 					label="Slippage tolerance"
-					tooltip="Your transaction will revert if the price changes unfavorably by more than this percentage."
+					tooltip={
+						<div>
+							Your transaction will revert if the price changes
+							<br />
+							unfavorably by more than this percentage.
+						</div>
+					}
 				>
 					<TextField
 						className={styles.slippageInput}
@@ -196,7 +202,7 @@ export const ClaimBody: FC<IContent> = ({ onClose, onSubmit, amount, stakeAmount
 									{({ form }) => (
 										<button
 											className={styles.max}
-											onClick={() => form.change("slippage", "0.50")}
+											onClick={() => form.change("slippage", "0.5")}
 											type="button"
 										>
 											Auto
@@ -216,7 +222,7 @@ export const ClaimBody: FC<IContent> = ({ onClose, onSubmit, amount, stakeAmount
 						<PrimaryButton
 							size="large"
 							submit
-							disabled={!form.dirty || form.hasValidationErrors || isRewardOutMinLoading}
+							disabled={form.hasValidationErrors || isRewardOutMinLoading}
 						>
 							{isRewardOutMinLoading ? <Spinner size="small" /> : "Claim"}
 						</PrimaryButton>
