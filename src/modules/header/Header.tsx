@@ -3,7 +3,6 @@ import React, { FC, useCallback, useState, useEffect, useRef } from "react";
 
 import { FocusOn } from "react-focus-on";
 
-import { CREATE_PATH } from "@app/const/const";
 import { MaybeWithClassName } from "@app/helper/react/types";
 import { useScatteredContinuousState } from "@app/hooks/use-continuous-state";
 import { DotLinks } from "@app/modules/header/ui/dots";
@@ -85,16 +84,6 @@ export const HeaderView: FC<HeaderType & MaybeWithClassName> = ({ className, act
 					<DotLinks className={styles.dots} />
 					<Navigation className={styles.navigation} />
 					<div className={styles.buttons}>
-						<NavLink
-							className={styles.create}
-							href={CREATE_PATH}
-							variant="outlined"
-							size="medium"
-							color="primary-white"
-							rainbowHover
-						>
-							Create
-						</NavLink>
 						{active ? (
 							<UserInfo />
 						) : (
