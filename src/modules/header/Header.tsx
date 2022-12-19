@@ -3,7 +3,6 @@ import React, { FC, useCallback, useState, useEffect, useRef } from "react";
 
 import { FocusOn } from "react-focus-on";
 
-import { CREATE_PATH } from "@app/const/const";
 import { MaybeWithClassName } from "@app/helper/react/types";
 import { useScatteredContinuousState } from "@app/hooks/use-continuous-state";
 import { DotLinks } from "@app/modules/header/ui/dots";
@@ -19,10 +18,17 @@ import { useConnectWalletControl } from "../connect-wallet-modal";
 import styles from "./Header.module.scss";
 import { MobileNavigation } from "./ui/mobile-navigation";
 import { Navigation } from "./ui/navigation";
+import Alert from "@material-ui/lab/Alert";
+import { Collapse, makeStyles } from "@material-ui/core";
+import CautionIcon from "./assets/caution.svg";
 
 type HeaderType = {
 	active: boolean;
 };
+
+const useStyles = makeStyles({
+	root: { borderRadius: "unset" },
+});
 
 export const HeaderView: FC<HeaderType & MaybeWithClassName> = ({ className, active }) => {
 	const [mobileNavigationShown, setMobileNavigationVisibility] = useState(false);
@@ -45,9 +51,26 @@ export const HeaderView: FC<HeaderType & MaybeWithClassName> = ({ className, act
 
 	const { open } = useConnectWalletControl();
 
+	const classes = useStyles();
+	const [isAlertOpen, setIsAlertOpen] = useState(true);
+
 	return (
 		<>
 			<header className={classNames(className, styles.component)}>
+				<Collapse in={isAlertOpen}>
+					<Alert
+						variant="filled"
+						severity="error"
+						icon={<img src={CautionIcon} alt="Caution" />}
+						className={classes.root}
+						onClose={() => {
+							setIsAlertOpen(false);
+						}}
+					>
+						Please note that as Bounce transitions to V3 that Bounce V1 & V2 will be deactivated
+						following the successful launch and deployment of V3.
+					</Alert>
+				</Collapse>
 				<div className={styles.wrapper}>
 					<NavLink
 						className={styles.logo}
@@ -61,16 +84,6 @@ export const HeaderView: FC<HeaderType & MaybeWithClassName> = ({ className, act
 					<DotLinks className={styles.dots} />
 					<Navigation className={styles.navigation} />
 					<div className={styles.buttons}>
-						<NavLink
-							className={styles.create}
-							href={CREATE_PATH}
-							variant="outlined"
-							size="medium"
-							color="primary-white"
-							rainbowHover
-						>
-							Create
-						</NavLink>
 						{active ? (
 							<UserInfo />
 						) : (
