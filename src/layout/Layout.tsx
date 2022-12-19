@@ -16,6 +16,7 @@ import { Vector } from "@app/ui/icons/vector";
 import { Web3ProviderRoot } from "../web3/provider/Web3Provider";
 
 import styles from "./Layout.module.scss";
+import { WarningPopUp } from "@app/modules/warning-pop-up";
 
 type LayoutType = {
 	children?: ReactNode;
@@ -116,6 +117,7 @@ export const Layout: FC<LayoutType> = ({
 			</div>
 
 			<BlockPopUp visible={!isIpLegal} />
+			<WarningPopUp />
 
 			<MobilePopUp visible={size?.width < 835 || false} />
 		</Providers>
