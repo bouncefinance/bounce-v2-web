@@ -78,7 +78,7 @@ export const Layout: FC<LayoutType> = ({
 			const { country_code } = res;
 
 			// 屏蔽中国和美国的 IP
-			if (country_code === "CN" || country_code === "US") {
+			if (location.hostname !== "localhost" && (country_code === "CN" || country_code === "US")) {
 				setIsIpLegal(false);
 			}
 		} catch (error) {
