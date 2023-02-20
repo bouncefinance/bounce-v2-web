@@ -1,5 +1,7 @@
+import BN from "bn.js";
+
 export const composeValidators = (...validators: any[]) => (value: string) =>
-	validators.reduce((error, validator) => error || validator(value), undefined);
+	validators.reduce((error, validator) => error || (validator && validator(value)), undefined);
 
 export function isRequired<T>(value: T): string | undefined {
 	return value ? undefined : "This field is required.";
@@ -9,12 +11,16 @@ export const isNotGreaterThan = (max: number) => (value: string): string | undef
 	return +value > max ? "You have exceeded the limit." : undefined;
 };
 
+export const isNotLessThan = (min: number) => (value: string): string | undefined => {
+	return +value < min ? "You have exceeded the limit." : undefined;
+};
+
 export const isEqualZero = (value: string): string | undefined => {
 	return +value === 0 ? "Should be a more than 0" : undefined;
 };
 
 export const isNotLongerThan = (max: number) => (value: string): string | undefined => {
-	return value.length > max ? `Should be a less than ${max} symbols` : undefined;
+	return value && value.length > max ? `Keep it below ${max} characters` : undefined;
 };
 
 export function isValidEmail(value: string): string | undefined {
@@ -35,6 +41,10 @@ export function isValidWei(value: string): string | undefined {
 		: undefined;
 }
 
+export const isEnoughBalance = (balance: number) => (value: string): string | undefined => {
+	return +value > +balance ? `You don’t have enough balance` : undefined;
+};
+
 export function isDateRequired(date: Date): string | undefined {
 	if (!date) {
 		return isRequired(null);
@@ -46,3 +56,22 @@ export function isDateRequired(date: Date): string | undefined {
 
 	return undefined;
 }
+
+export function isFromToTokensDifferent<T>(fromToken: T, toToken: T): string | undefined {
+	return fromToken !== toToken ? undefined : "Please select different tokens.";
+}
+
+export const isThanGreateAddrss = (address1: string, address2: string) => {
+	const num1 = new BN(parseInt(address1.substring(0, 8), 16));
+	const num2 = new BN(parseInt(address2.substring(0, 8), 16));
+
+	return num1.sub(num2).gt(new BN(0));
+};
+
+export const isNumberWith2DgitsAnd2Decimal = (input: string | number) => {
+	const pattern = /^([1-9]\d|\d)(\.\d{1,2})?$/;
+
+	return String(input).search(pattern) > -1
+		? undefined
+		: "Should be less than 100 and no more than 2 digits after point";
+};
