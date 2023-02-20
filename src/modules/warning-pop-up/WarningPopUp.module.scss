@@ -1,0 +1,20 @@
+.component {
+	display: grid;
+	row-gap: 60px;
+	justify-items: center;
+	padding: var(--spacing-unit) calc(var(--spacing-unit) * 7.5) calc(var(--spacing-unit) * 6);
+}
+
+.title,
+.text {
+	margin: 0;
+	text-align: center;
+}
+
+.text {
+	opacity: 0.5;
+}
+
+.button {
+	width: 420px;
+}
