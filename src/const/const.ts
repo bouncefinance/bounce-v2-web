@@ -14,7 +14,8 @@ export const AUCTION_PATH = "/auction";
 export const OTC_PATH = "/otc";
 export const LBP_PATH = "/lbp";
 export const FARM_PATH = "https://token.bounce.finance/staking";
-export const GOVERNANCE_PATH = "https://snapshot.org/#/bouncedao.eth";
+// export const GOVERNANCE_PATH = "https://snapshot.org/#/bouncedao.eth";
+export const GOVERNANCE_PATH = "/governance";
 export const CREATE_PATH = "/create";
 export const CREATE_PROPOSAL_PATH = "/create/proposal";
 
