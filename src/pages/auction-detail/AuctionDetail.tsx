@@ -514,11 +514,12 @@ export const AuctionDetail: FC<{ poolID: number; auctionType: POOL_TYPE }> = ({
 						balance={balance}
 						limit={limit}
 						isLimit={limited}
-						disabled={
-							operation === OPERATION.loading ||
-							pool.status === POOL_STATUS.COMING ||
-							!userWhitelisted
-						}
+						// disabled={
+						// 	operation === OPERATION.loading ||
+						// 	pool.status === POOL_STATUS.COMING ||
+						// 	!userWhitelisted
+						// }
+						disabled
 						loading={operation === OPERATION.loading}
 						onSubmit={bidAction}
 					>

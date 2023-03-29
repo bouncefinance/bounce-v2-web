@@ -378,11 +378,12 @@ export const OTCDetail: FC<{ poolID: number; otcType: OTC_TYPE }> = ({ poolID })
 						<PlaceBid
 							currency={pool.to.address}
 							balance={balance}
-							disabled={
-								operation === OPERATION.loading ||
-								pool.status === POOL_STATUS.COMING ||
-								!userWhitelisted
-							}
+							// disabled={
+							// 	operation === OPERATION.loading ||
+							// 	pool.status === POOL_STATUS.COMING ||
+							// 	!userWhitelisted
+							// }
+							disabled
 							loading={operation === OPERATION.loading}
 							onSubmit={bidAction}
 							totalAmount={pool.total}
